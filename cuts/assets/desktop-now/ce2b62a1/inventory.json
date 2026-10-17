@@ -106,7 +106,6 @@
     { "capability": "Startup gate: the app stays hidden until vault recovery is clear and one model connection is verified", "evidence": "src/components/model-connections/ModelConnectionStartupGate.tsx · src/App.tsx" },
     { "capability": "Goal-alignment steering, with goals as part of the record; Goal Lens as a drill-in", "evidence": "STATUS.md · PR #450 · src/components/plane/surfaces/GoalLensSurface.tsx" },
     { "capability": "Correction ledger: a goal edit appends {prior, new, actor, timestamp, scope}, ledger before config, refusal on append failure", "evidence": "crates/operator-intel/src/goals_ledger.rs · LIM-1997 · #381" },
-    { "capability": "Verdict allowlist fails closed to a named refusal; RefusalKind is a closed enum validated on parse", "evidence": "crates/application-verdict/src/decide.rs · crates/application-trial/src/ports.rs" },
     { "capability": "Quote grounding enforced by rewrite, not by prompt", "evidence": "src/lib/agents.ts (STATUS.md row)" },
     { "capability": "Receipt-chain verification at the product boundary", "evidence": "PR #327 · STATUS.md" },
     { "capability": "Correction → proposed policy → ratify / revoke / propagate, with agent attribution", "evidence": "LIM-2168 “current product truth” · PR #719 · #724 · #725" },
@@ -116,6 +115,7 @@
     { "item": "Native signing and a verified packet", "why": "the browser fixture cannot sign; every receipt here says not verified / UNVERIFIED, which is the truth of this capture mode" },
     { "item": "Vault durability across restart", "why": "a packaged-app property; browser screenshots establish structure, not durability (LIM-2294)" },
     { "item": "Host-level policy enforcement beyond the commit-message hook", "why": "not landed (LIM-2168)" },
+    { "item": "The fail-closed verdict allowlist and seven-layer publication guard", "why": "STATUS.md lists them as shipped, but the de-slop audit of 2026-10-17 (LIM-2400) found they live in the Spine crates and nothing on the product path calls them; listed here as code presence, not capability, until they are ported into the packet path or removed" },
     { "item": "The legacy view switcher (?plane=0)", "why": "reachable only by opting out of the default shell; not the product path" },
     { "item": "Lab and proposed work: Spine HTTP server, Operational Picture scene, AoNS runtime, radio collection", "why": "opt-in or contracts only (STATUS.md Lab / Proposed)" }
   ]
