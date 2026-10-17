@@ -21,9 +21,9 @@
   What replaced what (2026-10-17, founder ruling): this slot used to hold a
   six-scene storyboard of an imagined four-zone plane ("sketch, no build
   wiring"). Desktop shipped that plane as its default shell, so the sketch
-  is gone and the slot now shows the real thing. The old file's last
-  commit is 16e09cb on this repo if the convergence matrix (LIM-2270)
-  needs to read it. Nothing from its DOM was carried forward; only the
+  is gone and the slot now shows the real thing. The sketch was last
+  present at 16e09cb on this repo (last touched in f5e0ebd) if the
+  convergence matrix (LIM-2270) needs to read it. Nothing from its DOM was carried forward; only the
   scene-tab chrome below is reused.
   ──────────────────────────────────────────────────────────────────────
   Claim register: no product claim here exceeds current-main capability
@@ -32,7 +32,8 @@
   "saved · not verified" because the browser fixture cannot sign. The
   "Shipped" table quotes STATUS.md and the navigation policy; Lab and
   Proposed work is listed under "Not shown", never as capability.
-  Layered over the canon stylesheets below. No build step. Open directly.
+  Layered over the canon stylesheets below. No build step. Serve it over
+  http (npm run dev): the page fetches inventory.json, which file:// blocks.
 -->
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -332,17 +333,20 @@
     $("ab-cap-src").innerHTML = f.src;
     // tabs + tiles reflect the selection
     var tabs = $("ab-scene-tabs").children;
+    // Roving tabindex: when a surface frame (no tab of its own) is selected,
+    // the nearest loop tab stays tabbable so the tablist never loses focus.
+    var tabbable = state.idx < state.loopCount ? state.idx : state.loopCount - 1;
     for (var t = 0; t < tabs.length; t++) {
       var on = tabs[t].getAttribute("data-idx") == state.idx;
       tabs[t].classList.toggle("is-active", on);
       tabs[t].setAttribute("aria-selected", on ? "true" : "false");
-      tabs[t].tabIndex = on ? 0 : -1;
+      tabs[t].tabIndex = tabs[t].getAttribute("data-idx") == tabbable ? 0 : -1;
     }
     var tiles = $("ab-tiles").children;
     for (var k = 0; k < tiles.length; k++) {
       tiles[k].classList.toggle("is-active", tiles[k].getAttribute("data-idx") == state.idx);
     }
-    if (focus === "tab" && tabs[state.idx]) tabs[state.idx].focus();
+    if (focus === "tab" && tabs[tabbable]) tabs[tabbable].focus();
   }
 
   function build(inv) {
