@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Liminal · Vault + Agents · The Founder OS</title>
-<meta name="description" content="Drag any window in. Bounded agents read it and disagree. Founder corrects what they got wrong; the correction appends to the chain. Vault commits the signed record. Local SQLCipher vault, no inbound network surface, no vault-content telemetry.">
+<meta name="description" content="Drag any window in. Bounded agents read it and disagree. Founder corrects what they got wrong; the correction appends to the chain. Vault commits the signed record. Local SQLCipher vault, no listening ports by default, no telemetry; reads go only to the model you choose.">
 <meta property="og:title" content="Liminal · The Founder OS">
 <meta property="og:description" content="Compose → read → dispatch → commit. The founder OS, running.">
 <meta property="og:type" content="website">
@@ -633,20 +633,20 @@
             <span class="live">Architecture PPA</span>
           </div>
           <div class="pane-caption">
-            Vault on-device, model-agnostic by design. <em>Refusals run local; synthesis can route to frontier.</em> No vault-content telemetry; the vault has no inbound network surface.
+            Vault on-device, model-agnostic by design. <em>Reads, refusals included, come from the model you connect; every quote is checked locally against your source.</em> No analytics or telemetry; no listening ports by default.
           </div>
           <div class="vault-rows">
             <div class="vault-row">
               <span class="cmd"><span class="prompt">$</span>sqlcipher vault.db ".schema correction_stream"</span>
-              <span class="out">→ <em>encrypted at rest</em> · AES-256 · founder is the only key-holder</span>
+              <span class="out">→ <em>encrypted at rest</em> · SQLCipher, AES-256 · key made on this Mac, kept in Keychain · no server copy</span>
             </div>
             <div class="vault-row">
               <span class="cmd"><span class="prompt">$</span>ls -la ~/.liminal/vault.db</span>
-              <span class="out">→ <em>0600 · user-only</em> · vault file unreadable to any other process</span>
+              <span class="out">→ <em>user-only</em> · other accounts on this Mac cannot read it · not a process-isolation boundary</span>
             </div>
             <div class="vault-row">
               <span class="cmd"><span class="prompt">$</span>liminal --inspect-routes</span>
-              <span class="out">refusal: <em>local</em> · synth: <em>frontier</em> · vault: <em>no inbound surface · no content telemetry</em></span>
+              <span class="out">refusal: <em>from the model · quote-checked locally</em> · synth: <em>frontier or local model</em> · vault: <em>no listening ports by default · no telemetry</em></span>
             </div>
           </div>
           <div class="pane-foot">
@@ -665,7 +665,7 @@
       <div class="deck-foot">
         <span class="left">compose → read → dispatch → commit · <b>the founder's own door into the loop</b></span>
         <span class="center">refusal-as-trust · <b>AgentHansa judges: “refusal as designed output”: most original architectural idea in their cohort</b></span>
-        <span class="right">local SQLCipher vault · no inbound network surface · no vault-content telemetry</span>
+        <span class="right">local SQLCipher vault · no listening ports by default · no telemetry · reads go only to the model you choose</span>
       </div>
 
     </div>
