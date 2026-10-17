@@ -1,18 +1,7 @@
 {
   "$schema_note": "Status of every HTML surface under cuts/ plus the two front-door subfolders (DES-181). Machine-read by tests/cut-status.spec.js. status: live = current, editable · frozen = ruled no-edit (see ruling) · archive = superseded record under cuts/_archive/, no edits. drift lists every known disagreement between a file's status and its own header or on-page copy; the test fails on drift that is not listed AND on listed drift that is gone, so this file has to move with the fixes. Each drift fix is its own small change (DES-181 boundary); frozen and archive files are never edited under this file.",
   "generated": "2026-10-05",
-  "docDrift": [
-    {
-      "doc": "cuts/TAXONOMY.md",
-      "says": "map table: 09 osint maturity \"live\", \"the real-kernel proof\"",
-      "should": "frozen per LIM-1135; front door already labels it \"archived concept\""
-    },
-    {
-      "doc": "cuts/TAXONOMY.md",
-      "says": "map table omits 04, 05, custody, thread/*, the tools and the archive",
-      "should": "point at cuts/cut-status.json for status; keep TAXONOMY for coordinates"
-    }
-  ],
+  "docDrift": [],
   "cuts": [
     {
       "path": "cuts/00-agency.html",
@@ -364,21 +353,13 @@
       "path": "team-drift/index.html",
       "status": "live",
       "kind": "cut",
-      "frontDoor": true,
-      "drift": [
-        {
-          "id": "maturity-off-vocab",
-          "says": "Maturity · prototype",
-          "should": "stub | sketch | refining | live (qualifier in parentheses)"
-        }
-      ]
+      "frontDoor": true
     },
     {
       "path": "cuts/_demo.html",
       "status": "live",
       "kind": "tool",
-      "frontDoor": false,
-      "pendingPr": "demo/decisions-with-receipts (LIM-2187)"
+      "frontDoor": false
     }
   ]
 }

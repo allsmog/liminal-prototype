@@ -137,6 +137,8 @@ the cut's address.
 
 ## The map: every cut as a coordinate (verified placement)
 
+> **Status lives in `cuts/cut-status.json`** (live / frozen / archive for every HTML surface under `cuts/`, machine-checked by `tests/cut-status.spec.js`). This table is the coordinate model for the main cuts and does not list every surface; the maturity column here is a coordinate, not a status.
+
 | Cut | loop-stage | altitude | surface | framing | maturity | convergence verdict |
 |---|---|---|---|---|---|---|
 | **00 agency** | full-loop | L1–L4 (subject-switch) | desktop | infra | refining | **The shell.** Literally `SUBJECTS={spend,custody,osint,notice,pattern}`. The others are panes of this. |
@@ -149,7 +151,7 @@ the cut's address.
 | 12 operating-plane | full-loop | L1-founder | desktop | wedge | sketch | The four-zone desktop plane (loop map, slate, agent workspace, intake dock) that cut 01's slate-tray unwinds into per FP-DESIGN. Shares altitude/surface/framing with cut 01, not loop-stage (cut 01 is Capture→Read→Decide detail; this is the full loop, plus Re-enter via the vault scene). Not a duplicate, the wider frame around the same wedge. |
 | 11 govern | full-loop (agent fleet) | L1→L2 | desktop | **wedge→infra** | live | **The seam cut**, positioning's exact wedge→platform example (AI-spend) |
 | 08 custody | full-loop (defense) | L3-high-stakes | desktop | infra | sketch | A subject of cut 00 (custody); proof-of-travel |
-| 09 osint | full-loop (live kernel) | L3-high-stakes | desktop | infra | live | A subject of cut 00 (osint); **the real-kernel proof** |
+| 09 osint | full-loop (frozen kernel) | L3-high-stakes | desktop | infra | frozen | A subject of cut 00 (osint). **Permanently frozen** (LIM-1135, 2026-08-21): the kernel bundle still computes in-browser, but its source is gone and it is not rebuilt. Front door: "archived concept" |
 | molehunt | full-loop (CI) | L3-high-stakes | desktop | infra | live | A subject, proof-of-travel (CI) |
 | team-drift | Record/correct (team) | L2-team | desktop | infra | live | The L2 (team) render |
 
