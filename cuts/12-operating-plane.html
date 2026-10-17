@@ -3,36 +3,45 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cut 12 · The operating plane · Liminal</title>
+<title>Cut 12 · The operating plane, as built · Liminal</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230b0b0d'/%3E%3Cpath d='M16 5 27 16 16 27 5 16Z' fill='none' stroke='%23c9c4bc' stroke-width='1.6'/%3E%3C/svg%3E">
 
 <!--
-  Cut 12 · The operating plane · the four-zone loop desktop, one instrument
+  Cut 12 · The operating plane, as built · what liminal-desktop is today
   ──────────────────────────────────────────────────────────────────────
   Loop-stage · full-loop (Capture → Read → Decide → Record → Re-enter)
   Altitude   · L1-founder
   Surface    · desktop
-  Framing    · wedge        (the founder front door, entered here)
-  Maturity   · sketch       (visual mockup, six togglable scenes, no build wiring)
-  Spec ref   · founder-brain/ops/fable-sprint-2026-07/FP-DESIGN_desktop-frontend-spec.md
-               §4 zones · §5 flows · §6 states · §7 components · §8 motion · §11 this cut
+  Framing    · wedge
+  Maturity   · live (real captures of the shipped shell · browser fixture · unsigned)
+  Source     · liminalworksinc/liminal-desktop @ ce2b62a1 (origin/main, 2026-10-07)
+  Captured   · 2026-10-17 · Playwright WebKit 1280×800 · reduced motion
+  Data       · assets/desktop-now/ce2b62a1/inventory.json (every row names its file)
   ──────────────────────────────────────────────────────────────────────
-  Coordinate note (TAXONOMY.md rule 5, convergence check): shares
-  (altitude, surface, framing) with cut 01 but NOT loop-stage. Cut 01 is
-  Capture→Read→Decide, the slate-tray detail. This cut is full-loop: the
-  plane cut 01's center zone unwinds into, per FP-DESIGN §1. Not a
-  duplicate projection, a wider frame around the same L1 wedge.
+  What replaced what (2026-10-17, founder ruling): this slot used to hold a
+  six-scene storyboard of an imagined four-zone plane ("sketch, no build
+  wiring"). Desktop shipped that plane as its default shell, so the sketch
+  is gone and the slot now shows the real thing. The old file's last
+  commit is 16e09cb on this repo if the convergence matrix (LIM-2270)
+  needs to read it. Nothing from its DOM was carried forward; only the
+  scene-tab chrome below is reused.
   ──────────────────────────────────────────────────────────────────────
-  Four zones, one grid: 280px loop map · 1fr slate · 320px agent
-  workspace · full-width intake dock. Six scenes swap the slate + agent
-  workspace content; the loop map and dock are the shell and hold steady.
-  Layered over the four canon stylesheets below. No build step, no
-  dependency on the parent catalog iframe. Open this file directly.
+  Claim register: no product claim here exceeds current-main capability
+  (LIM-2168 done-when). Every frame carries the app's own on-screen
+  banner, SYNTHETIC FIXTURE · NOT LIVE OR VERIFIED. Receipts read
+  "saved · not verified" because the browser fixture cannot sign. The
+  "Shipped" table quotes STATUS.md and the navigation policy; Lab and
+  Proposed work is listed under "Not shown", never as capability.
+  Layered over the canon stylesheets below. No build step. Open directly.
 -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
 <!-- canon · 12-wheel tokens · single source of truth -->
 <link rel="stylesheet" href="../design-system/tokens/design-tokens.css">
-<!-- shared shell · frame chrome, titlebar, three-pane grid, dispo-artifact -->
+<!-- shared shell · frame chrome, titlebar, product-row -->
 <link rel="stylesheet" href="../lib/cut-shell.css">
 <link rel="stylesheet" href="../lib/surface-nav.css">
 <link rel="stylesheet" href="../lib/cut-shell-products.css">
@@ -41,410 +50,163 @@
 <style>
   /* ════════════════════════════════════════════════════════════════
      Per-cut layer. Canon stylesheets provide the chrome (.stage/.frame/
-     .titlebar/.lights/.diamond/.vault-pill/.product-row/.main grid/
-     .rail-left/.slate-area/.rail-right/.dispo-artifact). Everything
-     below is this cut's own content: the loop map, the slate panels,
-     the agent workspace, the intake dock, and the six-scene switch.
-     No canon token is redefined; only consumed via var().
+     .titlebar/.lights/.diamond/.vault-pill/.product-row). Everything
+     below is this cut's own content: the scene switcher, one viewer,
+     the surface tiles, the capability table. No token is redefined,
+     only consumed via var(). No literal font-size, no literal color.
      ════════════════════════════════════════════════════════════════ */
 
-  /* register the app's default accent · Diligence, the read/facts register */
   body { --p-accent: var(--diligence); }
 
-  /* weight replaces italic, everywhere this cut touches shared classes
-     that ship italic by default (the paper artifact title, quoted
-     margin text). No <i> tag and no authored italic anywhere below. */
-  .da-title, .op-quote, .op-substrate-text { font-style: normal !important; }
-  .da-title { font-weight: 600 !important; }
+  /* surface-nav injects a fixed 56px rail (--sn-w) and offsets nothing; the
+     other cuts hide the overlap under wide left padding. This cut's scene
+     label and 768px heading sit in that strip, so clear it by the rail's own
+     width, only when the rail is actually there (not under ?embed=1). */
+  body:has(.sn-rail) .stage { margin-left: var(--sn-w); width: calc(100% - var(--sn-w)); }
 
-  /* magnetic hover + press, canon spring, on this cut's own controls */
-  .op-scene-tab, .op-btn, .op-chip, .op-loop-row, .op-proposal-card, .op-tile {
-    transition: transform .22s var(--ease-spring, ease), background 180ms, color 180ms, border-color 180ms, box-shadow 180ms;
+  .ab-scene-tab, .ab-tile, .ab-link {
+    transition: transform .22s var(--ease-spring), background 180ms, color 180ms, border-color 180ms;
   }
-  .op-scene-tab:hover, .op-btn:hover { transform: translateY(-1.5px); }
-  .op-scene-tab:active, .op-btn:active { transform: translateY(0) scale(.97); transition-duration: .08s; }
+  .ab-scene-tab:hover, .ab-tile:hover { transform: translateY(-1.5px); }
+  .ab-scene-tab:active, .ab-tile:active { transform: translateY(0) scale(.98); transition-duration: .08s; }
   @media (prefers-reduced-motion: reduce) {
-    .op-scene-tab, .op-btn, .op-chip, .op-loop-row, .op-proposal-card, .op-tile { transition: background 180ms, color 180ms, border-color 180ms; }
-    .op-scene-tab:hover, .op-btn:hover, .op-scene-tab:active, .op-btn:active { transform: none; }
+    .ab-scene-tab, .ab-tile, .ab-link { transition: background 180ms, color 180ms, border-color 180ms; }
+    .ab-scene-tab:hover, .ab-tile:hover, .ab-scene-tab:active, .ab-tile:active { transform: none; }
   }
-
-  /* focus ring · keyboard access, register-tinted */
-  .op-scene-tab:focus-visible, .op-btn:focus-visible, .op-chip:focus-visible,
-  .op-loop-row:focus-visible, .op-proposal-card button:focus-visible,
-  .op-field:focus-visible, .op-redirect input:focus-visible, .op-radio:focus-visible {
+  .ab-scene-tab:focus-visible, .ab-tile:focus-visible, .ab-link:focus-visible {
     outline: 2px solid var(--diligence); outline-offset: 2px; border-radius: var(--radius-2);
   }
 
-  /* ── shell composition ─────────────────────────────────────────── */
-
-  .op-scene-row {
-    justify-content: space-between;
-    gap: calc(var(--space-4) * var(--density-scale));
-  }
-  .op-scene-label {
+  /* ── scene row · reused chrome from the previous cut 12 ─────────── */
+  .ab-scene-row { justify-content: space-between; gap: calc(var(--space-4) * var(--density-scale)); overflow-x: auto; }
+  .ab-scene-label {
     font-family: var(--mono); font-size: var(--fs-mono-xs); color: var(--text-faint);
     letter-spacing: var(--ls-mono); text-transform: uppercase;
-    display: flex; align-items: center; padding-right: 14px;
-    border-right: 1px solid var(--frame-border);
+    display: flex; align-items: center; padding-right: calc(var(--space-3) * var(--density-scale));
+    border-right: 1px solid var(--frame-border); white-space: nowrap;
   }
-  .op-scene-tabs { display: flex; align-items: stretch; overflow-x: auto; }
-  .op-scene-tab {
+  .ab-scene-tabs { display: flex; align-items: stretch; }
+  .ab-scene-tab {
     background: transparent; border: none; border-left: 1px solid var(--frame-border);
-    padding: 0 calc(var(--space-4) * var(--density-scale)); font-family: var(--mono); font-size: 10.5px; color: var(--text-dim);
-    letter-spacing: 0.05em; white-space: nowrap; display: flex; align-items: center; gap: calc(var(--space-app-1-5) * var(--density-scale));
+    padding: 0 calc(var(--space-3) * var(--density-scale)); font-family: var(--mono); font-size: var(--fs-mono-xs); color: var(--text-dim);
+    letter-spacing: var(--ls-app-wide); white-space: nowrap; display: flex; align-items: center; gap: calc(var(--space-app-1-5) * var(--density-scale));
+    cursor: pointer;
   }
-  .op-scene-tab .op-scene-n { color: var(--text-faint); }
-  .op-scene-tab:hover { color: var(--text-mid); background: var(--hover); }
-  .op-scene-tab.is-active { color: var(--text); background: var(--diligence-bg); }
-  .op-scene-tab.is-active .op-scene-n { color: var(--diligence); }
+  .ab-scene-tab .ab-scene-n { color: var(--text-faint); }
+  .ab-scene-tab:hover { color: var(--text-mid); background: var(--hover); }
+  .ab-scene-tab.is-active { color: var(--text); background: var(--diligence-bg); }
+  .ab-scene-tab.is-active .ab-scene-n { color: var(--diligence); }
+  .ab-scene-side { display: flex; align-items: center; gap: calc(var(--space-2) * var(--density-scale)); font-family: var(--mono); font-size: var(--fs-mono-xs); color: var(--text-faint); letter-spacing: var(--ls-app-wide); white-space: nowrap; }
+  .ab-scene-side kbd { font-family: var(--mono); font-size: var(--fs-eyebrow); color: var(--text-dim); border: 1px solid var(--frame-border); border-radius: var(--radius-1); padding: 0 calc(var(--space-1) * var(--density-scale)); }
 
-  .main.op-main {
-    grid-template-rows: 1fr auto;
-    min-height: 0;
-    overflow: visible;
+  /* ── main · one column, scrolls ─────────────────────────────────── */
+  .main.ab-main { display: block; overflow: auto; min-height: 0; }
+  .ab-section { padding: calc(var(--space-6) * var(--density-scale)) calc(var(--space-6) * var(--density-scale)); border-bottom: 1px solid var(--frame-border); }
+  .ab-section:last-child { border-bottom: none; }
+  .ab-eyebrow {
+    font-family: var(--mono); font-size: var(--fs-mono-xs); color: var(--text-faint);
+    letter-spacing: var(--ls-mono); text-transform: uppercase; margin: 0 0 calc(var(--space-2) * var(--density-scale));
+    display: flex; align-items: center; gap: calc(var(--space-3) * var(--density-scale)); flex-wrap: wrap;
   }
-  .op-loopmap { grid-column: 1; grid-row: 1; display: flex; flex-direction: column; }
-  .op-slate   { grid-column: 2; grid-row: 1; display: flex; flex-direction: column; min-width: 0; }
-  .op-agents  { grid-column: 3; grid-row: 1; display: flex; flex-direction: column; }
-  .op-dock    { grid-column: 1 / -1; grid-row: 2; border-top: 1px solid var(--frame-border); background: var(--frame-bg-2); }
+  .ab-eyebrow .ab-accent { color: var(--diligence); }
+  .ab-h { font-family: var(--serif); font-weight: 400; font-size: var(--fs-app-h1); line-height: var(--lh-tight); color: var(--text); margin: 0 0 calc(var(--space-2) * var(--density-scale)); letter-spacing: var(--ls-tight); }
+  .ab-h2 { font-family: var(--serif); font-weight: 400; font-size: var(--fs-app-h2); line-height: var(--lh-snug); color: var(--text); margin: 0 0 calc(var(--space-2) * var(--density-scale)); }
+  .ab-lede { font-family: var(--sans); font-size: var(--fs-body); line-height: var(--lh-relaxed); color: var(--text-mid); max-width: 72ch; margin: 0; }
+  .ab-lede strong { color: var(--text); font-weight: 500; }
 
-  @media (max-width: 1180px) {
-    .main.op-main { grid-template-columns: 240px 1fr 280px; }
+  /* fixture pill · mirrors the app's own banner so the page never outclaims it */
+  .ab-fixture {
+    display: inline-flex; align-items: center; gap: calc(var(--space-2) * var(--density-scale));
+    font-family: var(--mono); font-size: var(--fs-eyebrow); letter-spacing: var(--ls-app-wide); text-transform: uppercase;
+    color: var(--watch); border: 1px solid var(--watch-edge); background: var(--watch-bg);
+    border-radius: var(--radius-pill); padding: calc(var(--space-1) * var(--density-scale)) calc(var(--space-3) * var(--density-scale));
   }
-  @media (max-width: 900px) {
-    .main.op-main {
-      display: flex; flex-direction: column;
-      grid-template-columns: none;
-    }
-    .op-loopmap, .op-agents { max-height: 320px; }
+  .ab-sha { font-family: var(--mono); font-size: var(--fs-mono-xs); color: var(--text-dim); letter-spacing: var(--ls-app-wide); }
+  .ab-sha code { font-family: var(--mono); color: var(--text); }
+
+  /* ── viewer ─────────────────────────────────────────────────────── */
+  .ab-viewer { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: calc(var(--space-6) * var(--density-scale)); align-items: start; }
+  .ab-figure { margin: 0; }
+  .ab-frame {
+    position: relative; border: 1px solid var(--frame-border); border-radius: var(--radius-3); overflow: hidden;
+    background: var(--frame-bg-2); aspect-ratio: 16 / 10;
   }
-
-  /* ── zone 1 · loop map ──────────────────────────────────────────── */
-
-  .op-loopmap-head {
-    display: flex; align-items: baseline; justify-content: space-between;
-    padding: calc(var(--space-1) * var(--density-scale)) 18px 10px;
+  .ab-frame img { display: block; width: 100%; height: 100%; object-fit: contain; }
+  .ab-frame[data-state="loading"]::after {
+    content: "loading capture…"; position: absolute; inset: 0; display: grid; place-items: center;
+    font-family: var(--mono); font-size: var(--fs-mono-xs); color: var(--text-faint); letter-spacing: var(--ls-app-wide); text-transform: uppercase;
   }
-  .op-loopmap-head .rh-meta { font-family: var(--mono); font-size: 9.5px; color: var(--text-faint); letter-spacing: 0.08em; }
-  .op-group { padding: 10px 18px calc(var(--space-app-1-5) * var(--density-scale)); }
-  .op-group-title {
-    font-family: var(--serif); font-size: var(--fs-mono-lg); color: var(--text-mid);
-    letter-spacing: 0.01em; margin-bottom: calc(var(--space-app-1-5) * var(--density-scale));
+  .ab-caption { display: flex; flex-direction: column; gap: calc(var(--space-4) * var(--density-scale)); }
+  .ab-cap-n { font-family: var(--mono); font-size: var(--fs-mono-xs); color: var(--diligence); letter-spacing: var(--ls-mono); text-transform: uppercase; }
+  .ab-cap-title { font-family: var(--serif); font-size: var(--fs-app-h2); line-height: var(--lh-snug); color: var(--text); margin: calc(var(--space-1) * var(--density-scale)) 0 0; }
+  .ab-cap-block dt { font-family: var(--mono); font-size: var(--fs-eyebrow); color: var(--text-faint); letter-spacing: var(--ls-app-wide); text-transform: uppercase; margin: 0 0 calc(var(--space-1) * var(--density-scale)); }
+  .ab-cap-block dd { font-family: var(--sans); font-size: var(--fs-sm); line-height: var(--lh-relaxed); color: var(--text-mid); margin: 0 0 calc(var(--space-3) * var(--density-scale)); }
+  .ab-cap-block dd:last-child { margin-bottom: 0; }
+  .ab-cap-src { font-family: var(--mono); font-size: var(--fs-mono-xs); color: var(--text-faint); line-height: var(--lh-normal); word-break: break-word; }
+  .ab-cap-src code { font-family: var(--mono); color: var(--text-dim); }
+  .ab-cap-nav { display: flex; gap: calc(var(--space-2) * var(--density-scale)); }
+  .ab-btn {
+    background: transparent; border: 1px solid var(--frame-border); border-radius: var(--radius-2); color: var(--text-dim);
+    font-family: var(--mono); font-size: var(--fs-mono-xs); letter-spacing: var(--ls-app-wide); text-transform: uppercase;
+    padding: calc(var(--space-2) * var(--density-scale)) calc(var(--space-3) * var(--density-scale)); cursor: pointer;
   }
-  .op-loop-row {
-    display: block; width: 100%; text-align: left; background: transparent;
-    border: 1px solid transparent; border-radius: var(--radius-3);
-    padding: calc(var(--space-2) * var(--density-scale)) 9px; margin-bottom: calc(var(--space-app-0-5) * var(--density-scale)); cursor: default;
+  .ab-btn:hover { color: var(--text); background: var(--hover); border-color: var(--text-faint); }
+  .ab-btn:focus-visible { outline: 2px solid var(--diligence); outline-offset: 2px; }
+
+  /* ── surface tiles ──────────────────────────────────────────────── */
+  .ab-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: calc(var(--space-4) * var(--density-scale)); margin-top: calc(var(--space-5) * var(--density-scale)); }
+  .ab-tile {
+    text-align: left; background: var(--frame-bg-2); border: 1px solid var(--frame-border); border-radius: var(--radius-3);
+    padding: 0; overflow: hidden; cursor: pointer; display: flex; flex-direction: column; color: inherit;
   }
-  .op-loop-row:hover { background: var(--hover); border-color: var(--card-border); }
-  .op-loop-name { font-family: var(--serif); font-size: var(--fs-mono-lg); color: var(--text); line-height: 1.35; display: block; margin-bottom: calc(var(--space-1) * var(--density-scale)); }
-  .op-loop-meta { display: flex; align-items: center; gap: calc(var(--space-2) * var(--density-scale)); font-family: var(--mono); font-size: var(--fs-eyebrow); letter-spacing: 0.1em; text-transform: uppercase; }
-  .op-badge { display: inline-flex; align-items: center; gap: 5px; padding: calc(var(--space-app-0-5) * var(--density-scale)) 7px calc(var(--space-app-0-5) * var(--density-scale)) calc(var(--space-app-1-5) * var(--density-scale)); border-radius: var(--radius-2); border: 1px solid; }
-  .op-badge .op-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-  .op-badge.st-running { color: var(--signal); border-color: var(--signal-edge); background: var(--signal-bg); }
-  .op-badge.st-running .op-dot { background: var(--signal); animation: op-pulse 1.6s ease-in-out infinite; }
-  .op-badge.st-watch { color: var(--watch); border-color: var(--watch-edge); background: var(--watch-bg); }
-  .op-badge.st-watch .op-dot { background: var(--watch); }
-  .op-badge.st-queued { color: var(--liminal); border-color: var(--liminal-edge); background: var(--liminal-bg); }
-  .op-badge.st-queued .op-dot { background: var(--liminal); }
-  .op-badge.st-closed { color: var(--resolved); border-color: var(--resolved-soft); background: var(--resolved-bg); }
-  .op-badge.st-closed .op-dot { background: var(--resolved); }
-  .op-badge.st-blocked { color: var(--alarm); border-color: var(--alarm-edge); background: var(--alarm-bg); }
-  .op-badge.st-blocked .op-dot { background: var(--alarm); }
-  .op-loop-count { color: var(--text-faint); }
-  @keyframes op-pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
-  .op-loop-row.is-lit { background: var(--signal-bg); border-color: var(--signal-edge); }
-  .op-edge {
-    display: flex; align-items: center; gap: 7px; margin: calc(var(--space-app-0-5) * var(--density-scale)) 0 calc(var(--space-app-1-5) * var(--density-scale)) 9px;
-    padding-left: calc(var(--space-2) * var(--density-scale)); border-left: 1px dashed var(--card-border-2);
-    font-family: var(--mono); font-size: var(--fs-eyebrow); color: var(--text-faint);
-    letter-spacing: var(--ls-app-wide); text-transform: uppercase;
+  .ab-tile:hover { border-color: var(--text-faint); background: var(--hover); }
+  .ab-tile.is-active { border-color: var(--diligence); box-shadow: 0 0 0 1px var(--diligence-edge) inset; }
+  .ab-tile-img { aspect-ratio: 16 / 10; background: var(--frame-bg-3); border-bottom: 1px solid var(--frame-border); }
+  .ab-tile-img img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top left; }
+  .ab-tile-body { padding: calc(var(--space-3) * var(--density-scale)) calc(var(--space-4) * var(--density-scale)) calc(var(--space-4) * var(--density-scale)); display: flex; flex-direction: column; gap: calc(var(--space-1) * var(--density-scale)); }
+  .ab-tile-kind { font-family: var(--mono); font-size: var(--fs-eyebrow); color: var(--text-faint); letter-spacing: var(--ls-app-wide); text-transform: uppercase; }
+  .ab-tile-kind[data-nav="primary"] { color: var(--diligence); }
+  .ab-tile-kind[data-nav="tools"] { color: var(--synthesis); }
+  .ab-tile-kind[data-nav="overlay"] { color: var(--outreach); }
+  .ab-tile-title { font-family: var(--serif); font-size: var(--fs-lg); line-height: var(--lh-snug); color: var(--text); }
+  .ab-tile-desc { font-family: var(--sans); font-size: var(--fs-sm); line-height: var(--lh-normal); color: var(--text-mid); }
+  .ab-tile-file { font-family: var(--mono); font-size: var(--fs-eyebrow); color: var(--text-faint); letter-spacing: var(--ls-app-loose); word-break: break-all; margin-top: calc(var(--space-1) * var(--density-scale)); }
+
+  /* ── capability table ───────────────────────────────────────────── */
+  .ab-cols { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: calc(var(--space-8) * var(--density-scale)); align-items: start; margin-top: calc(var(--space-5) * var(--density-scale)); }
+  .ab-table { width: 100%; border-collapse: collapse; }
+  .ab-table th { text-align: left; font-family: var(--mono); font-size: var(--fs-eyebrow); color: var(--text-faint); letter-spacing: var(--ls-app-wide); text-transform: uppercase; font-weight: 400; padding: 0 calc(var(--space-3) * var(--density-scale)) calc(var(--space-2) * var(--density-scale)) 0; border-bottom: 1px solid var(--frame-border); }
+  .ab-table td { vertical-align: top; padding: calc(var(--space-3) * var(--density-scale)) calc(var(--space-3) * var(--density-scale)) calc(var(--space-3) * var(--density-scale)) 0; border-bottom: 1px solid var(--frame-border); font-family: var(--sans); font-size: var(--fs-sm); line-height: var(--lh-normal); color: var(--text-mid); }
+  .ab-table td:first-child { color: var(--text); }
+  .ab-table td.ab-ev { font-family: var(--mono); font-size: var(--fs-mono-xs); color: var(--text-dim); word-break: break-word; }
+  .ab-not { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: calc(var(--space-3) * var(--density-scale)); }
+  .ab-not li { border-left: 2px solid var(--watch-edge); padding-left: calc(var(--space-3) * var(--density-scale)); }
+  .ab-not .ab-not-item { font-family: var(--sans); font-size: var(--fs-sm); color: var(--text); line-height: var(--lh-normal); }
+  .ab-not .ab-not-why { font-family: var(--sans); font-size: var(--fs-xs); color: var(--text-dim); line-height: var(--lh-normal); }
+
+  /* ── foot ───────────────────────────────────────────────────────── */
+  .ab-foot { font-family: var(--mono); font-size: var(--fs-mono-xs); color: var(--text-faint); line-height: var(--lh-relaxed); letter-spacing: var(--ls-app-loose); max-width: 90ch; }
+  .ab-foot code { font-family: var(--mono); color: var(--text-dim); }
+  .ab-foot a, .ab-link { color: var(--text-dim); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--frame-border); }
+  .ab-foot a:hover, .ab-link:hover { color: var(--text); text-decoration-color: var(--diligence); }
+
+  .ab-error { font-family: var(--mono); font-size: var(--fs-mono-xs); color: var(--alarm); padding: calc(var(--space-6) * var(--density-scale)); }
+
+  @media (max-width: 1100px) {
+    .ab-viewer { grid-template-columns: 1fr; }
+    .ab-cols { grid-template-columns: 1fr; gap: calc(var(--space-6) * var(--density-scale)); }
   }
-  .op-rail-foot {
-    margin-top: auto; padding: calc(var(--space-3) * var(--density-scale)) 18px; border-top: 1px solid var(--frame-border);
-    display: flex; gap: 14px; font-family: var(--mono); font-size: 9.5px;
-    letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint);
+  @media (max-width: 768px) {
+    .ab-section { padding: calc(var(--space-5) * var(--density-scale)) calc(var(--space-4) * var(--density-scale)); }
+    .ab-scene-side { display: none; }
+    .ab-tiles { grid-template-columns: 1fr 1fr; }
+    .ab-table td.ab-ev { display: none; }
+    .ab-table th:last-child { display: none; }
   }
-  .op-rail-foot a, .op-rail-foot span.op-fake-link { color: inherit; border-bottom: 1px dotted var(--card-border-2); padding-bottom: 1px; }
-  .op-rail-foot a:hover { color: var(--text-mid); }
-
-  /* ── zone 2 · slate ─────────────────────────────────────────────── */
-
-  .op-stage-strip {
-    display: flex; flex-wrap: wrap; gap: 0; padding: calc(var(--space-3) * var(--density-scale)) calc(var(--space-6) * var(--density-scale));
-    border-bottom: 1px solid var(--frame-border); background: var(--frame-bg-2);
-    font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase;
+  @media (max-width: 520px) {
+    .ab-tiles { grid-template-columns: 1fr; }
   }
-  .op-stage-chip { color: var(--text-faint); padding: calc(var(--space-app-0-5) * var(--density-scale)) 10px calc(var(--space-app-0-5) * var(--density-scale)) 0; position: relative; }
-  .op-stage-chip:not(:last-child)::after { content: "·"; margin-left: 10px; color: var(--card-border-2); }
-  .op-stage-chip.is-active { color: var(--diligence); font-weight: 500; }
-
-  .op-slate-scroll { flex: 1; overflow-y: auto; padding: calc(var(--space-6) * var(--density-scale)) 32px 32px; }
-  .op-panel { display: none; }
-  .op-plane[data-scene="rest"]      .op-panel[data-panel="rest"],
-  .op-plane[data-scene="proposals"] .op-panel[data-panel="proposals"],
-  .op-plane[data-scene="running"]   .op-panel[data-panel="running"],
-  .op-plane[data-scene="judgment"]  .op-panel[data-panel="judgment"],
-  .op-plane[data-scene="closure"]   .op-panel[data-panel="closure"],
-  .op-plane[data-scene="vault"]     .op-panel[data-panel="vault"] { display: block; }
-
-  .op-eyebrow { font-family: var(--mono); font-size: var(--fs-mono-xs); color: var(--text-faint); letter-spacing: var(--ls-mono-sm); text-transform: uppercase; margin-bottom: 10px; }
-  .op-brain-title {
-    font-family: var(--display); font-weight: 500; letter-spacing: var(--ls-app-neutral);
-    font-size: 40px; line-height: 1.05; color: var(--text); margin: 0 0 calc(var(--space-3) * var(--density-scale));
-  }
-  .op-brain-sub { font-family: var(--serif); font-size: var(--fs-base); line-height: 1.55; color: var(--text-mid); max-width: 56ch; margin: 0 0 20px; }
-  .op-field-wrap { position: relative; margin-bottom: 14px; }
-  .op-field {
-    width: 100%; min-height: 110px; resize: vertical;
-    background: var(--frame-bg-3); border: 1px solid var(--card-border);
-    border-radius: 5px; padding: 14px 46px 14px calc(var(--space-4) * var(--density-scale));
-    font-family: var(--serif); font-size: var(--fs-body-tight); line-height: 1.55; color: var(--text);
-  }
-  .op-field::placeholder { color: var(--text-faint); }
-  .op-mic {
-    position: absolute; right: 12px; top: 12px; width: 26px; height: 26px;
-    border: 1px dashed var(--card-border-2); border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    color: var(--text-faint); font-size: var(--fs-mono-sm);
-  }
-  .op-hint { font-family: var(--mono); font-size: 10.5px; color: var(--text-faint); letter-spacing: var(--ls-app-loose); line-height: 1.5; }
-
-  .op-quote {
-    border-left: 2px solid var(--card-border-2); padding: calc(var(--space-1) * var(--density-scale)) 0 calc(var(--space-1) * var(--density-scale)) calc(var(--space-4) * var(--density-scale)); margin-bottom: calc(var(--space-5) * var(--density-scale));
-    font-family: var(--serif); font-size: var(--fs-base); line-height: 1.55; color: var(--text-mid); max-width: 62ch;
-  }
-  .op-quote .op-q-label { display: block; font-family: var(--mono); font-size: var(--fs-eyebrow); color: var(--text-faint); letter-spacing: var(--ls-mono-sm); text-transform: uppercase; margin-bottom: calc(var(--space-app-1-5) * var(--density-scale)); }
-
-  .op-proposal-grid { display: flex; flex-direction: column; gap: calc(var(--space-3) * var(--density-scale)); }
-  .op-proposal-card {
-    border: 1px solid var(--card-border); border-radius: var(--radius-4); background: var(--frame-bg-2);
-    padding: calc(var(--space-4) * var(--density-scale)) 18px;
-  }
-  .op-proposal-card:hover { border-color: var(--card-border-2); }
-  .op-proposal-name { font-family: var(--serif); font-size: var(--fs-app-lg); color: var(--text); margin: 0 0 5px; }
-  .op-proposal-obj { font-family: var(--serif); font-size: var(--fs-mono-lg); color: var(--text-mid); line-height: 1.5; margin: 0 0 10px; }
-  .op-contract {
-    display: flex; flex-wrap: wrap; gap: calc(var(--space-2) * var(--density-scale)) 14px; align-items: center;
-    font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase;
-    color: var(--text-faint); padding: calc(var(--space-2) * var(--density-scale)) 0; border-top: 1px solid var(--frame-border); border-bottom: 1px solid var(--frame-border); margin-bottom: calc(var(--space-3) * var(--density-scale));
-  }
-  .op-contract .op-req { color: var(--gold); }
-  .op-proposal-actions { display: flex; gap: calc(var(--space-2) * var(--density-scale)); flex-wrap: wrap; }
-
-  .op-btn {
-    height: 28px; padding: 0 13px; font-family: var(--mono); font-size: 9.5px;
-    letter-spacing: 0.12em; text-transform: uppercase; background: var(--hover);
-    border: 1px solid var(--card-border); color: var(--text-mid); border-radius: var(--radius-2);
-  }
-  .op-btn:hover { background: rgba(255,255,255,0.06); color: var(--text); }
-  .op-btn.is-primary { background: var(--diligence); border-color: var(--diligence); color: #0A0A0B; }
-  .op-btn.is-primary:hover { background: var(--diligence-soft); }
-  .op-btn.is-quiet { background: transparent; color: var(--text-faint); border-style: dashed; }
-  .op-btn.is-danger { color: var(--judgment); border-color: var(--judgment-edge); }
-
-  .op-substrate {
-    display: flex; gap: 10px; padding: calc(var(--space-3) * var(--density-scale)) 14px; border: 1px solid var(--card-border);
-    border-radius: 5px; background: var(--frame-bg-3); margin-bottom: 20px;
-  }
-  .op-substrate .op-diamond-mark { color: var(--diligence); font-size: var(--fs-mono-lg); line-height: 1.5; }
-  .op-substrate-label { font-family: var(--mono); font-size: var(--fs-eyebrow); color: var(--text-faint); letter-spacing: var(--ls-app-wider); text-transform: uppercase; margin-bottom: calc(var(--space-1) * var(--density-scale)); }
-  .op-substrate-text { font-family: var(--serif); font-size: var(--fs-sm); color: var(--text-mid); line-height: 1.5; }
-
-  .op-watch-note { font-family: var(--serif); font-size: var(--fs-sm); color: var(--text-mid); line-height: 1.6; max-width: 58ch; }
-  .op-watch-note strong { color: var(--text); font-weight: 500; }
-
-  /* ── reads ───────────────────────────────────────────────────────
-     FOLDED OUT 2026-07-29. This cut DONATED the per-register row model
-     (register-coded left edge, register-named head, and the Quoted /
-     Situation / Hidden risk / Next move rows) to `.p-read` in
-     lib/cut-shell-products.css: those rows are liminal-desktop's shipped
-     `agent_reads` columns. Cut 06 donated the chrome, cut 10 the chroma.
-     This cut now consumes the primitive it seeded. The container below
-     stays local: it is page spacing, not part of a read.
-     ──────────────────────────────────────────────────────────────── */
-  .op-reads { display: flex; flex-direction: column; gap: 14px; margin-bottom: calc(var(--space-5) * var(--density-scale)); }
-
-  .op-correction {
-    border: 1px solid var(--card-border); border-radius: var(--radius-4); padding: 18px 20px; background: var(--frame-bg-2);
-  }
-  .op-correction-title { font-family: var(--serif); font-size: var(--fs-body-tight); color: var(--text); margin: 0 0 calc(var(--space-3) * var(--density-scale)); }
-  .op-radio-row { display: flex; flex-wrap: wrap; gap: calc(var(--space-2) * var(--density-scale)); margin-bottom: 14px; }
-  .op-radio {
-    font-family: var(--mono); font-size: var(--fs-mono-xs); letter-spacing: var(--ls-app-wide);
-    padding: calc(var(--space-app-1-5) * var(--density-scale)) calc(var(--space-3) * var(--density-scale)); border: 1px solid var(--card-border); border-radius: var(--radius-pill); background: transparent; color: var(--text-dim);
-  }
-  .op-radio:hover { border-color: var(--card-border-2); }
-  .op-radio.is-selected { background: var(--diligence-bg); border-color: var(--diligence); color: var(--diligence); }
-  .op-freetext {
-    width: 100%; min-height: 56px; background: var(--frame-bg-3); border: 1px solid var(--card-border);
-    border-radius: 5px; padding: 10px calc(var(--space-3) * var(--density-scale)); font-family: var(--serif); font-size: var(--fs-mono-lg); color: var(--text); margin-bottom: 14px;
-  }
-  .op-freetext::placeholder { color: var(--text-faint); }
-  .op-kind-chips { display: flex; flex-wrap: wrap; gap: calc(var(--space-2) * var(--density-scale)); margin-bottom: calc(var(--space-4) * var(--density-scale)); }
-  .op-chip {
-    font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase;
-    padding: calc(var(--space-app-1-5) * var(--density-scale)) 11px; border: 1px solid var(--card-border); border-radius: var(--radius-3); background: transparent; color: var(--text-dim);
-  }
-  .op-chip:hover { color: var(--text-mid); border-color: var(--card-border-2); }
-  .op-chip.is-active { background: var(--correction-bg); border-color: var(--correction); color: var(--correction); }
-  .op-chip.is-emergence {
-    color: var(--emergence); border-color: var(--emergence-soft); background: var(--emergence-bg);
-    box-shadow: 0 0 0 0 var(--emergence-glow); animation: op-glow 2.2s ease-in-out infinite;
-  }
-  @keyframes op-glow {
-    0%, 100% { box-shadow: 0 0 0 0 var(--emergence-glow); }
-    50% { box-shadow: 0 0 10px 1px var(--emergence-glow); }
-  }
-  @media (prefers-reduced-motion: reduce) { .op-chip.is-emergence { animation: none; box-shadow: 0 0 6px 1px var(--emergence-glow); } }
-
-  .op-receipt-wrap { margin-bottom: 18px; }
-  .op-dispo-artifact { margin: 0 0 18px; }
-  .op-receipt-note { font-family: var(--serif); font-size: var(--fs-mono-lg); color: var(--text-mid); line-height: 1.55; max-width: 56ch; }
-  .op-receipt-note a, .op-feed-link { color: var(--gold); border-bottom: 1px dotted var(--gold); padding-bottom: 1px; }
-
-  .op-vault-list { display: flex; flex-direction: column; gap: calc(var(--space-app-0-5) * var(--density-scale)); margin-bottom: 20px; }
-  .op-vault-row {
-    display: flex; align-items: baseline; justify-content: space-between; gap: calc(var(--space-3) * var(--density-scale));
-    padding: 10px calc(var(--space-3) * var(--density-scale)); border-radius: var(--radius-3); border: 1px solid transparent;
-  }
-  .op-vault-row:hover { background: var(--hover); border-color: var(--card-border); }
-  .op-vault-row.is-selected { background: var(--diligence-bg); border-color: var(--diligence-edge); }
-  .op-vault-row-name { font-family: var(--serif); font-size: var(--fs-sm); color: var(--text); }
-  .op-vault-row-meta { font-family: var(--mono); font-size: 9.5px; color: var(--text-faint); letter-spacing: var(--ls-app-wide); white-space: nowrap; }
-  .op-vault-detail { border: 1px solid var(--card-border); border-radius: var(--radius-4); padding: calc(var(--space-4) * var(--density-scale)) 18px; background: var(--frame-bg-2); margin-bottom: 14px; }
-  .op-vault-detail-title { font-family: var(--serif); font-size: var(--fs-base); color: var(--text); margin: 0 0 calc(var(--space-2) * var(--density-scale)); }
-  .op-vault-detail-body { font-family: var(--serif); font-size: var(--fs-mono-lg); color: var(--text-mid); line-height: 1.55; margin-bottom: 14px; }
-  .op-vault-actions { display: flex; gap: calc(var(--space-2) * var(--density-scale)); flex-wrap: wrap; }
-  .op-vault-caption { font-family: var(--mono); font-size: 9.5px; color: var(--text-faint); letter-spacing: 0.08em; }
-
-  /* ── zone 3 · agent workspace ───────────────────────────────────── */
-
-  .op-agents-head {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: calc(var(--space-3) * var(--density-scale)) calc(var(--space-4) * var(--density-scale)); border-bottom: 1px solid var(--frame-border);
-  }
-  .op-agents-label { font-family: var(--mono); font-size: var(--fs-mono-xs); color: var(--text-faint); letter-spacing: var(--ls-mono-sm); text-transform: uppercase; }
-  .op-agents-live { font-family: var(--mono); font-size: var(--fs-eyebrow); color: var(--text-faint); letter-spacing: 0.1em; text-transform: uppercase; }
-  .op-agents-live.is-live { color: var(--signal); }
-  .op-agents-body { flex: 1; overflow-y: auto; padding: calc(var(--space-4) * var(--density-scale)); display: flex; flex-direction: column; }
-
-  .op-agents-panel { display: none; }
-  .op-plane[data-scene="rest"]      .op-agents-panel[data-panel="empty-rest"],
-  .op-plane[data-scene="proposals"] .op-agents-panel[data-panel="empty-proposals"],
-  .op-plane[data-scene="running"]   .op-agents-panel[data-panel="running"],
-  .op-plane[data-scene="judgment"]  .op-agents-panel[data-panel="judgment"],
-  .op-plane[data-scene="closure"]   .op-agents-panel[data-panel="closure"],
-  .op-plane[data-scene="vault"]     .op-agents-panel[data-panel="vault"] { display: flex; flex-direction: column; flex: 1; }
-
-  .op-agents-empty { text-align: center; margin: auto 0; padding: 20px 10px; }
-  .op-empty-diamond { font-size: var(--fs-xl); color: var(--card-border-2); border: 1px dashed var(--card-border-2); border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; }
-  .op-empty-title { font-family: var(--serif); font-size: var(--fs-body-tight); color: var(--text-mid); margin: 0 0 calc(var(--space-app-1-5) * var(--density-scale)); }
-  .op-empty-hint { font-family: var(--mono); font-size: var(--fs-mono-xs); color: var(--text-faint); letter-spacing: var(--ls-app-loose); line-height: 1.55; max-width: 30ch; margin: 0 auto; }
-
-  .op-orbital { position: relative; width: 100%; aspect-ratio: 1 / 1; margin: calc(var(--space-1) * var(--density-scale)) auto 10px; }
-  .op-orb-svg { width: 100%; height: 100%; overflow: visible; }
-  .op-plate { fill: rgba(255,255,255,0.025); stroke-width: 1; }
-  .op-plate.diligence { stroke: var(--diligence); }
-  .op-plate.outreach  { stroke: var(--outreach); }
-  .op-plate.judgment  { stroke: var(--judgment); }
-  .op-plate.synthesis { stroke: var(--synthesis); }
-  .op-plate-label { font-family: var(--mono); font-size: 8px; letter-spacing: var(--ls-app-wider); text-transform: uppercase; text-anchor: middle; }
-  .op-plate-label.diligence { fill: var(--diligence); }
-  .op-plate-label.outreach  { fill: var(--outreach); }
-  .op-plate-label.judgment  { fill: var(--judgment); }
-  .op-plate-label.synthesis { fill: var(--synthesis); }
-  .op-agent-glyph { font-family: var(--mono); font-size: var(--fs-mono-sm); text-anchor: middle; }
-  .op-agent-glyph.queued   { fill: var(--liminal-soft); }
-  .op-agent-glyph.reading  { fill: var(--text); animation: op-pulse-glyph 2.4s ease-in-out infinite; }
-  .op-agent-glyph.complete { fill: var(--resolved); }
-  .op-agent-glyph.refused  { fill: var(--judgment); }
-  @keyframes op-pulse-glyph { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
-  .op-agent-slot { font-family: var(--mono); font-size: 7px; text-anchor: middle; fill: rgba(255,255,255,0.5); }
-  .op-center-mark { font-family: var(--mono); font-size: var(--fs-base); text-anchor: middle; fill: rgba(255,255,255,0.5); }
-  .op-center-orb { fill: rgba(142,102,251,0); stroke: rgba(142,102,251,0); transition: fill 500ms ease, stroke 500ms ease; }
-  .op-center-orb.is-convergent { fill: var(--diligence-bg); stroke: var(--diligence-edge); }
-  .op-center-orb.is-sealed { fill: color-mix(in oklch, var(--gold) 30%, transparent); stroke: var(--gold); stroke-width: 1.5; filter: drop-shadow(0 0 8px var(--emergence-glow)); }
-  @media (prefers-reduced-motion: reduce) { .op-agent-glyph.reading { animation: none; opacity: 0.8; } }
-
-  .op-phase-caption { text-align: center; font-family: var(--mono); font-size: 9.5px; color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: calc(var(--space-3) * var(--density-scale)); }
-  .op-phase-caption strong { color: var(--text); }
-
-  .op-steplog { display: flex; flex-direction: column; gap: calc(var(--space-app-1-5) * var(--density-scale)); font-family: var(--mono); font-size: var(--fs-mono-xs); margin-bottom: calc(var(--space-3) * var(--density-scale)); }
-  .op-steplog-row { display: flex; gap: calc(var(--space-2) * var(--density-scale)); align-items: baseline; }
-  .op-steplog-reg { flex-shrink: 0; width: 66px; letter-spacing: var(--ls-app-wide); text-transform: uppercase; font-size: var(--fs-eyebrow); }
-  .op-steplog-row .op-steplog-reg.diligence { color: var(--diligence); }
-  .op-steplog-row .op-steplog-reg.outreach  { color: var(--outreach); }
-  .op-steplog-row .op-steplog-reg.judgment  { color: var(--judgment); }
-  .op-steplog-row .op-steplog-reg.synthesis { color: var(--synthesis); }
-  .op-steplog-text { color: var(--text-dim); }
-
-  .op-redirect { margin-top: auto; padding-top: calc(var(--space-3) * var(--density-scale)); border-top: 1px solid var(--frame-border); }
-  .op-redirect input {
-    width: 100%; height: 34px; background: var(--frame-bg-3); border: 1px solid var(--card-border);
-    border-radius: var(--radius-3); padding: 0 34px 0 calc(var(--space-3) * var(--density-scale)); font-family: var(--serif); font-size: 12.5px; color: var(--text);
-  }
-  .op-redirect input::placeholder { color: var(--text-faint); }
-  .op-redirect-wrap { position: relative; }
-  .op-redirect-mic { position: absolute; right: 9px; top: 50%; transform: translateY(-50%); font-size: var(--fs-mono-xs); color: var(--text-faint); border: 1px dashed var(--card-border-2); border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; }
-
-  .op-sealed-note { margin-top: auto; padding-top: calc(var(--space-3) * var(--density-scale)); border-top: 1px solid var(--frame-border); font-family: var(--mono); font-size: var(--fs-mono-xs); color: var(--text-dim); letter-spacing: 0.04em; line-height: 1.6; }
-  .op-sealed-note strong { color: var(--gold); }
-  .op-feeds-list { margin-top: 10px; font-family: var(--mono); font-size: 9.5px; color: var(--text-faint); letter-spacing: 0.04em; line-height: 1.6; }
-  .op-feeds-list .op-badge { margin-left: calc(var(--space-1) * var(--density-scale)); }
-
-  /* ── zone 4 · intake dock ───────────────────────────────────────── */
-
-  .op-dock-head {
-    display: flex; align-items: center; gap: 14px; padding: calc(var(--space-3) * var(--density-scale)) calc(var(--space-app-5) * var(--density-scale));
-    border-bottom: 1px solid var(--frame-border);
-  }
-  .op-dock-pill {
-    font-family: var(--mono); font-size: var(--fs-mono-xs); letter-spacing: var(--ls-app-wider); text-transform: uppercase;
-    color: var(--text-mid); display: flex; align-items: center; gap: calc(var(--space-app-1-5) * var(--density-scale));
-  }
-  .op-dock-pill .op-diamond-mark { color: var(--diligence); }
-  .op-triage { display: flex; gap: calc(var(--space-app-1-5) * var(--density-scale)); }
-  .op-triage .op-btn { height: 24px; padding: 0 10px; font-size: var(--fs-eyebrow); }
-  .op-dock-body { display: grid; grid-template-columns: 260px 1fr; gap: 0; }
-  @media (max-width: 900px) { .op-dock-body { grid-template-columns: 1fr; } }
-
-  .op-capture { padding: calc(var(--space-4) * var(--density-scale)) calc(var(--space-app-5) * var(--density-scale)); border-right: 1px solid var(--frame-border); }
-  .op-capture-tabs { display: flex; gap: calc(var(--space-app-0-5) * var(--density-scale)); margin-bottom: 10px; }
-  .op-capture-tab {
-    font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase;
-    padding: 5px 11px; border: 1px solid var(--card-border); border-radius: var(--radius-pill); background: transparent; color: var(--text-dim);
-  }
-  .op-capture-tab.is-active { background: var(--diligence-bg); border-color: var(--diligence-edge); color: var(--diligence); }
-  .op-capture-tab.is-staged { color: var(--text-faint); }
-  .op-capture textarea {
-    width: 100%; min-height: 64px; background: var(--frame-bg-3); border: 1px solid var(--card-border);
-    border-radius: 5px; padding: 10px calc(var(--space-3) * var(--density-scale)); font-family: var(--serif); font-size: var(--fs-mono-lg); color: var(--text);
-  }
-  .op-capture textarea::placeholder { color: var(--text-faint); }
-
-  .op-tile-groups { display: flex; gap: 20px; overflow-x: auto; padding: calc(var(--space-4) * var(--density-scale)) calc(var(--space-app-5) * var(--density-scale)); }
-  .op-tile-group { flex-shrink: 0; min-width: 190px; }
-  .op-tile-group-label { font-family: var(--mono); font-size: var(--fs-eyebrow); color: var(--text-faint); letter-spacing: var(--ls-app-wider); text-transform: uppercase; margin-bottom: calc(var(--space-2) * var(--density-scale)); }
-  .op-tiles { display: flex; flex-direction: column; gap: calc(var(--space-2) * var(--density-scale)); }
-  .op-tile { border: 1px solid var(--card-border); border-radius: 5px; background: var(--frame-bg-3); overflow: hidden; }
-  .op-tile-bar { display: flex; align-items: center; gap: calc(var(--space-app-1-5) * var(--density-scale)); padding: calc(var(--space-app-1-5) * var(--density-scale)) 9px; border-bottom: 1px solid var(--frame-border); }
-  .op-tile-led { width: 7px; height: 7px; border-radius: 50%; }
-  .op-tile-led.red { background: var(--alarm-600, #8a3b3b); }
-  .op-tile-led.yellow { background: var(--amber-orn-500, #a6802e); }
-  .op-tile-led.green { background: var(--connection-600, #3f6e5a); }
-  .op-tile-src { margin-left: auto; font-family: var(--mono); font-size: 8px; color: var(--text-faint); letter-spacing: 0.08em; text-transform: uppercase; }
-  .op-tile-live { width: 6px; height: 6px; border-radius: 50%; background: var(--text-faint); }
-  .op-tile-live.is-live { background: var(--signal); }
-  .op-tile-body { padding: calc(var(--space-2) * var(--density-scale)) 10px 10px; }
-  .op-tile-title { font-family: var(--serif); font-size: var(--fs-mono); color: var(--text); line-height: 1.35; margin: 0 0 3px; }
-  .op-tile-note { font-family: var(--mono); font-size: var(--fs-eyebrow); color: var(--text-faint); letter-spacing: var(--ls-app-loose); }
-  .op-tile.is-manual { border-style: dashed; background: transparent; }
-  .op-tile.is-manual .op-tile-body { display: flex; align-items: center; justify-content: center; padding: 14px; color: var(--text-faint); font-family: var(--mono); font-size: var(--fs-mono-xs); letter-spacing: var(--ls-app-wide); text-transform: uppercase; }
-
-  .op-dock-foot { padding: calc(var(--space-2) * var(--density-scale)) calc(var(--space-app-5) * var(--density-scale)) 14px; font-family: var(--mono); font-size: var(--fs-eyebrow); color: var(--text-faint); letter-spacing: 0.04em; }
 </style>
-
 </head>
 <body data-product="personal">
 
@@ -462,673 +224,223 @@
         <span class="diamond">◇</span>
         <span class="tb-wedge">Liminal gives form to inner life.</span>
       </div>
-      <div class="vault-pill">
-        <span class="diamond">◇</span>vault: <strong>41 packets</strong>
+      <div class="vault-pill" title="liminal-desktop · origin/main · the commit every frame was taken from">
+        <span class="diamond">◇</span>desktop: <strong id="ab-pill-sha">ce2b62a1</strong>
       </div>
     </header>
 
-    <!-- scene switcher · reuses the product-row chrome, its own tabs -->
-    <nav class="product-row op-scene-row">
-      <span class="op-scene-label">Scene</span>
-      <div class="op-scene-tabs" id="op-scene-tabs" role="tablist" aria-label="Operating plane scenes">
-        <button class="op-scene-tab is-active" type="button" data-scene="rest" role="tab" aria-selected="true"><span class="op-scene-n">01</span> At rest</button>
-        <button class="op-scene-tab" type="button" data-scene="proposals" role="tab" aria-selected="false"><span class="op-scene-n">02</span> Brain-dump</button>
-        <button class="op-scene-tab" type="button" data-scene="running" role="tab" aria-selected="false"><span class="op-scene-n">03</span> Loop running</button>
-        <button class="op-scene-tab" type="button" data-scene="judgment" role="tab" aria-selected="false"><span class="op-scene-n">04</span> Judgment</button>
-        <button class="op-scene-tab" type="button" data-scene="closure" role="tab" aria-selected="false"><span class="op-scene-n">05</span> Closure</button>
-        <button class="op-scene-tab" type="button" data-scene="vault" role="tab" aria-selected="false"><span class="op-scene-n">06</span> Vault</button>
-      </div>
+    <!-- scene switcher · the eight real states of one decision -->
+    <nav class="product-row ab-scene-row">
+      <span class="ab-scene-label">The loop · as shipped</span>
+      <div class="ab-scene-tabs" id="ab-scene-tabs" role="tablist" aria-label="Desktop loop states"></div>
+      <span class="ab-scene-side"><kbd>←</kbd><kbd>→</kbd> step · <kbd>1</kbd>–<kbd>8</kbd> jump</span>
     </nav>
 
-    <!-- the four-zone plane -->
-    <main class="main op-main op-plane" id="op-plane" data-scene="rest">
+    <main class="main ab-main" id="ab-main">
 
-      <!-- ZONE 1 · loop map -->
-      <aside class="rail-left op-loopmap">
-        <div class="op-loopmap-head">
-          <span class="rail-header">Loop map</span>
-          <span class="rh-meta" id="op-loopmap-count">3 running · 2 awaiting you</span>
-        </div>
+      <!-- 1 · the viewer -->
+      <section class="ab-section" aria-labelledby="ab-viewer-h">
+        <p class="ab-eyebrow">
+          <span class="ab-fixture" title="The app renders this label itself whenever it runs on the browser fixture.">◆ synthetic fixture · not live or verified</span>
+          <span class="ab-sha">liminal-desktop <code id="ab-sha">ce2b62a1</code> · captured <span id="ab-captured">2026-10-17</span></span>
+        </p>
+        <h1 class="ab-h" id="ab-viewer-h">The operating plane, as built.</h1>
+        <p class="ab-lede">Real frames of the desktop app's default shell at a pinned commit. One synthetic decision walks the whole loop: <strong>capture → read → correct → save → record → re-enter</strong>. Nothing is mocked up; what the fixture cannot do (sign a packet) is shown as exactly that.</p>
 
-        <div class="op-group">
-          <div class="op-group-title">Hiring</div>
-          <div class="op-loop-row" id="op-loop-hire" tabindex="0">
-            <span class="op-loop-name">Hire decision, pipeline pressure</span>
-            <span class="op-loop-meta">
-              <span class="op-badge st-running" id="op-badge-hire"><span class="op-dot"></span>running</span>
-              <span class="op-loop-count">3 agents · 2 corrections</span>
-            </span>
-          </div>
-          <div class="op-edge">feeds ↓ vault schema decision</div>
-          <div class="op-loop-row" tabindex="0">
-            <span class="op-loop-name">Head of eng offer, third slip</span>
-            <span class="op-loop-meta">
-              <span class="op-badge st-watch"><span class="op-dot"></span>awaiting you</span>
-              <span class="op-loop-count">2d idle</span>
-            </span>
-          </div>
-        </div>
-
-        <div class="op-group">
-          <div class="op-group-title">Fundraise</div>
-          <div class="op-loop-row" tabindex="0">
-            <span class="op-loop-name">SR007 follow-up</span>
-            <span class="op-loop-meta">
-              <span class="op-badge st-queued"><span class="op-dot"></span>confirmed</span>
-              <span class="op-loop-count">due Friday</span>
-            </span>
-          </div>
-          <div class="op-loop-row" tabindex="0">
-            <span class="op-loop-name">Design partner onboarding</span>
-            <span class="op-loop-meta">
-              <span class="op-badge st-closed"><span class="op-dot"></span>closed</span>
-              <span class="op-loop-count">signed 3d ago</span>
-            </span>
-          </div>
-        </div>
-
-        <div class="op-group">
-          <div class="op-group-title">Product</div>
-          <div class="op-loop-row" tabindex="0">
-            <span class="op-loop-name">Vault schema decision</span>
-            <span class="op-loop-meta">
-              <span class="op-badge st-blocked"><span class="op-dot"></span>blocked</span>
-              <span class="op-loop-count">waits on hire decision</span>
-            </span>
-          </div>
-        </div>
-
-        <div class="op-rail-foot">
-          <span class="op-fake-link">Recents</span>
-          <span class="op-fake-link">Search</span>
-          <span class="op-fake-link">Vault</span>
-        </div>
-      </aside>
-
-      <!-- ZONE 2 · the slate -->
-      <section class="slate-area op-slate">
-        <div class="op-stage-strip" aria-hidden="false">
-          <span class="op-stage-chip" data-stage="brain-dump">brain-dump</span>
-          <span class="op-stage-chip" data-stage="work-stream">work-stream</span>
-          <span class="op-stage-chip" data-stage="loop">loop</span>
-          <span class="op-stage-chip" data-stage="agent-run">agent-run</span>
-          <span class="op-stage-chip" data-stage="read">read</span>
-          <span class="op-stage-chip" data-stage="correction">correction</span>
-          <span class="op-stage-chip" data-stage="signed-packet">signed packet</span>
-          <span class="op-stage-chip" data-stage="vault-item">vault item</span>
-        </div>
-
-        <div class="op-slate-scroll">
-
-          <!-- panel: rest -->
-          <div class="op-panel" data-panel="rest">
-            <div class="op-eyebrow">Slate · brain-dump</div>
-            <h1 class="op-brain-title">What's on your mind?</h1>
-            <p class="op-brain-sub">Drop the mess in. Loops sprout from what you type here, not the other way around.</p>
-            <div class="op-field-wrap">
-              <textarea class="op-field" placeholder="Devon's offer slipped a third time. Sleep's bad. SR007 wants a follow-up by Friday. The design partner onboarding still isn't confirmed."></textarea>
-              <span class="op-mic" title="Voice input, staged">🎙</span>
+        <div class="ab-viewer" style="margin-top: calc(var(--space-5) * var(--density-scale))">
+          <figure class="ab-figure">
+            <div class="ab-frame" id="ab-frame" data-state="loading">
+              <img id="ab-img" alt="" decoding="async">
             </div>
-            <p class="op-hint">Try: the hire that's stalling, the investor thread that won't resolve, the onboarding that's dragging.</p>
-          </div>
-
-          <!-- panel: proposals -->
-          <div class="op-panel" data-panel="proposals">
-            <div class="op-eyebrow">Slate · brain-dump to proposals</div>
-            <div class="op-quote">
-              <span class="op-q-label">What you typed</span>
-              "Devon's offer slipped a third time. Sleep's bad. SR007 wants a follow-up by Friday. The design partner onboarding still isn't confirmed."
+          </figure>
+          <figcaption class="ab-caption" id="ab-caption" aria-live="polite">
+            <div>
+              <div class="ab-cap-n" id="ab-cap-n">—</div>
+              <h2 class="ab-cap-title" id="ab-cap-title">Loading the inventory…</h2>
             </div>
-            <h1 class="op-brain-title" style="font-size:28px;">Three loops, from what you just said.</h1>
-            <div class="op-proposal-grid">
-              <div class="op-proposal-card">
-                <h2 class="op-proposal-name">Hire decision, pipeline pressure</h2>
-                <p class="op-proposal-obj">Decide on Devon's counter before a fourth slip costs the search.</p>
-                <div class="op-contract">Diligence + Judgment <span aria-hidden="true">·</span> closes on signed decision <span aria-hidden="true">·</span> <span class="op-req">requires packet ◇</span></div>
-                <div class="op-proposal-actions">
-                  <button class="op-btn is-primary" type="button">Confirm</button>
-                  <button class="op-btn" type="button">Edit</button>
-                  <button class="op-btn" type="button">Merge</button>
-                  <button class="op-btn" type="button">Split</button>
-                  <button class="op-btn is-quiet" type="button">Reject</button>
-                </div>
-              </div>
-              <div class="op-proposal-card">
-                <h2 class="op-proposal-name">SR007 follow-up</h2>
-                <p class="op-proposal-obj">Answer the partner's Friday ask without reopening claims already signed.</p>
-                <div class="op-contract">Outreach + Diligence <span aria-hidden="true">·</span> closes on reply sent <span aria-hidden="true">·</span> <span class="op-req">requires packet ◇</span></div>
-                <div class="op-proposal-actions">
-                  <button class="op-btn is-primary" type="button">Confirm</button>
-                  <button class="op-btn" type="button">Edit</button>
-                  <button class="op-btn" type="button">Merge</button>
-                  <button class="op-btn" type="button">Split</button>
-                  <button class="op-btn is-quiet" type="button">Reject</button>
-                </div>
-              </div>
-              <div class="op-proposal-card">
-                <h2 class="op-proposal-name">Design partner onboarding</h2>
-                <p class="op-proposal-obj">Get the pilot's first environment access moving before it goes cold.</p>
-                <div class="op-contract">Outreach + Synthesis <span aria-hidden="true">·</span> closes on kickoff scheduled <span aria-hidden="true">·</span> no packet required</div>
-                <div class="op-proposal-actions">
-                  <button class="op-btn is-primary" type="button">Confirm</button>
-                  <button class="op-btn" type="button">Edit</button>
-                  <button class="op-btn" type="button">Merge</button>
-                  <button class="op-btn" type="button">Split</button>
-                  <button class="op-btn is-quiet" type="button">Reject</button>
-                </div>
-              </div>
+            <dl class="ab-cap-block" id="ab-cap-block"></dl>
+            <div class="ab-cap-src" id="ab-cap-src"></div>
+            <div class="ab-cap-nav">
+              <button class="ab-btn" type="button" id="ab-prev" aria-label="Previous frame">← prev</button>
+              <button class="ab-btn" type="button" id="ab-next" aria-label="Next frame">next →</button>
             </div>
-          </div>
-
-          <!-- panel: running -->
-          <div class="op-panel" data-panel="running">
-            <div class="op-eyebrow">Slate · loop running</div>
-            <div class="op-substrate">
-              <span class="op-diamond-mark">◇</span>
-              <div>
-                <div class="op-substrate-label">Dropped in</div>
-                <div class="op-substrate-text">Devon's counter: 12% more base, no change to start date. Recruiter says he's got a second offer close.</div>
-              </div>
-            </div>
-            <h1 class="op-brain-title" style="font-size:26px;">Hire decision, pipeline pressure</h1>
-            <p class="op-watch-note">The workspace is <strong>reading Devon's counter-offer thread</strong> against your last three hiring decisions. Nothing to correct yet. Watch it in the agent workspace, and redirect it there if the framing looks off.</p>
-          </div>
-
-          <!-- panel: judgment -->
-          <div class="op-panel" data-panel="judgment">
-            <div class="op-eyebrow">Slate · read, correct, sign</div>
-            <div class="op-substrate">
-              <span class="op-diamond-mark">◇</span>
-              <div>
-                <div class="op-substrate-label">Dropped in</div>
-                <div class="op-substrate-text">Devon's counter: 12% more base, no change to start date. Recruiter says he's got a second offer close.</div>
-              </div>
-            </div>
-
-            <div class="op-reads">
-              <div class="p-read p-read--diligence">
-                <div class="p-read__head">Diligence</div>
-                <div class="p-read__row"><span class="p-read__k">Quoted</span><span class="p-read__v">"Base counter sits inside your last three hires' band. The start-date hold doesn't."</span></div>
-                <div class="p-read__row"><span class="p-read__k">Situation</span><span class="p-read__v">The gap is timing, not money. He isn't asking for more, he's asking you to move faster than this search usually allows.</span></div>
-                <div class="p-read__row"><span class="p-read__k">Hidden risk</span><span class="p-read__v">If the search reopens, six weeks go with it, and the two references who already vouched for him.</span></div>
-                <div class="p-read__row"><span class="p-read__k">Next move</span><span class="p-read__v">Match the base. Hold the start date. Name a decision date instead of an open hold.</span></div>
-              </div>
-              <div class="p-read p-read--outreach">
-                <div class="p-read__head">Outreach</div>
-                <div class="p-read__row"><span class="p-read__k">Quoted</span><span class="p-read__v">"Recruiter flagged a second offer close. Not confirmed."</span></div>
-                <div class="p-read__row"><span class="p-read__k">Situation</span><span class="p-read__v">Nothing you've sent him raises the stakes on your side. Silence reads as slow, not careful.</span></div>
-                <div class="p-read__row"><span class="p-read__k">Hidden risk</span><span class="p-read__v">A generic counter email undercuts the personal case you made on the first call.</span></div>
-                <div class="p-read__row"><span class="p-read__k">Next move</span><span class="p-read__v">Draft goes out today. It references the first call by name.</span></div>
-              </div>
-              <div class="p-read p-read--judgment p-read--refusal">
-                <div class="p-read__head">Judgment <span class="p-read__badge">refused, out of lane</span></div>
-                <div class="p-read__row"><span class="p-read__k">Refusal</span><span class="p-read__v">Reads the compensation band. Refuses to weigh in on whether Devon is the right hire. That call is yours, not a read of a thread.</span></div>
-                <div class="p-read__row"><span class="p-read__k">Next move</span><span class="p-read__v">Set the decision date today so this doesn't become a fourth slip.</span></div>
-              </div>
-            </div>
-
-            <div class="op-correction">
-              <h2 class="op-correction-title">Which read guided your decision?</h2>
-              <div class="op-radio-row" role="radiogroup" aria-label="Chosen agent">
-                <button class="op-radio is-selected" type="button">Diligence</button>
-                <button class="op-radio" type="button">Outreach</button>
-                <button class="op-radio" type="button">Judgment</button>
-                <button class="op-radio" type="button">None of these</button>
-              </div>
-              <textarea class="op-freetext" placeholder="What did the reads miss?">The reads were right about timing, but missed that Devon already told me verbally he'd take a decision date over more money.</textarea>
-              <div class="op-kind-chips">
-                <button class="op-chip is-active" type="button">Missed context</button>
-                <button class="op-chip" type="button">Wrong emphasis</button>
-                <button class="op-chip" type="button">Too cautious</button>
-                <button class="op-chip is-emergence" type="button">★ Emergence</button>
-              </div>
-              <div class="disposition" style="margin-top:0;">
-                <button class="dispo-btn is-primary" type="button">Sign</button>
-                <button class="dispo-btn is-defer" type="button">Sleep on it 7d</button>
-                <button class="preview-sub" type="button">Preview</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- panel: closure -->
-          <div class="op-panel" data-panel="closure">
-            <div class="op-eyebrow">Slate · sealed</div>
-            <div class="op-receipt-wrap">
-              <div class="dispo-artifact op-dispo-artifact">
-                <div class="da-bar">
-                  <span class="da-stamp">Signed</span>
-                  <span class="da-title">Hire decision, signed</span>
-                  <span class="da-time">today · 2:14pm</span>
-                </div>
-                <div class="da-body">
-                  <div class="da-section">
-                    <div class="da-label">What you decided</div>
-                    <div class="da-text">Match Devon's base. Hold the start date. Name a decision date instead of an open-ended hold.</div>
-                  </div>
-                  <div class="da-section">
-                    <div class="da-label">Saved to vault</div>
-                    <div class="da-text">1 loop, 2 reads corrected, 1 refusal logged.</div>
-                  </div>
-                  <div class="da-section">
-                    <div class="da-label">Next action</div>
-                    <div class="da-text">Send the counter today. The Outreach read has the draft ready.</div>
-                  </div>
-                  <div class="da-section">
-                    <div class="da-label">Proof it's real</div>
-                    <div class="da-text">Fingerprint below. Anyone with the packet link can verify which reads fed this.</div>
-                  </div>
-                </div>
-                <div class="da-foot">
-                  <div class="da-hash">
-                    <span class="da-hash-label">Fingerprint</span>
-                    <code>SHA256 · 8f2a1c9e4b7d0f3e</code>
-                  </div>
-                  <div class="da-handoff">
-                    <button class="dispo-btn da-handoff-btn" type="button">Hand off</button>
-                    <button class="dispo-btn da-handoff-btn" type="button">Share with Devon</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <p class="op-receipt-note">This closes the loop. It can feed the next one, <a href="#" onclick="return false;">feed the vault schema decision</a> that's waiting on it.</p>
-          </div>
-
-          <!-- panel: vault -->
-          <div class="op-panel" data-panel="vault">
-            <div class="op-eyebrow">Slate · vault</div>
-            <h1 class="op-brain-title" style="font-size:30px;">Vault</h1>
-            <div class="op-vault-list">
-              <div class="op-vault-row is-selected">
-                <span class="op-vault-row-name">Hire decision, pipeline pressure</span>
-                <span class="op-vault-row-meta">signed today</span>
-              </div>
-              <div class="op-vault-row">
-                <span class="op-vault-row-name">Design partner onboarding</span>
-                <span class="op-vault-row-meta">signed 3d ago</span>
-              </div>
-              <div class="op-vault-row">
-                <span class="op-vault-row-name">SR007 forensic audit</span>
-                <span class="op-vault-row-meta">signed May 8</span>
-              </div>
-            </div>
-            <div class="op-vault-detail">
-              <h2 class="op-vault-detail-title">Hire decision, pipeline pressure</h2>
-              <p class="op-vault-detail-body">Matched base, held start date, named a decision date. Two reads corrected, one refusal logged. Feeds the vault schema decision now waiting in the loop map.</p>
-              <div class="op-vault-actions">
-                <button class="op-btn is-primary" type="button">Export bundle</button>
-                <button class="op-btn" type="button">Generate decision record</button>
-                <button class="op-btn" type="button">Feed a downstream loop</button>
-              </div>
-            </div>
-            <p class="op-vault-caption">41 packets · 9 corrections logged this month</p>
-          </div>
-
+          </figcaption>
         </div>
       </section>
 
-      <!-- ZONE 3 · agent workspace -->
-      <aside class="rail-right op-agents">
-        <div class="op-agents-head">
-          <span class="op-agents-label">Agent workspace</span>
-          <span class="op-agents-live" id="op-agents-live">idle</span>
-        </div>
-        <div class="op-agents-body">
+      <!-- 2 · every surface it ships -->
+      <section class="ab-section" aria-labelledby="ab-surf-h">
+        <p class="ab-eyebrow"><span class="ab-accent">◇</span> every surface it ships · from <code class="ab-sha">src/lib/planeNavigationPolicy.ts</code></p>
+        <h2 class="ab-h2" id="ab-surf-h">Three primary destinations, six tools, three overlays.</h2>
+        <p class="ab-lede">Slate, Today and Record are the wayfinder. Everything else lives under one Tools menu or a keyboard overlay. Each tile names the component that renders it. Click a tile to open it in the viewer above.</p>
+        <div class="ab-tiles" id="ab-tiles"></div>
+      </section>
 
-          <div class="op-agents-panel" data-panel="empty-rest">
-            <div class="op-agents-empty">
-              <div class="op-empty-diamond">◇</div>
-              <h2 class="op-empty-title">Nothing running</h2>
-              <p class="op-empty-hint">Confirm a loop and its agent run shows up here, step by step.</p>
-            </div>
-          </div>
-
-          <div class="op-agents-panel" data-panel="empty-proposals">
-            <div class="op-agents-empty">
-              <div class="op-empty-diamond">◇</div>
-              <h2 class="op-empty-title">Nothing running</h2>
-              <p class="op-empty-hint">Confirm a proposal in the Slate to start its first run.</p>
-            </div>
-          </div>
-
-          <div class="op-agents-panel" data-panel="running">
-            <div class="op-orbital">
-              <svg class="op-orb-svg" viewBox="0 0 260 260" preserveAspectRatio="xMidYMid meet">
-                <g>
-                  <rect class="op-plate diligence" x="50" y="14" width="160" height="56" rx="4"/>
-                  <text class="op-plate-label diligence" x="130" y="28">Diligence</text>
-                  <text class="op-agent-glyph reading" x="100" y="52">◉</text>
-                  <text class="op-agent-slot" x="100" y="64">reading</text>
-                  <text class="op-agent-glyph queued" x="160" y="52">◯</text>
-                  <text class="op-agent-slot" x="160" y="64">queued</text>
-                </g>
-                <g>
-                  <rect class="op-plate outreach" x="6" y="96" width="80" height="70" rx="4"/>
-                  <text class="op-plate-label outreach" x="46" y="110">Outreach</text>
-                  <text class="op-agent-glyph queued" x="46" y="138">◯</text>
-                  <text class="op-agent-slot" x="46" y="150">queued</text>
-                </g>
-                <g>
-                  <rect class="op-plate judgment" x="174" y="96" width="80" height="70" rx="4"/>
-                  <text class="op-plate-label judgment" x="214" y="110">Judgment</text>
-                  <text class="op-agent-glyph refused" x="214" y="138">⊘</text>
-                  <text class="op-agent-slot" x="214" y="150">refused</text>
-                </g>
-                <g>
-                  <rect class="op-plate synthesis" x="50" y="190" width="160" height="56" rx="4"/>
-                  <text class="op-plate-label synthesis" x="130" y="204">Synthesis</text>
-                  <text class="op-agent-glyph complete" x="130" y="228">●</text>
-                  <text class="op-agent-slot" x="130" y="240">complete</text>
-                </g>
-                <circle class="op-center-orb is-convergent" cx="130" cy="130" r="16"/>
-                <text class="op-center-mark" x="130" y="135">◇</text>
-              </svg>
-            </div>
-            <p class="op-phase-caption">reading <strong>2 of 4</strong> agents active</p>
-            <div class="op-steplog">
-              <div class="op-steplog-row"><span class="op-steplog-reg diligence">Diligence</span><span class="op-steplog-text">reading compensation history</span></div>
-              <div class="op-steplog-row"><span class="op-steplog-reg outreach">Outreach</span><span class="op-steplog-text">queued</span></div>
-              <div class="op-steplog-row"><span class="op-steplog-reg judgment">Judgment</span><span class="op-steplog-text">refused, hiring call is not its lane</span></div>
-              <div class="op-steplog-row"><span class="op-steplog-reg synthesis">Synthesis</span><span class="op-steplog-text">complete, pattern matches two prior hires</span></div>
-            </div>
-            <div class="op-redirect">
-              <div class="op-redirect-wrap">
-                <input type="text" placeholder="Redirect this loop…">
-                <span class="op-redirect-mic" title="Voice input, staged">🎙</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="op-agents-panel" data-panel="judgment">
-            <div class="op-orbital">
-              <svg class="op-orb-svg" viewBox="0 0 260 260" preserveAspectRatio="xMidYMid meet">
-                <g>
-                  <rect class="op-plate diligence" x="50" y="14" width="160" height="56" rx="4"/>
-                  <text class="op-plate-label diligence" x="130" y="28">Diligence</text>
-                  <text class="op-agent-glyph complete" x="130" y="52">●</text>
-                  <text class="op-agent-slot" x="130" y="64">complete</text>
-                </g>
-                <g>
-                  <rect class="op-plate outreach" x="6" y="96" width="80" height="70" rx="4"/>
-                  <text class="op-plate-label outreach" x="46" y="110">Outreach</text>
-                  <text class="op-agent-glyph complete" x="46" y="138">●</text>
-                  <text class="op-agent-slot" x="46" y="150">complete</text>
-                </g>
-                <g>
-                  <rect class="op-plate judgment" x="174" y="96" width="80" height="70" rx="4"/>
-                  <text class="op-plate-label judgment" x="214" y="110">Judgment</text>
-                  <text class="op-agent-glyph refused" x="214" y="138">⊘</text>
-                  <text class="op-agent-slot" x="214" y="150">refused</text>
-                </g>
-                <g>
-                  <rect class="op-plate synthesis" x="50" y="190" width="160" height="56" rx="4"/>
-                  <text class="op-plate-label synthesis" x="130" y="204">Synthesis</text>
-                  <text class="op-agent-glyph complete" x="130" y="228">●</text>
-                  <text class="op-agent-slot" x="130" y="240">complete</text>
-                </g>
-                <circle class="op-center-orb is-convergent" cx="130" cy="130" r="16"/>
-                <text class="op-center-mark" x="130" y="135">◇</text>
-              </svg>
-            </div>
-            <p class="op-phase-caption">read complete, <strong>awaiting your correction</strong></p>
-            <div class="op-redirect">
-              <div class="op-redirect-wrap">
-                <input type="text" placeholder="Redirect this loop…">
-                <span class="op-redirect-mic" title="Voice input, staged">🎙</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="op-agents-panel" data-panel="closure">
-            <div class="op-orbital">
-              <svg class="op-orb-svg" viewBox="0 0 260 260" preserveAspectRatio="xMidYMid meet">
-                <g>
-                  <rect class="op-plate diligence" x="50" y="14" width="160" height="56" rx="4"/>
-                  <text class="op-plate-label diligence" x="130" y="28">Diligence</text>
-                  <text class="op-agent-glyph complete" x="130" y="52">●</text>
-                </g>
-                <g>
-                  <rect class="op-plate outreach" x="6" y="96" width="80" height="70" rx="4"/>
-                  <text class="op-plate-label outreach" x="46" y="110">Outreach</text>
-                  <text class="op-agent-glyph complete" x="46" y="138">●</text>
-                </g>
-                <g>
-                  <rect class="op-plate judgment" x="174" y="96" width="80" height="70" rx="4"/>
-                  <text class="op-plate-label judgment" x="214" y="110">Judgment</text>
-                  <text class="op-agent-glyph refused" x="214" y="138">⊘</text>
-                </g>
-                <g>
-                  <rect class="op-plate synthesis" x="50" y="190" width="160" height="56" rx="4"/>
-                  <text class="op-plate-label synthesis" x="130" y="204">Synthesis</text>
-                  <text class="op-agent-glyph complete" x="130" y="228">●</text>
-                </g>
-                <circle class="op-center-orb is-sealed" cx="130" cy="130" r="16"/>
-                <text class="op-center-mark" x="130" y="135">◇</text>
-              </svg>
-            </div>
-            <p class="op-phase-caption">sealed, <strong>vault committed</strong></p>
-            <div class="op-sealed-note">This run is sealed. <strong>Vault pulse, +1 packet.</strong> A redirect from here opens a new loop, not this one.</div>
-          </div>
-
-          <div class="op-agents-panel" data-panel="vault">
-            <div class="op-orbital">
-              <svg class="op-orb-svg" viewBox="0 0 260 260" preserveAspectRatio="xMidYMid meet">
-                <g>
-                  <rect class="op-plate diligence" x="50" y="14" width="160" height="56" rx="4"/>
-                  <text class="op-plate-label diligence" x="130" y="28">Diligence</text>
-                  <text class="op-agent-glyph complete" x="130" y="52">●</text>
-                </g>
-                <g>
-                  <rect class="op-plate outreach" x="6" y="96" width="80" height="70" rx="4"/>
-                  <text class="op-plate-label outreach" x="46" y="110">Outreach</text>
-                  <text class="op-agent-glyph complete" x="46" y="138">●</text>
-                </g>
-                <g>
-                  <rect class="op-plate judgment" x="174" y="96" width="80" height="70" rx="4"/>
-                  <text class="op-plate-label judgment" x="214" y="110">Judgment</text>
-                  <text class="op-agent-glyph refused" x="214" y="138">⊘</text>
-                </g>
-                <g>
-                  <rect class="op-plate synthesis" x="50" y="190" width="160" height="56" rx="4"/>
-                  <text class="op-plate-label synthesis" x="130" y="204">Synthesis</text>
-                  <text class="op-agent-glyph complete" x="130" y="228">●</text>
-                </g>
-                <circle class="op-center-orb is-sealed" cx="130" cy="130" r="16"/>
-                <text class="op-center-mark" x="130" y="135">◇</text>
-              </svg>
-            </div>
-            <p class="op-phase-caption">sealed, <strong>vault committed</strong></p>
-            <div class="op-feeds-list">
-              This loop feeds <span class="op-badge st-blocked"><span class="op-dot"></span>vault schema decision</span>
-            </div>
-          </div>
-
-        </div>
-      </aside>
-
-      <!-- ZONE 4 · intake dock -->
-      <section class="op-dock">
-        <div class="op-dock-head">
-          <span class="op-dock-pill"><span class="op-diamond-mark">◇</span>Intake</span>
-          <div class="op-triage">
-            <button class="op-btn" type="button">Select</button>
-            <button class="op-btn" type="button">Clear</button>
-            <button class="op-btn is-primary" type="button">Place</button>
-            <button class="op-btn" type="button">Ack</button>
-            <button class="op-btn is-quiet" type="button">Archive</button>
+      <!-- 3 · what it can do now -->
+      <section class="ab-section" aria-labelledby="ab-cap-h">
+        <p class="ab-eyebrow"><span class="ab-accent">◇</span> what it can do now · from <code class="ab-sha">STATUS.md</code> “Shipped” and the code it points at</p>
+        <h2 class="ab-h2" id="ab-cap-h">Shipped on the main path. Each row names its file.</h2>
+        <div class="ab-cols">
+          <table class="ab-table" id="ab-shipped">
+            <thead><tr><th>Capability</th><th>Evidence</th></tr></thead>
+            <tbody></tbody>
+          </table>
+          <div>
+            <p class="ab-eyebrow" style="margin-bottom: calc(var(--space-3) * var(--density-scale))">Not shown here, on purpose</p>
+            <ul class="ab-not" id="ab-not"></ul>
           </div>
         </div>
-        <div class="op-dock-body">
-          <div class="op-capture">
-            <div class="op-capture-tabs">
-              <button class="op-capture-tab is-active" type="button">Typed</button>
-              <button class="op-capture-tab is-staged" type="button">Voice, staged</button>
-            </div>
-            <textarea placeholder="Paste a thread, forward an email, drop a screenshot. Or just type what's stuck."></textarea>
-          </div>
-          <div class="op-tile-groups">
-            <div class="op-tile-group">
-              <div class="op-tile-group-label">Captured now</div>
-              <div class="op-tiles">
-                <div class="op-tile">
-                  <div class="op-tile-bar">
-                    <span class="op-tile-led red"></span><span class="op-tile-led yellow"></span><span class="op-tile-led green"></span>
-                    <span class="op-tile-src">email</span>
-                    <span class="op-tile-live is-live"></span>
-                  </div>
-                  <div class="op-tile-body">
-                    <p class="op-tile-title">Devon, counter-offer thread</p>
-                    <p class="op-tile-note">attached to Hire decision</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="op-tile-group">
-              <div class="op-tile-group-label">Signals</div>
-              <div class="op-tiles">
-                <div class="op-tile">
-                  <div class="op-tile-bar">
-                    <span class="op-tile-led red"></span><span class="op-tile-led yellow"></span><span class="op-tile-led green"></span>
-                    <span class="op-tile-src">email</span>
-                    <span class="op-tile-live is-live"></span>
-                  </div>
-                  <div class="op-tile-body">
-                    <p class="op-tile-title">SR007, partner reply landed</p>
-                    <p class="op-tile-note">new, unattached</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="op-tile-group">
-              <div class="op-tile-group-label">Recent</div>
-              <div class="op-tiles">
-                <div class="op-tile">
-                  <div class="op-tile-bar">
-                    <span class="op-tile-led red"></span><span class="op-tile-led yellow"></span><span class="op-tile-led green"></span>
-                    <span class="op-tile-src">calendar</span>
-                    <span class="op-tile-live"></span>
-                  </div>
-                  <div class="op-tile-body">
-                    <p class="op-tile-title">Design partner, kickoff hold</p>
-                    <p class="op-tile-note">2d ago</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="op-tile-group">
-              <div class="op-tile-group-label">Corpus</div>
-              <div class="op-tiles">
-                <div class="op-tile">
-                  <div class="op-tile-bar">
-                    <span class="op-tile-led red"></span><span class="op-tile-led yellow"></span><span class="op-tile-led green"></span>
-                    <span class="op-tile-src">vault</span>
-                    <span class="op-tile-live"></span>
-                  </div>
-                  <div class="op-tile-body">
-                    <p class="op-tile-title">Last quarter's hiring decisions</p>
-                    <p class="op-tile-note">3 packets</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="op-tile-group">
-              <div class="op-tile-group-label">Manual</div>
-              <div class="op-tiles">
-                <div class="op-tile is-manual">
-                  <div class="op-tile-body">+ add a source</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <p class="op-dock-foot">Drop attaches a source to the active loop. Everything else here is staged.</p>
+      </section>
+
+      <!-- 4 · provenance -->
+      <section class="ab-section">
+        <p class="ab-eyebrow">Provenance</p>
+        <p class="ab-foot" id="ab-prov"></p>
       </section>
 
     </main>
-
-  </div><!-- /.frame -->
-</div><!-- /.stage -->
+  </div>
+</div>
 
 <script>
 (function () {
   "use strict";
-  var plane = document.getElementById('op-plane');
-  var tabs = Array.prototype.slice.call(document.querySelectorAll('.op-scene-tab'));
-  var liveLabel = document.getElementById('op-agents-live');
-  var badgeHire = document.getElementById('op-badge-hire');
-  var loopmapCount = document.getElementById('op-loopmap-count');
+  var ASSETS = "assets/desktop-now/ce2b62a1/";
+  var $ = function (id) { return document.getElementById(id); };
+  var state = { frames: [], idx: 0, loopCount: 0 };
 
-  var stageMap = {
-    rest:       ['brain-dump'],
-    proposals:  ['work-stream'],
-    running:    ['loop', 'agent-run'],
-    judgment:   ['read', 'correction'],
-    closure:    ['signed-packet'],
-    vault:      ['vault-item']
-  };
-  var liveMap = {
-    rest: 'idle', proposals: 'idle', running: 'live',
-    judgment: 'read complete', closure: 'sealed', vault: 'sealed'
-  };
-
-  function setScene(scene) {
-    plane.setAttribute('data-scene', scene);
-    tabs.forEach(function (t) {
-      var active = t.getAttribute('data-scene') === scene;
-      t.classList.toggle('is-active', active);
-      t.setAttribute('aria-selected', active ? 'true' : 'false');
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
     });
-    var active = stageMap[scene] || [];
-    document.querySelectorAll('.op-stage-chip').forEach(function (c) {
-      c.classList.toggle('is-active', active.indexOf(c.getAttribute('data-stage')) > -1);
-    });
-    liveLabel.textContent = liveMap[scene] || 'idle';
-    liveLabel.classList.toggle('is-live', scene === 'running');
-    if (badgeHire) {
-      badgeHire.className = 'op-badge ' + (scene === 'running' ? 'st-running' : 'st-queued');
-      badgeHire.innerHTML = '<span class="op-dot"></span>' + (scene === 'running' ? 'running' : 'confirmed');
-    }
-    if (loopmapCount) {
-      loopmapCount.textContent = scene === 'running' ? '3 running · 2 awaiting you' : '2 running · 2 awaiting you';
-    }
   }
 
-  tabs.forEach(function (t) {
-    t.addEventListener('click', function () { setScene(t.getAttribute('data-scene')); });
-  });
+  function show(i, focus) {
+    if (!state.frames.length) return;
+    state.idx = (i + state.frames.length) % state.frames.length;
+    var f = state.frames[state.idx];
+    var frame = $("ab-frame"), img = $("ab-img");
+    frame.setAttribute("data-state", "loading");
+    img.onload = function () { frame.setAttribute("data-state", "ready"); };
+    img.src = ASSETS + f.id + ".webp";
+    img.alt = f.alt;
+    $("ab-cap-n").textContent = f.kicker;
+    $("ab-cap-title").textContent = f.title;
+    $("ab-cap-block").innerHTML = f.blocks.map(function (b) {
+      return "<dt>" + esc(b[0]) + "</dt><dd>" + esc(b[1]) + "</dd>";
+    }).join("");
+    $("ab-cap-src").innerHTML = f.src;
+    // tabs + tiles reflect the selection
+    var tabs = $("ab-scene-tabs").children;
+    for (var t = 0; t < tabs.length; t++) {
+      var on = tabs[t].getAttribute("data-idx") == state.idx;
+      tabs[t].classList.toggle("is-active", on);
+      tabs[t].setAttribute("aria-selected", on ? "true" : "false");
+      tabs[t].tabIndex = on ? 0 : -1;
+    }
+    var tiles = $("ab-tiles").children;
+    for (var k = 0; k < tiles.length; k++) {
+      tiles[k].classList.toggle("is-active", tiles[k].getAttribute("data-idx") == state.idx);
+    }
+    if (focus === "tab" && tabs[state.idx]) tabs[state.idx].focus();
+  }
 
-  // small cosmetic interactivity, correction block + capture tabs
-  document.querySelectorAll('.op-radio-row').forEach(function (group) {
-    group.querySelectorAll('.op-radio').forEach(function (r) {
-      r.addEventListener('click', function () {
-        group.querySelectorAll('.op-radio').forEach(function (o) { o.classList.remove('is-selected'); });
-        r.classList.add('is-selected');
-      });
-    });
-  });
-  document.querySelectorAll('.op-kind-chips').forEach(function (group) {
-    group.querySelectorAll('.op-chip:not(.is-emergence)').forEach(function (c) {
-      c.addEventListener('click', function () {
-        group.querySelectorAll('.op-chip:not(.is-emergence)').forEach(function (o) { o.classList.remove('is-active'); });
-        c.classList.add('is-active');
-      });
-    });
-  });
-  document.querySelectorAll('.op-capture-tabs').forEach(function (group) {
-    group.querySelectorAll('.op-capture-tab').forEach(function (t) {
-      t.addEventListener('click', function () {
-        group.querySelectorAll('.op-capture-tab').forEach(function (o) { o.classList.remove('is-active'); });
-        t.classList.add('is-active');
-      });
-    });
-  });
-  document.querySelectorAll('.op-vault-row').forEach(function (row) {
-    row.addEventListener('click', function () {
-      document.querySelectorAll('.op-vault-row').forEach(function (o) { o.classList.remove('is-selected'); });
-      row.classList.add('is-selected');
-    });
-  });
+  function build(inv) {
+    var src = inv.source;
+    $("ab-sha").textContent = src.short;
+    $("ab-pill-sha").textContent = src.short;
+    $("ab-captured").textContent = src.captured;
 
-  setScene('rest');
+    // loop frames
+    inv.loop.forEach(function (s, i) {
+      state.frames.push({
+        id: s.id,
+        kicker: "Loop · " + s.n + " of " + inv.loop.length + " · fixture " + s.fixture,
+        title: s.label,
+        alt: "Desktop at the “" + s.label + "” state: " + s.shows,
+        blocks: [["You did", s.did], ["Desktop shows", s.shows]],
+        src: "<code>" + esc(s.source) + "</code>"
+      });
+      var b = document.createElement("button");
+      b.className = "ab-scene-tab"; b.type = "button"; b.setAttribute("role", "tab");
+      b.setAttribute("data-idx", String(i)); b.setAttribute("aria-selected", "false");
+      b.innerHTML = '<span class="ab-scene-n">' + esc(s.n) + "</span> " + esc(s.label);
+      b.addEventListener("click", function () { show(i); });
+      $("ab-scene-tabs").appendChild(b);
+    });
+    state.loopCount = inv.loop.length;
+
+    // surface frames
+    inv.surfaces.forEach(function (s, j) {
+      var idx = state.loopCount + j;
+      var kind = s.nav === "primary" ? "Primary destination" : s.nav === "tools" ? "Tools menu" : "Overlay";
+      state.frames.push({
+        id: s.id,
+        kicker: kind + " · fixture " + s.fixture,
+        title: s.label,
+        alt: "Desktop " + s.label + " surface: " + s.description,
+        blocks: [["In the app", s.description]].concat(s.note ? [["Note", s.note]] : []),
+        src: "renders <code>" + esc(s.component) + "</code>"
+      });
+      var t = document.createElement("button");
+      t.className = "ab-tile"; t.type = "button"; t.setAttribute("data-idx", String(idx));
+      t.setAttribute("aria-label", "Open the " + s.label + " capture in the viewer");
+      t.innerHTML =
+        '<div class="ab-tile-img"><img src="' + ASSETS + esc(s.id) + '.webp" alt="" loading="lazy" decoding="async"></div>' +
+        '<div class="ab-tile-body">' +
+          '<span class="ab-tile-kind" data-nav="' + esc(s.nav) + '">' + esc(kind) + "</span>" +
+          '<span class="ab-tile-title">' + esc(s.label) + "</span>" +
+          '<span class="ab-tile-desc">' + esc(s.description) + "</span>" +
+          '<span class="ab-tile-file">' + esc(s.component) + "</span>" +
+        "</div>";
+      t.addEventListener("click", function () {
+        show(idx);
+        // the frame grows with its content, so the window scrolls, not #ab-main
+        $("ab-frame").scrollIntoView({ block: "start", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+      });
+      $("ab-tiles").appendChild(t);
+    });
+
+    // shipped table
+    var tb = $("ab-shipped").tBodies[0];
+    tb.innerHTML = inv.shipped.map(function (r) {
+      return "<tr><td>" + esc(r.capability) + '</td><td class="ab-ev">' + esc(r.evidence) + "</td></tr>";
+    }).join("");
+    $("ab-not").innerHTML = inv.notShown.map(function (n) {
+      return '<li><div class="ab-not-item">' + esc(n.item) + '</div><div class="ab-not-why">' + esc(n.why) + "</div></li>";
+    }).join("");
+
+    $("ab-prov").innerHTML =
+      "Repo <code>" + esc(src.repo) + "</code> at <code>" + esc(src.commit) + "</code> (" + esc(src.commitDate) + "), captured " + esc(src.captured) + ". " +
+      "Mode: " + esc(src.mode) + ". Renderer: " + esc(src.renderer) + ". " +
+      "Loop frames: " + esc(src.loopFrames) + ". Surface frames: " + esc(src.surfaceFrames) + ". " +
+      esc(src.fontsNote) + ". " +
+      'Data for this page: <a class="ab-link" href="' + ASSETS + 'inventory.json">inventory.json</a>.';
+
+    // keyboard · arrows step, digits jump within the loop
+    document.addEventListener("keydown", function (e) {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      var tag = (e.target && e.target.tagName) || "";
+      if (tag === "INPUT" || tag === "TEXTAREA") return;
+      if (e.key === "ArrowRight") { show(state.idx + 1, "tab"); e.preventDefault(); }
+      else if (e.key === "ArrowLeft") { show(state.idx - 1, "tab"); e.preventDefault(); }
+      else if (/^[1-8]$/.test(e.key) && Number(e.key) <= state.loopCount) { show(Number(e.key) - 1, "tab"); }
+    });
+    $("ab-prev").addEventListener("click", function () { show(state.idx - 1); });
+    $("ab-next").addEventListener("click", function () { show(state.idx + 1); });
+
+    var start = parseInt(new URLSearchParams(location.search).get("frame") || "1", 10);
+    show(isNaN(start) ? 0 : Math.max(0, Math.min(state.frames.length - 1, start - 1)));
+  }
+
+  fetch(ASSETS + "inventory.json")
+    .then(function (r) { if (!r.ok) throw new Error("inventory " + r.status); return r.json(); })
+    .then(build)
+    .catch(function (err) {
+      $("ab-cap-title").textContent = "Inventory did not load.";
+      $("ab-cap-src").textContent = String(err && err.message || err);
+      $("ab-frame").setAttribute("data-state", "ready");
+    });
 })();
 </script>
 
