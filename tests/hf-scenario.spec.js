@@ -8,6 +8,19 @@ import { test, expect } from "@playwright/test";
 const DEFAULT = "/cuts/01-slate-tray.html?skip-entry&skip-boot";
 const DEEP = "/cuts/01-slate-tray.html?scenario=hugging-face-2026&skip-boot";
 const CLAIM_WORDS = /\b(live|real|production|customers?|pilots?|partners?)\b/i;
+// Outcome claims: the copy must never say the record or the tool prevented,
+// stopped, detected or caught anything. The only allowed uses are negated or
+// sit under "Not proven"; they are listed verbatim and removed before the scan,
+// so a new affirmative use anywhere on screen still fails.
+const OUTCOME_WORDS = /\b(prevent(s|ed|ing)?|stop(s|ped|ping)?|detect(s|ed|ing)?|caught)\b/i;
+const OUTCOME_ALLOWED = [
+  "stops no agent",                                        // record: negated
+  "name a human owner or stop",                            // read a: an instruction to the operator
+  "Not proven: that any tool would have caught it",        // record: under Not proven
+  "That any tool, this one included, would have caught or stopped it", // demo foot: Not proven
+  "That an agent delegation can be detected automatically",           // demo foot: Not proven
+  "That a signed record notifies anyone or stops an agent",           // demo foot: Not proven
+];
 
 test("the scenario thread is absent from the default surface", async ({ page }) => {
   await page.goto(DEFAULT);
@@ -74,9 +87,22 @@ test("scenario copy passes the claim gate on screen", async ({ page }) => {
   for (const url of [DEEP, "/cuts/_demo-hf.html"]) {
     await page.goto(url);
     await page.waitForTimeout(800);
-    const text = await page.evaluate(() => document.body.innerText);
+    let text = await page.evaluate(() => document.body.innerText);
+    if (url === DEEP) {
+      // walk to the split and the record so their copy is gated too
+      await page.locator("#dispo-primary").click();
+      await expect(page.locator("#dispo-primary")).toHaveText("Decide anyway");
+      text += "\n" + await page.evaluate(() => document.body.innerText);
+      await page.locator("#dispo-primary").click();
+      await expect(page.locator("#dispo-artifact")).toBeVisible();
+      text += "\n" + await page.evaluate(() => document.body.innerText);
+    }
     expect(text, `${url} em dash`).not.toMatch(/—/);
     const hits = text.split("\n").filter((l) => CLAIM_WORDS.test(l) && /Hugging|METR|PHASEONE|mission|board|GO|reconstruction/i.test(l));
     expect(hits, `${url} claim words in scenario copy`).toEqual([]);
+    const outcome = text.split("\n")
+      .map((l) => OUTCOME_ALLOWED.reduce((acc, ok) => acc.split(ok).join(""), l))
+      .filter((l) => OUTCOME_WORDS.test(l));
+    expect(outcome, `${url} prevent/stop/detect/caught claims`).toEqual([]);
   }
 });
