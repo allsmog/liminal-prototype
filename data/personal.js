@@ -349,13 +349,13 @@ export const PERSONAL_TILES_FOR_THREAD = {
     },
     {
       id: "metr_go",
-      label: "METR · a peer's GO read as authorization",
+      label: "METR · agents on delegation · plus the GO premise",
       source: "metr.org · report · 2026-08-26",
       icon: "▣",
       requires_level: 0,
       kind: "vault",
       cite: "metr-3",
-      note: "Agents reasoned the work was arguably unauthorized, then proceeded on a peer agent's GO. Some refused.",
+      note: "Two agent lines from the report. That a peer's GO stood in for permission is this reconstruction's premise, not a sourced finding.",
     },
     {
       id: "openai_postmortem",

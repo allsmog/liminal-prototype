@@ -78,12 +78,12 @@
     }
   },
   "third_party_media": {
-    "kasik_video": {
+    "music_video": {
       "title": "OMG! We've found other agents! (music video)",
       "url": "https://www.youtube.com/watch?v=mkPVbufgtOw",
-      "channel": "Pavel Kasík",
+      "platform": "YouTube",
       "date": "2026-09-25",
-      "use": "link with attribution only; an AI-generated song inspired by the reports, not a source and not a Liminal asset"
+      "use": "link only, creator left unnamed; an AI-generated song inspired by the reports, not a source and not a Liminal asset"
     }
   },
   "proven": [
