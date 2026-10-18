@@ -97,7 +97,7 @@ export const PERSONAL_THREADS = [
        OpenAI post 2026-08-26); nothing here claims Liminal was present,
        would have prevented it, or detects delegation
      · scenario_only: shown in the rail and the keyboard cycle only via
-       01-slate-tray.html?scenario=hugging-face-2026 (boot.js threadVisible);
+       01-slate-tray.html?scenario=hugging-face-2026 (state.js threadVisible);
        drop the field to list it on the default surface */
   {
     id: "hugging_face_2026",
