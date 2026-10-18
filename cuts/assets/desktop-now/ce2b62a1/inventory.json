@@ -1,0 +1,122 @@
+{
+  "$note": "Cut 12 · the operating plane, as built. Everything below was read from liminal-desktop at the pinned commit, not written from memory. Each row carries the file it came from. The page renders this file; regenerate it at a new SHA and the markup stays the same.",
+  "source": {
+    "repo": "liminalworksinc/liminal-desktop",
+    "commit": "ce2b62a14bad9d894ec5f2e2446ad3b5d8f507d6",
+    "short": "ce2b62a1",
+    "commitDate": "2026-10-07",
+    "captured": "2026-10-17",
+    "mode": "browser fixture (no Tauri shell, no native signing, synthetic data; the app's own banner on every frame says SYNTHETIC FIXTURE · NOT LIVE OR VERIFIED)",
+    "renderer": "Playwright WebKit (Desktop Safari profile), 1280×800, prefers-reduced-motion: reduce, fixed clock 2026-05-12T18:43Z, seeded ids",
+    "loopFrames": "the committed baseline tests/playwright/convergence-baseline.spec.ts-snapshots/*-reduce-webkit-darwin.png (PR #697, part of this commit)",
+    "surfaceFrames": "a local scratch spec over tests/playwright/fixtures.ts with scenario 5-packets-mixed (Check: 14-packets-calibration); not committed to desktop",
+    "fontsNote": "the app bundles only upright Perfectly Nineties faces; other faces fall back to what the capture host has installed (LIM-2268), so type may differ slightly from a packaged build"
+  },
+  "loop": [
+    {
+      "id": "01-empty",
+      "n": "01",
+      "label": "Empty",
+      "did": "Opened the app with an empty vault.",
+      "shows": "The default shell: Slate · Today · Record in the wayfinder, a loop-map rail, the Slate asking “What needs a decision?”, an agent workspace rail, the tray dock.",
+      "fixture": "empty",
+      "source": "convergence-baseline.spec.ts · test \"1 empty slate\""
+    },
+    {
+      "id": "02-captured",
+      "n": "02",
+      "label": "Captured",
+      "did": "Opened the tray and placed “Hire decision · pipeline scarcity” on the Slate.",
+      "shows": "Authored context on the Slate, no reads yet, Run reads available.",
+      "fixture": "marcus-hire-fresh",
+      "source": "convergence-baseline.spec.ts · step 2 · Capture"
+    },
+    {
+      "id": "03-refusal",
+      "n": "03",
+      "label": "Read · refusal",
+      "did": "Ran the reads. The fixture auditor was given one bounded refusal.",
+      "shows": "Three bounded reads; the auditor holds its boundary and says why (REFUSED · VALUES) instead of answering.",
+      "fixture": "marcus-hire-fresh",
+      "source": "convergence-baseline.spec.ts · step 3 · Read"
+    },
+    {
+      "id": "04-corrected",
+      "n": "04",
+      "label": "Corrected",
+      "did": "Chose the analyst's read, typed a correction, named the kind (Emergence) and the outcome (Pursue).",
+      "shows": "The correction becomes part of the record before anything is saved; Save to vault is now enabled.",
+      "fixture": "marcus-hire-fresh",
+      "source": "convergence-baseline.spec.ts · step 4 · Decide"
+    },
+    {
+      "id": "05-saved",
+      "n": "05",
+      "label": "Saved",
+      "did": "Saved to vault.",
+      "shows": "The decision record status reads “saved · not verified”. The browser fixture cannot sign, and the app says so rather than pretending.",
+      "fixture": "marcus-hire-fresh",
+      "source": "convergence-baseline.spec.ts · step 5 · Record"
+    },
+    {
+      "id": "06-record",
+      "n": "06",
+      "label": "Record",
+      "did": "Opened Record from the wayfinder.",
+      "shows": "The Record drill-in with the summary and proof guide; the saved packet is listed with its verification state.",
+      "fixture": "marcus-hire-fresh",
+      "source": "convergence-baseline.spec.ts · step 6"
+    },
+    {
+      "id": "06b-record-row",
+      "n": "07",
+      "label": "Record · the row",
+      "did": "Scrolled to the saved packet.",
+      "shows": "The packet row itself, below the fold, marked UNVERIFIED. The baseline PR logs this placement as a known defect to fix, not a feature.",
+      "fixture": "marcus-hire-fresh",
+      "source": "convergence-baseline.spec.ts · step 6b"
+    },
+    {
+      "id": "07-today",
+      "n": "08",
+      "label": "Today",
+      "did": "Opened Today.",
+      "shows": "Re-entry: the decision just made comes back as something to return to, with Open record.",
+      "fixture": "marcus-hire-fresh",
+      "source": "convergence-baseline.spec.ts · step 7 · Re-enter"
+    }
+  ],
+  "surfaces": [
+    { "id": "10-slate-populated", "label": "Slate", "nav": "primary", "description": "Operating plane", "component": "src/components/plane/OperatingPlaneShell.tsx", "fixture": "5-packets-mixed", "note": "Loop map · Slate · agent workspace · tray dock. The goal brief card (PR #450) sits on the Slate." },
+    { "id": "11-today", "label": "Today", "nav": "primary", "description": "Judgment re-entering current work", "component": "src/components/today/TodayView.tsx", "fixture": "5-packets-mixed", "note": "" },
+    { "id": "12-record", "label": "Record", "nav": "primary", "description": "Ratified decisions and proof", "component": "src/components/vault/VaultViewer.tsx", "fixture": "5-packets-mixed", "note": "Packet list, verification states, proof guide." },
+    { "id": "13-authorize", "label": "Authorize", "nav": "tools", "description": "Approve proposed actions after judgment", "component": "src/components/decide/DecideSurface.tsx", "fixture": "5-packets-mixed", "note": "Empty in this fixture: “Nothing needs your decision.” The queue drains; it does not scroll." },
+    { "id": "14-brief", "label": "Brief", "nav": "tools", "description": "Operator intelligence", "component": "src/components/brief/BriefView.tsx", "fixture": "5-packets-mixed", "note": "" },
+    { "id": "15-goals", "label": "Goals", "nav": "tools", "description": "Priorities, progress, and drift", "component": "src/components/plane/surfaces/registry.tsx · goals", "fixture": "5-packets-mixed", "note": "" },
+    { "id": "16-check", "label": "Check", "nav": "tools", "description": "Calibration", "component": "src/components/coherence/CoherenceCheck.tsx", "fixture": "14-packets-calibration", "note": "" },
+    { "id": "17-spend", "label": "Spend", "nav": "tools", "description": "Spend workstation", "component": "src/components/ai-spend/AiSpendWorkspace.tsx", "fixture": "5-packets-mixed", "note": "Steps qualify → import → review → reconcile → allocate → triage → decide → control → verify → export, mapped to sense · examine · decide · prove." },
+    { "id": "18-labs", "label": "Labs", "nav": "tools", "description": "Advanced panels", "component": "src/components/plane/surfaces/LabsHub.tsx", "fixture": "5-packets-mixed", "note": "Operator and Govern tabs." },
+    { "id": "19-settings", "label": "Settings", "nav": "overlay", "description": "⌘, · General, Model runtime, Connectors, Feeds, Vault data, Diagnostics", "component": "src/components/settings/SettingsPanel.tsx", "fixture": "5-packets-mixed", "note": "" },
+    { "id": "20-command-palette", "label": "Command palette", "nav": "overlay", "description": "⌘K · jump, run, recall, switch", "component": "src/components/plane/OperatingPlaneShell.tsx", "fixture": "5-packets-mixed", "note": "" },
+    { "id": "21-recall", "label": "Search the record", "nav": "overlay", "description": "⌘F · recall across the vault", "component": "src/components/recall/", "fixture": "5-packets-mixed", "note": "" }
+  ],
+  "shipped": [
+    { "capability": "Tray loop: drag context in, a bounded agent panel reads it, you correct the read, the vault holds the record", "evidence": "src/lib/agents.ts · src/components/tray/ · STATUS.md “Shipped”" },
+    { "capability": "Operating plane is the default shell (Slate · Today · Record, tools under one menu)", "evidence": "src/lib/planeFlag.ts (default ON) · src/lib/planeNavigationPolicy.ts" },
+    { "capability": "Startup gate: the app stays hidden until vault recovery is clear and one model connection is verified", "evidence": "src/components/model-connections/ModelConnectionStartupGate.tsx · src/App.tsx" },
+    { "capability": "Goal-alignment steering, with goals as part of the record; Goal Lens as a drill-in", "evidence": "STATUS.md · PR #450 · src/components/plane/surfaces/GoalLensSurface.tsx" },
+    { "capability": "Correction ledger: a goal edit appends {prior, new, actor, timestamp, scope}, ledger before config, refusal on append failure", "evidence": "crates/operator-intel/src/goals_ledger.rs · LIM-1997 · #381" },
+    { "capability": "Quote grounding enforced by rewrite, not by prompt", "evidence": "src/lib/agents.ts (STATUS.md row)" },
+    { "capability": "Receipt-chain verification at the product boundary", "evidence": "PR #327 · STATUS.md" },
+    { "capability": "Correction → proposed policy → ratify / revoke / propagate, with agent attribution", "evidence": "LIM-2168 “current product truth” · PR #719 · #724 · #725" },
+    { "capability": "Deterministic visual baseline of the core loop (8 states × 2 motion modes) committed and gated", "evidence": "tests/playwright/convergence-baseline.spec.ts · PR #697" }
+  ],
+  "notShown": [
+    { "item": "Native signing and a verified packet", "why": "the browser fixture cannot sign; every receipt here says not verified / UNVERIFIED, which is the truth of this capture mode" },
+    { "item": "Vault durability across restart", "why": "a packaged-app property; browser screenshots establish structure, not durability (LIM-2294)" },
+    { "item": "Host-level policy enforcement beyond the commit-message hook", "why": "not landed (LIM-2168)" },
+    { "item": "The fail-closed verdict allowlist and seven-layer publication guard", "why": "STATUS.md lists them as shipped, but the de-slop audit of 2026-10-17 (LIM-2400) found they live in the Spine crates and nothing on the product path calls them; listed here as code presence, not capability, until they are ported into the packet path or removed" },
+    { "item": "The legacy view switcher (?plane=0)", "why": "reachable only by opting out of the default shell; not the product path" },
+    { "item": "Lab and proposed work: Spine HTTP server, Operational Picture scene, AoNS runtime, radio collection", "why": "opt-in or contracts only (STATUS.md Lab / Proposed)" }
+  ]
+}

@@ -48,11 +48,6 @@
     "no-raw-hex": 11,
     "stale-var-fallback": 6
   },
-  "cuts/12-operating-plane.html": {
-    "no-bare-font-size": 13,
-    "no-raw-hex": 1,
-    "stale-var-fallback": 3
-  },
   "cuts/_compare.html": {
     "stale-var-fallback": 6,
     "no-bare-font-size": 8
