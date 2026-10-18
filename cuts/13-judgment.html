@@ -120,6 +120,8 @@ const S = {
   kind: null,               // M1 correction kind · inferred from the assertion until the person overrides
   rationale: "",
   deferWindow: null,
+  judgedAgainst: "",       // unsigned · the constraint or goal this was weighed against
+  statedName: "",          // unsigned · typed by the person, never verified
   inspected: new Set(),     // evidence ids the operator opened
   open: new Set(),          // evidence ids currently expanded
   problems: [],
@@ -151,7 +153,7 @@ function stateStrip(stateFor, record) {
   const failed = S.failure && stateFor === STATES.CONFIRMED;
   const cells = [
     { k: "proposed", v: `AI produced it · ${fmtTime(FIXTURE.producer.producedAt)} · ${record ? "awaited judgment" : "not yet human-accepted"}` },
-    { k: "operator-confirmed", v: record?.confirmedAt ? `${DISPOSITION_LABELS[record.disposition]} · ${fmtTime(record.confirmedAt)}` : "nobody has judged this yet" },
+    { k: "you confirmed", v: record?.confirmedAt ? `${DISPOSITION_LABELS[record.disposition]} · ${fmtTime(record.confirmedAt)}` : "nobody has judged this yet" },
     { k: "recorded", v: record?.recordedAt ? `device-local vault · id #${S.recordId} · ${fmtTime(record.recordedAt)}` : (failed ? "not recorded · the vault could not be written" : stateFor === STATES.CONFIRMED && !S.failure ? "writing to this device's vault…" : "nothing stored") },
   ];
   return `<ol class="jd-states" aria-label="Lifecycle of this result" data-state="${esc(stateFor)}">${cells.map((c, i) => {
@@ -186,7 +188,7 @@ function resultCard({ interactive, change = null, markChanged = false, badge = "
     <div class="p-read__head">${esc(FIXTURE.producer.name)} · ${esc(FIXTURE.producer.detail)}<span class="jd-ai-badge ${interactive ? "" : "is-ink"}" title="${interactive ? "Produced by an agent. Nothing here has been accepted by a person." : "Produced by an agent. Preserved exactly as produced; the judgment on it is recorded separately."}">${esc(badge)}</span></div>
     <div class="p-read__tags"><span class="p-read__tag">${esc(FIXTURE.subject)}</span><span class="p-read__tag">${esc(FIXTURE.caseId)} · ${esc(FIXTURE.findingId)}</span><span class="p-read__tag">lane · ${esc(FIXTURE.lane)}</span></div>
     <p class="jd-headline">${esc(FIXTURE.headline)}</p>
-    ${interactive ? `<p class="jd-hint" id="jd-assert-help" style="margin:0 0 8px">Five assertions. Each names the evidence under it. Select one to dispute it.</p>` : ""}
+    ${interactive ? `<p class="jd-hint" id="jd-assert-help" style="margin:0 0 8px">Five claims. Each names the evidence under it. Select one to dispute it.</p>` : ""}
     <ol class="jd-assertions">${rows}</ol>
     ${agent}
     <div class="jd-uncertain"><div class="jd-uncertain__k">what the agent itself left uncertain</div><ul>${FIXTURE.uncertainty.map(u => `<li>${esc(u)}</li>`).join("")}</ul></div>
@@ -214,9 +216,9 @@ function inspectedMeta() { return `${S.inspected.size} of ${FIXTURE.evidence.len
 function panelChoose() {
   return `<h3 class="jd-panel__q" id="jd-panel-h" tabindex="-1">Does this deserve to be trusted?</h3>
   <p class="jd-panel__sub">The agent finished. That is not a decision. <em>Yours is.</em> Correcting is the primary act here: it keeps the original and appends what you know.</p>
-  <div class="jd-dispos" role="group" aria-label="Disposition">
-    <button type="button" class="jd-dispo jd-dispo--primary" data-dispo="correct"><span class="jd-dispo__l">Correct</span><span class="jd-dispo__k">primary</span><span class="jd-dispo__d">Pick the assertion that is wrong, write what is true, keep the AI's text beside yours.</span></button>
-    <button type="button" class="jd-dispo" data-dispo="accept"><span class="jd-dispo__l">Accept</span><span class="jd-dispo__k">as is</span><span class="jd-dispo__d">The five assertions stand as your judgment. The record says which evidence you opened first.</span></button>
+  <div class="jd-dispos" role="group" aria-label="Decision">
+    <button type="button" class="jd-dispo jd-dispo--primary" data-dispo="correct"><span class="jd-dispo__l">Correct</span><span class="jd-dispo__k">primary</span><span class="jd-dispo__d">Pick the claim that is wrong, write what is true, keep the AI's text beside yours.</span></button>
+    <button type="button" class="jd-dispo" data-dispo="accept"><span class="jd-dispo__l">Accept</span><span class="jd-dispo__k">as is</span><span class="jd-dispo__d">The five claims stand as your judgment. The record says which evidence you opened first.</span></button>
     <button type="button" class="jd-dispo" data-dispo="reject"><span class="jd-dispo__l">Reject</span><span class="jd-dispo__k">set aside</span><span class="jd-dispo__d">Nothing is routed. The result is kept, marked rejected, with your reason.</span></button>
     <button type="button" class="jd-dispo" data-dispo="defer"><span class="jd-dispo__l">Defer</span><span class="jd-dispo__k">hold</span><span class="jd-dispo__d">Comes back on Today at a date you pick. It stays AI-produced, not accepted, until then.</span></button>
   </div>`;
@@ -247,6 +249,23 @@ function acceptCheckHTML() {
   return `<div class="jd-warn">${none}${lines.length ? `Before you take this as yours: ${lines.join(" ")}` : ""} You can still accept; the record will say what you opened.</div>`;
 }
 
+/* unsigned · the constraint you weighed it against, and the name you want the record to carry */
+function sharedFields() {
+  return `
+      <div class="jd-field">
+        <label for="jd-against">Judged against <span class="opt">optional · the goal or constraint you weighed this against</span></label>
+        <input id="jd-against" type="text" placeholder="e.g. Q3 budget stays flat; launch work is not admin." value="${esc(S.judgedAgainst)}">
+      </div>
+      <div class="jd-field">
+        <label for="jd-by">Decided by <span class="opt">optional · your name as typed · not verified, no sign-in</span></label>
+        <input id="jd-by" type="text" autocomplete="name" placeholder="Your name" value="${esc(S.statedName)}">
+      </div>`;
+}
+function actorForRecord() {
+  const name = S.statedName.trim();
+  return name ? { ...OPERATOR, statedName: name } : { ...OPERATOR };
+}
+
 function panelForm() {
   const d = S.disposition;
   let body = "";
@@ -254,13 +273,13 @@ function panelForm() {
     const a = assertionById(S.assertionId);
     body = `
       <div class="jd-field">
-        <span class="jd-label">Disputed assertion</span>
+        <span class="jd-label">Disputed claim</span>
         ${a ? `<div class="jd-orig"><span class="k">${a.id} · as the AI wrote it · stays in the record</span>${esc(a.text)}</div>`
-             : `<div class="jd-pick" id="jd-pick">Select an assertion in the result on the left. <b>A2</b> is the one the agent itself marked thin.</div>`}
+             : `<div class="jd-pick" id="jd-pick">Select a claim in the result on the left. <b>A2</b> is the one the agent itself marked thin.</div>`}
       </div>
       <div class="jd-field">
-        <label for="jd-corrected">Corrected assertion <span class="opt">required · what is actually true</span></label>
-        <textarea id="jd-corrected" placeholder="${a ? "Rewrite " + a.id + " as it should read." : "Select an assertion first."}" ${a ? "" : "disabled"}>${esc(S.correctedText)}</textarea>
+        <label for="jd-corrected">Corrected claim <span class="opt">required · what is actually true</span></label>
+        <textarea id="jd-corrected" placeholder="${a ? "Rewrite " + a.id + " as it should read." : "Select a claim first."}" ${a ? "" : "disabled"}>${esc(S.correctedText)}</textarea>
       </div>
       ${kindPicker()}
       <div class="jd-field">
@@ -274,14 +293,14 @@ function panelForm() {
         <label for="jd-rationale">Note <span class="opt">optional</span></label>
         <textarea id="jd-rationale" class="jd-short" placeholder="Anything a reader of the record should know about why this stands.">${esc(S.rationale)}</textarea>
       </div>
-      <div class="jd-pick">Accepting makes all five assertions <b>your</b> judgment, including A2, which the agent marked thin. The AI's text is preserved as the AI's; your acceptance is a separate line in the record.</div>`;
+      <div class="jd-pick">Accepting makes all five claims <b>your</b> judgment, including A2, which the agent marked thin. The AI's text is preserved as the AI's; your acceptance is a separate line in the record.</div>`;
   } else if (d === "reject") {
     body = `
       <div class="jd-field">
         <label for="jd-rationale">Why the result is rejected <span class="opt">required</span></label>
-        <textarea id="jd-rationale" placeholder="What makes the whole result unusable, as opposed to one assertion being wrong?">${esc(S.rationale)}</textarea>
+        <textarea id="jd-rationale" placeholder="What makes the whole result unusable, as opposed to one claim being wrong?">${esc(S.rationale)}</textarea>
       </div>
-      <div class="jd-pick">Rejecting routes nothing and changes no agent. The result is kept in the record, marked rejected, so the next review can see what was set aside and why. If only one assertion is wrong, <b>Correct</b> is the finer tool.</div>`;
+      <div class="jd-pick">Rejecting routes nothing and changes no agent. The result is kept in the record, marked rejected, so the next review can see what was set aside and why. If only one claim is wrong, <b>Correct</b> is the finer tool.</div>`;
   } else if (d === "defer") {
     body = `
       <div class="jd-field">
@@ -297,6 +316,7 @@ function panelForm() {
   return `<h3 class="jd-panel__q" id="jd-panel-h" tabindex="-1">${esc(DISPOSITION_LABELS[d])} · ${d === "correct" ? "say what is true" : d === "accept" ? "take it as your own" : d === "reject" ? "set it aside" : "hold it"}</h3>
   <form class="jd-form" id="jd-form" novalidate>
     ${body}
+    ${sharedFields()}
     <ul class="jd-problems" id="jd-problems" aria-live="assertive">${S.problems.map(p => `<li>${esc(p)}</li>`).join("")}</ul>
     <div class="jd-actions">
       <button type="submit" class="jd-btn jd-btn--primary" id="jd-review">Review the judgment →</button>
@@ -312,22 +332,23 @@ function panelConfirm() {
   const seen = FIXTURE.evidence.filter(e => S.inspected.has(e.id)).map(e => e.title.split(" · ")[0]);
   const win = d === "defer" ? DEFER_WINDOWS.find(w => w.id === S.deferWindow) : null;
   const does = {
-    correct: "appends your correction beside the AI's assertion; the original is kept unchanged; nothing is routed or propagated.",
-    accept: "records the five assertions as your judgment; the AI's text is kept as the AI's; nothing is routed or propagated.",
+    correct: "appends your correction beside the AI's claim; the original is kept unchanged; nothing is routed or propagated.",
+    accept: "records the five claims as your judgment; the AI's text is kept as the AI's; nothing is routed or propagated.",
     reject: "records the result as set aside with your reason; nothing is routed; no agent changes.",
     defer: `holds the result, still AI-produced and not accepted, and brings it back on Today in ${win ? win.label : "the window you picked"}.`,
   }[d];
   return `<h3 class="jd-panel__q" id="jd-panel-h" tabindex="-1">Confirm the judgment</h3>
-  <p class="jd-panel__sub">Confirming moves this from <em>proposed</em> to <em>operator-confirmed</em>, then writes it to this device's vault as <em>recorded</em>.</p>
+  <p class="jd-panel__sub">Confirming moves this from <em>proposed</em> to <em>you confirmed</em>, then writes it to this device's vault as <em>recorded</em>.</p>
   <div class="jd-summary">
-    <div class="jd-sum"><span class="k">disposition</span><span class="v"><b>${esc(DISPOSITION_LABELS[d])}</b></span></div>
+    <div class="jd-sum"><span class="k">decision</span><span class="v"><b>${esc(DISPOSITION_LABELS[d])}</b></span></div>
     ${a ? `<div class="jd-sum"><span class="k">disputed</span><span class="v">${a.id} · <b>${esc(a.text)}</b></span></div>
            <div class="jd-sum"><span class="k">corrected to</span><span class="v"><b>${esc(S.correctedText.trim())}</b></span></div>
            <div class="jd-sum"><span class="k">kind</span><span class="v"><b>${esc(S.kind)}</b> · ${S.kind === inferKind(a.id) ? "inferred" : "your choice"} · ${esc(KIND_GLOSS[S.kind])}</span></div>` : ""}
     ${win ? `<div class="jd-sum"><span class="k">returns</span><span class="v">in ${esc(win.label)} · on Today</span></div>` : ""}
     ${S.rationale.trim() ? `<div class="jd-sum"><span class="k">${d === "correct" ? "why" : d === "reject" ? "reason" : "note"}</span><span class="v">${esc(S.rationale.trim())}</span></div>` : ""}
+    ${S.judgedAgainst.trim() ? `<div class="jd-sum"><span class="k">judged against</span><span class="v">${esc(S.judgedAgainst.trim())} · <span class="is-dim">not in the signed packet</span></span></div>` : ""}
     <div class="jd-sum"><span class="k">evidence opened</span><span class="v">${seen.length ? seen.map(esc).join(" · ") : "<b>none</b>"} · ${S.inspected.size} of ${FIXTURE.evidence.length}</span></div>
-    <div class="jd-sum"><span class="k">who</span><span class="v">${esc(OPERATOR.name)} · ${esc(OPERATOR.identity)}</span></div>
+    <div class="jd-sum"><span class="k">who</span><span class="v">${S.statedName.trim() ? `<b>${esc(S.statedName.trim())}</b> · as typed, not verified · ` : ""}${esc(OPERATOR.name)} · ${esc(OPERATOR.identity)}</span></div>
     <div class="jd-sum"><span class="k">when</span><span class="v">set at the moment you confirm</span></div>
     <div class="jd-sum"><span class="k">this does</span><span class="v">${esc(does)}</span></div>
     <div class="jd-sum"><span class="k">this does not</span><span class="v">sign anything · anchor anything · change any agent · activate any rule</span></div>
@@ -406,6 +427,8 @@ function wireJudge() {
   /* form fields · keep S current without re-rendering */
   const corr = $("#jd-corrected"); if (corr) corr.addEventListener("input", () => { S.correctedText = corr.value; });
   const rat = $("#jd-rationale"); if (rat) rat.addEventListener("input", () => { S.rationale = rat.value; });
+  const against = $("#jd-against"); if (against) against.addEventListener("input", () => { S.judgedAgainst = against.value; });
+  const by = $("#jd-by"); if (by) by.addEventListener("input", () => { S.statedName = by.value; });
   main.querySelectorAll("[data-kind]").forEach(b => b.addEventListener("click", () => {
     S.kind = b.dataset.kind; /* always one of the 4; pressing the selected one keeps it */
     S.focus = null; renderJudge();
@@ -427,7 +450,7 @@ function wireJudge() {
 }
 
 function currentJudgment() {
-  return { disposition: S.disposition, assertionId: S.assertionId, correctedText: S.correctedText, kind: S.disposition === "correct" ? S.kind : null, rationale: S.rationale, deferWindow: S.deferWindow };
+  return { disposition: S.disposition, assertionId: S.assertionId, correctedText: S.correctedText, kind: S.disposition === "correct" ? S.kind : null, rationale: S.rationale, deferWindow: S.deferWindow, judgedAgainst: S.judgedAgainst };
 }
 
 function applyFocus() {
@@ -442,7 +465,7 @@ async function confirmJudgment() {
   const problems = validateJudgment(currentJudgment());
   if (problems.length) { S.problems = problems; S.phase = "form"; renderJudge(); return; }
   const confirmedAt = Date.now();
-  S.record = buildRecord({ judgment: currentJudgment(), inspected: [...S.inspected], actor: OPERATOR, confirmedAt });
+  S.record = buildRecord({ judgment: currentJudgment(), inspected: [...S.inspected], actor: actorForRecord(), confirmedAt });
   S.proof = null; S.indexError = null;
   S.state = STATES.CONFIRMED; S.failure = null; S.view = "record"; S.focus = "jd-record-h";
   renderRecord();
@@ -504,7 +527,7 @@ function proofBlock(r) {
     ${p.signed
       ? `Packet <code>${esc(p.packet.packet.id)}</code> (${esc(p.packet.schema)}), signed with a <b>${esc(KEY_LABEL)}</b>. Fingerprint <code class="jd-fp">${esc(p.fingerprint)}</code>.`
       : `This browser could not sign (${esc(p.signError)}). The bundle still carries the packet; the verifier reports it <b>UNVERIFIED</b>, which is the honest result.`}
-    <p style="margin-top:8px">The signature covers the AI's headline, its five assertions word for word, each one's evidence ids and support level, and its stated uncertainty; then your disposition, your words, the corrected text and its kind, the confirm time and any defer date. It does <b>not</b> cover the evidence contents or support notes, the reviewer agent's action on A5, which evidence you opened, the remaining-uncertainty lines, the actor label, the record time or the vault id: the packet format has no field for them.</p>
+    <p style="margin-top:8px">The signature covers the AI's headline, its five claims word for word, each one's evidence ids and support level, and its stated uncertainty; then your decision, your words, the corrected text and its kind, the confirm time and any defer date. It does <b>not</b> cover the evidence contents or support notes, the reviewer agent's action on A5, which evidence you opened, the remaining-uncertainty lines, the actor label, any name you typed, the judged-against line, the record time or the vault id: the packet format has no field for them.</p>
     <p style="margin-top:8px">Unzip, then run <code>${esc(cmd)}</code> with Node 18 or newer. The verifier in the bundle is the one published at <code>receipts/2026-10-06/bundle/</code>, unchanged.</p>
     <span class="jd-actions" style="display:inline-flex;margin-top:8px"><button type="button" class="jd-btn" id="jd-proof-dl">Download proof bundle (.zip)</button></span>
   </div>`;
@@ -514,8 +537,8 @@ function proofBlock(r) {
 function decidedLead(r) {
   const n = r.original.assertions.length;
   switch (r.disposition) {
-    case "correct": return `The AI's routing proposal stands <b>as corrected</b>: ${r.change.assertionId} now reads as you wrote it; the other ${n - 1} assertions stand as the agent wrote them.`;
-    case "accept": return `The AI's routing proposal stands <b>as your judgment</b>. All ${n} assertions are accepted unchanged.`;
+    case "correct": return `The AI's routing proposal stands <b>as corrected</b>: ${r.change.assertionId} now reads as you wrote it; the other ${n - 1} claims stand as the agent wrote them.`;
+    case "accept": return `The AI's routing proposal stands <b>as your judgment</b>. All ${n} claims are accepted unchanged.`;
     case "reject": return `The AI's routing proposal is <b>set aside</b>. Nothing is routed. It stays in the record as rejected, with your reason.`;
     case "defer": return `The AI's routing proposal is <b>held</b> for ${esc(r.defer.label)}. It returns on Today, ${esc(fmtDue(r.defer.dueAt))}. Until then it is AI-produced, not accepted.`;
   }
@@ -528,7 +551,7 @@ function renderRecord() {
   const recorded = S.state === STATES.RECORDED;
   const failed = !!S.failure;
   const signed = recorded && !!r.proof?.signed;
-  const eyeState = recorded ? `recorded · device-local · ${signed ? "demonstration-key signature" : "unsigned"}` : failed ? "operator-confirmed · NOT recorded" : "operator-confirmed · recording…";
+  const eyeState = recorded ? `recorded · device-local · ${signed ? "demonstration-key signature" : "unsigned"}` : failed ? "you confirmed · NOT recorded" : "you confirmed · recording…";
   const changeBlock = r.change ? `
     <div class="jd-diff">
       <div class="jd-diff__side is-orig"><div class="jd-diff__k"><span>original · ${esc(r.original.producer.name)}</span><span>${r.change.assertionId}</span></div><div class="jd-diff__t">${esc(r.change.originalText)}</div><div class="jd-diff__meta">kept verbatim · ${origHash ? "SHA-256 " + shortHash(origHash) : "hash pending"}</div></div>
@@ -536,7 +559,7 @@ function renderRecord() {
     </div>
     ${r.change.rationale ? `<p style="margin-top:10px"><b>Why.</b> ${esc(r.change.rationale)}</p>` : ""}
     ${r.change.affects.length ? `<p>${r.change.affects.join(", ")} ${r.change.affects.length > 1 ? "were" : "was"} derived from the original ${r.change.assertionId}. ${r.change.affects.length > 1 ? "They are" : "It is"} shown as the agent wrote ${r.change.affects.length > 1 ? "them" : "it"} and <b>not recomputed</b>; the correction narrows what ${r.change.affects.length > 1 ? "they" : "it"} can claim.</p>` : ""}`
-    : r.disposition === "accept" ? `<p>Nothing in the text. All five assertions stand as the agent wrote them. Your acceptance is a separate line, below, not an edit of the AI's words.${r.rationale ? ` <b>Note.</b> ${esc(r.rationale)}` : ""}</p>`
+    : r.disposition === "accept" ? `<p>Nothing in the text. All five claims stand as the agent wrote them. Your acceptance is a separate line, below, not an edit of the AI's words.${r.rationale ? ` <b>Note.</b> ${esc(r.rationale)}` : ""}</p>`
     : r.disposition === "reject" ? `<p>Nothing in the text. The whole result is set aside. <b>Reason.</b> ${esc(r.rationale)}</p>`
     : `<p>Nothing yet. The result is held, unchanged, and comes back ${esc(fmtDue(r.defer.dueAt))}.${r.rationale ? ` <b>What would change the call.</b> ${esc(r.rationale)}` : ""}</p>`;
 
@@ -556,7 +579,7 @@ function renderRecord() {
       <div class="jd-record__head">
         <div>
           <div class="jd-record__eyebrow"><span class="stamp">${esc(eyeState)}</span><span>${esc(r.subject)}</span></div>
-          <h2 class="jd-record__title">${esc(r.dispositionLabel)} by ${esc(r.actor.name).toLowerCase()} · ${fmtTime(r.confirmedAt)}</h2>
+          <h2 class="jd-record__title">${esc(r.dispositionLabel)} by ${r.actor.statedName ? esc(r.actor.statedName) + " (as typed, not verified)" : esc(r.actor.name).toLowerCase()} · ${fmtTime(r.confirmedAt)}</h2>
         </div>
         <div class="jd-record__id">${recorded ? `vault id #${S.recordId}<br>content hash SHA-256 ${shortHash(r.contentHash)}<br>computed in this browser · not a signature${signed ? `<br>packet signed · key ${shortHash(r.proof.fingerprint)}` : ""}` : `no vault id<br>not stored · no proof issued`}</div>
       </div>
@@ -579,9 +602,11 @@ function renderRecord() {
       <section class="jd-q"><div><div class="jd-q__n">4</div><h3 class="jd-q__h">What did the human change?</h3></div>
         <div class="jd-q__b">${changeBlock}</div></section>
 
+      ${r.judgedAgainst ? `<div class="jd-notice jd-notice--quiet" id="jd-judged-against" style="margin:0 0 1rem"><span class="k">judged against · in the record, not in the signed packet</span>${esc(r.judgedAgainst)}</div>` : ""}
       <section class="jd-q"><div><div class="jd-q__n">5</div><h3 class="jd-q__h">Who authorized the judgment?</h3></div>
         <div class="jd-q__b">
           <div class="jd-facts">
+            ${r.actor.statedName ? `<div class="jd-fact" id="jd-stated-name"><span class="k">decided by · as typed</span><span class="v">${esc(r.actor.statedName)}</span><span class="v is-dim" style="font-size:.82rem">typed by the person at confirm · not checked against any account · not in the signed packet</span></div>` : ""}
             <div class="jd-fact"><span class="k">human actor</span><span class="v">${esc(r.actor.name)}</span><span class="v is-dim" style="font-size:.82rem">${esc(r.actor.identity)}</span></div>
             <div class="jd-fact"><span class="k">confirmed at</span><span class="v">${fmtTime(r.confirmedAt)}</span></div>
             <div class="jd-fact"><span class="k">recorded at</span><span class="v ${recorded ? "" : "is-dim"}">${recorded ? fmtTime(r.recordedAt) : failed ? "not recorded" : "writing…"}</span></div>
