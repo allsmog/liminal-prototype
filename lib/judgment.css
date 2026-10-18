@@ -1,0 +1,287 @@
+/* judgment.css · acceptance & correction scene (LIM-2273)
+   ──────────────────────────────────────────────────────────────────────
+   Per-feature layer for cuts/13-judgment.html and the re-entry card in
+   cuts/10-today.html. Consumes canon tokens + the shared shell; redefines
+   none (CONTRIBUTING rule #1). The AI result itself is the shared .p-read
+   primitive (lib/cut-shell-products.css); this file only adds the pieces
+   that primitive does not have: an assertion list, an evidence dock, the
+   disposition panel, the side-by-side diff and the six-question record.
+
+   Chroma law (state-atlas, 2026-07-29): the register that produced the
+   read gets its hue (--judgment on the AI card). Lifecycle states are
+   register hues or ink, never --alarm / --watch. The only --watch use here
+   is the "thin" support badge on an assertion, which IS a property of the
+   evidence, not of the read, so it is allowed by the same law.
+
+   Class names must not contain the substring "refused" (brand-upgrade.css
+   carries a !important wildcard on it). None here do.
+   ────────────────────────────────────────────────────────────────────── */
+
+/* shell lay-out · the frame is a column under the titlebar */
+.stage { display: flex; flex-direction: column; }
+.frame { display: flex; flex-direction: column; height: 100vh; }
+.titlebar { flex-shrink: 0; }
+
+.jd-crumb { font-family: var(--mono); font-size: var(--fs-mono-sm); letter-spacing: 0.04em; color: var(--text-dim); }
+.jd-crumb b { color: var(--text); font-weight: 500; }
+.jd-claim {
+  font-family: var(--mono); font-size: var(--fs-mono-xs); letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--text-dim); border: 1px solid var(--frame-border); border-radius: var(--radius-pill); padding: 3px 10px;
+}
+
+.jd { flex: 1; overflow-y: auto; background: var(--frame-bg); padding: 2.2rem 3rem 3rem; }
+.jd-wrap { max-width: 1080px; margin: 0 auto; }
+
+/* ── head ─────────────────────────────────────────────────────────── */
+.jd-eyebrow { font-family: var(--mono); font-size: var(--fs-mono-xs); letter-spacing: var(--ls-mono); text-transform: uppercase; color: var(--judgment); margin-bottom: 0.8rem; }
+.jd-title { font-family: var(--display); font-weight: 500; font-size: 2.3rem; line-height: 1.08; letter-spacing: -0.012em; color: var(--text); margin: 0 0 0.6rem; max-width: 860px; }
+.jd-lede { font-family: var(--sans); font-size: 0.95rem; line-height: 1.6; color: var(--text-mid); max-width: 720px; margin: 0; }
+.jd-lede b { color: var(--text); font-weight: 500; }
+
+/* ── lifecycle strip · proposed → operator-confirmed → recorded ────── */
+.jd-states { display: flex; align-items: stretch; gap: 0; margin: 1.4rem 0 1.8rem; border: 1px solid var(--card-border); border-radius: var(--radius-3); background: var(--frame-bg-2); overflow: hidden; }
+.jd-state { flex: 1; padding: 0.7rem 0.9rem; display: flex; flex-direction: column; gap: 3px; border-right: 1px solid var(--card-border); min-width: 0; }
+.jd-state:last-child { border-right: 0; }
+.jd-state__k { font-family: var(--mono); font-size: var(--fs-mono-xs); letter-spacing: var(--ls-mono-sm); text-transform: uppercase; color: var(--text-faint); display: flex; align-items: center; gap: 7px; }
+.jd-state__k::before { content: "○"; color: var(--text-faint); }
+.jd-state__v { font-family: var(--serif); font-size: 0.92rem; color: var(--text-dim); line-height: 1.35; }
+.jd-state.is-current .jd-state__k { color: var(--text); }
+.jd-state.is-current .jd-state__k::before { content: "◉"; color: var(--judgment); }
+.jd-state.is-current .jd-state__v { color: var(--text); }
+.jd-state.is-done .jd-state__k::before { content: "●"; color: var(--text-dim); }
+.jd-state.is-done .jd-state__v { color: var(--text-mid); }
+.jd-state.is-failed .jd-state__k::before { content: "✕"; color: var(--judgment); }
+.jd-state.is-failed .jd-state__v { color: var(--judgment); }
+
+/* ── two columns · result + evidence | judgment panel ─────────────── */
+.jd-cols { display: grid; grid-template-columns: 1.35fr 1fr; gap: 1.5rem; align-items: start; }
+.jd-col { display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; }
+.jd-section-label { font-family: var(--mono); font-size: var(--fs-mono-xs); letter-spacing: var(--ls-mono-sm); text-transform: uppercase; color: var(--text-dim); display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin-bottom: 0.8rem; }
+.jd-section-label .meta { color: var(--text-faint); text-align: right; }
+
+/* the AI result · .p-read--judgment plus an assertion list */
+.jd-result .p-read__head .jd-ai-badge { margin-left: auto; }
+.jd-ai-badge {
+  font-family: var(--mono); font-size: var(--fs-mono-xs); letter-spacing: var(--ls-app-wide); text-transform: uppercase;
+  border: 1px solid var(--judgment-edge); color: var(--judgment); border-radius: var(--radius-2); padding: 2px 7px; white-space: nowrap;
+}
+.jd-ai-badge.is-ink { border-color: var(--card-border-2); color: var(--text-dim); }
+.jd-headline { font-family: var(--serif); font-size: 1.25rem; line-height: 1.3; color: var(--text); margin: 0 0 0.9rem; }
+.jd-assertions { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.jd-assert {
+  display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items: start;
+  width: 100%; text-align: left; padding: 9px 10px; border-radius: var(--radius-2);
+  border: 1px solid var(--frame-border); background: var(--frame-bg); color: var(--text-mid);
+  font: inherit; cursor: pointer; transition: border-color 160ms var(--ease), background 160ms var(--ease);
+}
+.jd-assert:hover { border-color: var(--card-border-2); background: var(--frame-bg-3); }
+.jd-assert:focus-visible { outline: 2px solid var(--ui-focus-ring); outline-offset: 2px; }
+.jd-assert[aria-pressed="true"] { border-color: var(--judgment); background: var(--judgment-bg); }
+.jd-assert[aria-pressed="true"] .jd-assert__t { color: var(--text); }
+.jd-assert[disabled] { cursor: default; }
+.jd-assert[disabled]:hover { border-color: var(--frame-border); background: var(--frame-bg); }
+.jd-assert__id { font-family: var(--mono); font-size: var(--fs-mono-xs); letter-spacing: 0.06em; color: var(--text-faint); padding-top: 3px; }
+.jd-assert__t { font-family: var(--serif); font-size: 0.95rem; line-height: 1.5; color: var(--text-mid); }
+.jd-assert__t.is-struck { text-decoration: line-through; text-decoration-color: var(--text-faint); color: var(--text-faint); }
+.jd-assert__note { display: block; margin-top: 4px; font-family: var(--sans); font-size: 0.78rem; line-height: 1.45; color: var(--text-faint); }
+.jd-assert__note .cite { font-family: var(--mono); font-size: var(--fs-mono-xs); letter-spacing: 0.04em; color: var(--text-dim); border-bottom: 1px dotted var(--text-faint); margin-right: 4px; }
+.jd-assert__corr { display: block; margin-top: 6px; padding: 6px 8px; border-left: 2px solid var(--judgment); background: var(--judgment-bg); color: var(--text); font-family: var(--serif); font-size: 0.92rem; line-height: 1.45; }
+.jd-assert__corr .k { font-family: var(--mono); font-size: var(--fs-mono-xs); letter-spacing: var(--ls-mono-sm); text-transform: uppercase; color: var(--judgment); margin-right: 6px; }
+.jd-support { font-family: var(--mono); font-size: var(--fs-mono-xs); letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; padding: 2px 6px; border-radius: var(--radius-2); border: 1px solid var(--frame-border); color: var(--text-dim); margin-top: 1px; }
+.jd-support--supported { color: var(--outreach); border-color: var(--outreach-edge); }
+.jd-support--thin { color: var(--watch); border-color: var(--watch-edge); }         /* evidence property · allowed */
+.jd-support--derived { color: var(--synthesis); border-color: var(--synthesis-edge); }
+.jd-support--agent-corrected { color: var(--text-dim); border-color: var(--card-border-2); }
+.jd-agent-line { display: flex; gap: 8px; align-items: baseline; margin-top: 10px; padding: 8px 10px; border: 1px dashed var(--card-border); border-radius: var(--radius-2); font-family: var(--sans); font-size: 0.8rem; color: var(--text-dim); line-height: 1.45; }
+.jd-agent-line .who { font-family: var(--mono); font-size: var(--fs-mono-xs); letter-spacing: var(--ls-mono-sm); text-transform: uppercase; color: var(--text-dim); white-space: nowrap; }
+.jd-uncertain { margin: 12px 0 0; padding: 10px 12px; border-left: 2px solid var(--card-border-2); background: var(--frame-bg); }
+.jd-uncertain__k { font-family: var(--mono); font-size: var(--fs-mono-xs); letter-spacing: var(--ls-mono-sm); text-transform: uppercase; color: var(--text-dim); margin-bottom: 5px; }
+.jd-uncertain ul { margin: 0; padding-left: 1.1rem; font-family: var(--sans); font-size: 0.82rem; line-height: 1.55; color: var(--text-mid); }
+
+/* evidence dock · <details> so it is keyboard-native */
+.jd-evidence { display: flex; flex-direction: column; gap: 6px; }
+.jd-ev { border: 1px solid var(--frame-border); border-radius: var(--radius-2); background: var(--frame-bg-2); }
+.jd-ev[open] { border-color: var(--card-border-2); }
+.jd-ev.is-inspected { border-left: 2px solid var(--diligence); }
+.jd-ev--absent { border-style: dashed; }
+.jd-ev summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: 16px 1fr auto; gap: 10px; align-items: baseline; padding: 9px 11px; }
+.jd-ev summary::-webkit-details-marker { display: none; }
+.jd-ev summary:focus-visible { outline: 2px solid var(--ui-focus-ring); outline-offset: -2px; border-radius: var(--radius-2); }
+.jd-ev__glyph { font-family: var(--mono); color: var(--text-faint); font-size: 0.8rem; }
+.jd-ev[open] .jd-ev__glyph { color: var(--diligence); }
+.jd-ev__t { font-family: var(--serif); font-size: 0.92rem; color: var(--text); line-height: 1.35; }
+.jd-ev__src { display: block; font-family: var(--mono); font-size: var(--fs-mono-xs); letter-spacing: 0.04em; color: var(--text-faint); margin-top: 2px; }
+.jd-ev__bear { font-family: var(--mono); font-size: var(--fs-mono-xs); letter-spacing: 0.04em; color: var(--text-dim); text-align: right; max-width: 160px; line-height: 1.4; }
+.jd-ev__seen { color: var(--diligence); }
+.jd-ev__body { padding: 0 11px 11px 37px; font-family: var(--sans); font-size: 0.84rem; line-height: 1.55; color: var(--text-mid); }
+.jd-ev__note { margin-top: 6px; font-size: 0.78rem; color: var(--text-faint); }
+.jd-ev table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: var(--fs-mono-xs); letter-spacing: 0.02em; }
+.jd-ev th { text-align: left; color: var(--text-faint); font-weight: 400; padding: 4px 6px 6px 0; border-bottom: 1px solid var(--frame-border); text-transform: uppercase; letter-spacing: 0.06em; }
+.jd-ev td { padding: 5px 6px 5px 0; color: var(--text-mid); border-bottom: 1px solid var(--frame-border); vertical-align: top; }
+.jd-ev tr.is-dropped td { color: var(--text-faint); text-decoration: line-through; text-decoration-color: var(--text-faint); }
+.jd-ev tr.is-dropped td:last-child { text-decoration: none; color: var(--text-dim); }
+
+/* ── judgment panel (right) ───────────────────────────────────────── */
+.jd-panel { background: var(--frame-bg-2); border: 1px solid var(--card-border); border-radius: 8px; padding: 1.4rem 1.5rem; position: sticky; top: 0; }
+.jd-panel__q { font-family: var(--serif); font-weight: 500; font-size: 1.22rem; line-height: 1.25; color: var(--text); margin: 0 0 0.5rem; }
+.jd-panel__sub { font-family: var(--sans); font-size: 0.84rem; line-height: 1.55; color: var(--text-dim); margin: 0 0 1.1rem; }
+.jd-panel__sub em { color: var(--text-mid); }
+.jd-panel h3:focus-visible, .jd-panel h3:focus { outline: none; }
+
+.jd-dispos { display: flex; flex-direction: column; gap: 0.5rem; }
+.jd-dispo {
+  font-family: var(--sans); font-size: 0.9rem; text-align: left; padding: 0.8rem 1rem; border-radius: var(--radius-3);
+  border: 1px solid var(--card-border); background: var(--frame-bg); color: var(--text-mid); cursor: pointer;
+  display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; transition: border-color 150ms var(--ease), background 150ms var(--ease);
+}
+.jd-dispo:hover { border-color: var(--text-faint); background: var(--frame-bg-3); color: var(--text); }
+.jd-dispo:focus-visible { outline: 2px solid var(--ui-focus-ring); outline-offset: 2px; }
+.jd-dispo__l { font-weight: 500; color: var(--text); }
+.jd-dispo__k { font-family: var(--mono); font-size: var(--fs-mono-xs); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); }
+.jd-dispo__d { grid-column: 1 / -1; font-size: 0.8rem; color: var(--text-dim); line-height: 1.45; }
+.jd-dispo--primary { border-color: color-mix(in oklab, var(--judgment) 55%, var(--card-border)); }
+.jd-dispo--primary:hover { border-color: var(--judgment); background: var(--judgment-bg); }
+.jd-dispo--primary .jd-dispo__k { color: var(--judgment); }
+
+/* the form · any disposition */
+.jd-form { display: flex; flex-direction: column; gap: 0.9rem; }
+.jd-field { display: flex; flex-direction: column; gap: 6px; }
+.jd-field label, .jd-field .jd-label { font-family: var(--mono); font-size: var(--fs-mono-xs); letter-spacing: var(--ls-mono-sm); text-transform: uppercase; color: var(--text-dim); }
+.jd-field label .opt { color: var(--text-faint); text-transform: none; letter-spacing: 0.02em; margin-left: 6px; }
+.jd-field textarea, .jd-field input[type="text"] {
+  font-family: var(--serif); font-size: 0.95rem; line-height: 1.5; color: var(--text);
+  background: var(--frame-bg); border: 1px solid var(--card-border); border-radius: var(--radius-2); padding: 9px 11px; resize: vertical; min-height: 84px; width: 100%; box-sizing: border-box;
+}
+.jd-field textarea:focus-visible, .jd-field input:focus-visible { outline: 2px solid var(--ui-focus-ring); outline-offset: 1px; }
+.jd-field textarea.jd-short { min-height: 56px; }
+.jd-pick { font-family: var(--sans); font-size: 0.84rem; color: var(--text-dim); line-height: 1.5; padding: 9px 11px; border: 1px dashed var(--card-border); border-radius: var(--radius-2); }
+.jd-pick b { color: var(--text); font-weight: 500; }
+.jd-orig { font-family: var(--serif); font-size: 0.9rem; line-height: 1.5; color: var(--text-mid); padding: 8px 11px; border-left: 2px solid var(--card-border-2); background: var(--frame-bg); }
+.jd-orig .k { display: block; font-family: var(--mono); font-size: var(--fs-mono-xs); letter-spacing: var(--ls-mono-sm); text-transform: uppercase; color: var(--text-faint); margin-bottom: 3px; }
+.jd-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.jd-tag { font: var(--fs-mono-xs)/1 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; padding: 6px 9px; border-radius: var(--radius-pill); border: 1px solid var(--frame-border); background: var(--frame-bg); color: var(--text-dim); cursor: pointer; }
+.jd-tag:hover { border-color: var(--text-faint); color: var(--text); }
+.jd-tag:focus-visible { outline: 2px solid var(--ui-focus-ring); outline-offset: 2px; }
+.jd-tag[aria-pressed="true"] { border-color: var(--judgment); color: var(--judgment); background: var(--judgment-bg); }
+.jd-tag-gloss { font-family: var(--sans); font-size: 0.78rem; color: var(--text-faint); min-height: 1.2em; }
+.jd-windows { display: flex; gap: 6px; flex-wrap: wrap; }
+.jd-problems { margin: 0; padding: 8px 11px; list-style: none; border: 1px solid var(--judgment-edge); background: var(--judgment-bg); border-radius: var(--radius-2); font-family: var(--sans); font-size: 0.82rem; color: var(--text); line-height: 1.5; }
+.jd-problems:empty { display: none; }
+.jd-warn { font-family: var(--sans); font-size: 0.8rem; color: var(--text-mid); padding: 8px 11px; border-left: 2px solid var(--watch); background: var(--frame-bg); line-height: 1.5; }
+.jd-actions { display: flex; gap: 9px; flex-wrap: wrap; align-items: center; margin-top: 4px; }
+.jd-btn {
+  font: var(--fs-mono-sm)/1 var(--mono); letter-spacing: var(--ls-mono-sm); text-transform: uppercase; padding: 10px 14px; border-radius: var(--radius-2);
+  border: 1px solid var(--card-border); background: var(--frame-bg); color: var(--text-dim); cursor: pointer;
+  transition: color 160ms var(--ease), border-color 160ms var(--ease), background 160ms var(--ease), transform .22s var(--ease-spring, ease);
+}
+.jd-btn:hover { color: var(--text); border-color: var(--text-faint); transform: translateY(-1px); }
+.jd-btn:active { transform: translateY(0) scale(.98); }
+.jd-btn:focus-visible { outline: 2px solid var(--ui-focus-ring); outline-offset: 2px; }
+.jd-btn--primary { color: var(--text); background: var(--judgment); border-color: var(--judgment); }
+.jd-btn--primary:hover { color: var(--text); box-shadow: 0 0 22px var(--judgment-glow); }
+.jd-btn[disabled] { opacity: .45; cursor: default; transform: none; box-shadow: none; }
+.jd-hint { font-family: var(--sans); font-size: 0.78rem; color: var(--text-faint); }
+.jd-kbd { font-family: var(--mono); font-size: var(--fs-mono-xs); border: 1px solid var(--card-border); border-radius: 3px; padding: 1px 5px; color: var(--text-dim); }
+
+/* confirm summary */
+.jd-summary { display: flex; flex-direction: column; gap: 8px; }
+.jd-sum { display: grid; grid-template-columns: 110px 1fr; gap: 10px; font-size: 0.86rem; line-height: 1.5; }
+.jd-sum .k { font-family: var(--mono); font-size: var(--fs-mono-xs); letter-spacing: var(--ls-mono-sm); text-transform: uppercase; color: var(--text-faint); padding-top: 3px; }
+.jd-sum .v { font-family: var(--serif); color: var(--text-mid); }
+.jd-sum .v b { color: var(--text); font-weight: 500; }
+
+/* side by side · original vs corrected */
+.jd-diff { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.jd-diff__side { border: 1px solid var(--card-border); border-radius: var(--radius-2); padding: 10px 12px; background: var(--frame-bg); min-width: 0; }
+.jd-diff__side.is-orig { border-left: 2px solid var(--card-border-2); }
+.jd-diff__side.is-corr { border-left: 2px solid var(--judgment); }
+.jd-diff__k { font-family: var(--mono); font-size: var(--fs-mono-xs); letter-spacing: var(--ls-mono-sm); text-transform: uppercase; color: var(--text-faint); margin-bottom: 6px; display: flex; justify-content: space-between; gap: 8px; }
+.jd-diff__side.is-corr .jd-diff__k { color: var(--judgment); }
+.jd-diff__t { font-family: var(--serif); font-size: 0.95rem; line-height: 1.5; color: var(--text); word-break: break-word; }
+.jd-diff__side.is-orig .jd-diff__t { color: var(--text-mid); }
+.jd-diff__meta { margin-top: 8px; font-family: var(--mono); font-size: var(--fs-mono-xs); letter-spacing: 0.04em; color: var(--text-faint); line-height: 1.5; word-break: break-all; }
+
+/* ── the record · six questions ───────────────────────────────────── */
+.jd-record { border: 1px solid var(--card-border); border-radius: 8px; background: var(--frame-bg-2); padding: 0; overflow: hidden; }
+.jd-record__head { padding: 1.4rem 1.6rem 1.2rem; border-bottom: 1px solid var(--card-border); display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: start; }
+.jd-record__eyebrow { font-family: var(--mono); font-size: var(--fs-mono-xs); letter-spacing: var(--ls-mono); text-transform: uppercase; color: var(--text-dim); margin-bottom: 0.5rem; display: flex; gap: 10px; flex-wrap: wrap; }
+.jd-record__eyebrow .stamp { color: var(--judgment); }
+.jd-record__title { font-family: var(--display); font-weight: 500; font-size: 1.7rem; line-height: 1.15; color: var(--text); margin: 0; }
+.jd-record__id { font-family: var(--mono); font-size: var(--fs-mono-xs); letter-spacing: 0.06em; color: var(--text-faint); text-align: right; line-height: 1.6; }
+.jd-q { padding: 1.2rem 1.6rem; border-bottom: 1px solid var(--frame-border); display: grid; grid-template-columns: 220px 1fr; gap: 1.2rem; }
+.jd-q:last-child { border-bottom: 0; }
+.jd-q__n { font-family: var(--mono); font-size: var(--fs-mono-xs); letter-spacing: var(--ls-mono-sm); text-transform: uppercase; color: var(--text-faint); }
+.jd-q__h { font-family: var(--serif); font-weight: 500; font-size: 1.05rem; line-height: 1.3; color: var(--text); margin: 4px 0 0; }
+.jd-q__b { font-family: var(--sans); font-size: 0.9rem; line-height: 1.6; color: var(--text-mid); min-width: 0; }
+.jd-q__b > p { margin: 0 0 0.6rem; }
+.jd-q__b > p:last-child { margin-bottom: 0; }
+.jd-q__b b { color: var(--text); font-weight: 500; }
+.jd-q__lead { font-family: var(--serif); font-size: 1.15rem; line-height: 1.4; color: var(--text); margin: 0 0 0.5rem; }
+.jd-list { margin: 0; padding-left: 1.1rem; }
+.jd-list li { margin-bottom: 4px; }
+.jd-evlist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.jd-evlist li { display: flex; gap: 8px; align-items: baseline; font-size: 0.86rem; }
+.jd-evlist .mark { font-family: var(--mono); font-size: var(--fs-mono-xs); letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; min-width: 86px; color: var(--text-faint); }
+.jd-evlist .mark.is-seen { color: var(--diligence); }
+.jd-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 16px; }
+.jd-fact { border-top: 1px solid var(--frame-border); padding-top: 6px; }
+.jd-fact .k { font-family: var(--mono); font-size: var(--fs-mono-xs); letter-spacing: var(--ls-mono-sm); text-transform: uppercase; color: var(--text-faint); display: block; margin-bottom: 2px; }
+.jd-fact .v { font-family: var(--serif); font-size: 0.92rem; color: var(--text); line-height: 1.45; word-break: break-word; }
+.jd-fact .v.is-dim { color: var(--text-dim); }
+.jd-pattern { margin-top: 10px; padding: 10px 12px; border: 1px dashed var(--card-border); border-radius: var(--radius-2); font-size: 0.84rem; line-height: 1.55; color: var(--text-mid); }
+.jd-pattern .k { font-family: var(--mono); font-size: var(--fs-mono-xs); letter-spacing: var(--ls-mono-sm); text-transform: uppercase; color: var(--text-dim); display: block; margin-bottom: 4px; }
+.jd-pattern .dots { font-family: var(--mono); letter-spacing: 0.2em; color: var(--text-dim); margin-right: 8px; }
+.jd-pattern .dots b { color: var(--judgment); }
+.jd-record__foot { padding: 1.1rem 1.6rem 1.4rem; border-top: 1px solid var(--card-border); display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+/* notice · error / empty / not-found */
+.jd-notice { border: 1px solid var(--judgment-edge); background: var(--judgment-bg); border-radius: var(--radius-3); padding: 1rem 1.2rem; font-family: var(--sans); font-size: 0.9rem; line-height: 1.55; color: var(--text); }
+.jd-notice .k { font-family: var(--mono); font-size: var(--fs-mono-xs); letter-spacing: var(--ls-mono-sm); text-transform: uppercase; color: var(--judgment); display: block; margin-bottom: 4px; }
+.jd-notice--quiet { border-color: var(--card-border); background: var(--frame-bg-2); }
+.jd-notice--quiet .k { color: var(--text-dim); }
+
+.jd-foot { max-width: 1080px; margin: 2.2rem auto 0; padding-top: 1.2rem; border-top: 1px solid var(--frame-border); font-family: var(--serif); font-style: italic; font-size: 0.9rem; color: var(--text-dim); line-height: 1.5; }
+
+/* enter motion · one fade, reduced-motion safe */
+.jd-enter { animation: jd-rise 320ms var(--ease) both; }
+@keyframes jd-rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .jd-enter { animation: none; }
+  .jd-btn, .jd-dispo, .jd-assert { transition: none; }
+  .jd-btn:hover { transform: none; }
+}
+
+/* ── narrow ───────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .jd { padding: 1.4rem 1rem 2rem; }
+  .jd-cols { grid-template-columns: 1fr; }
+  .jd-panel { position: static; }
+  .jd-q { grid-template-columns: 1fr; gap: 0.5rem; }
+  .jd-title { font-size: 1.7rem; }
+}
+@media (max-width: 640px) {
+  .jd-claim, .jd-crumb__id { display: none; }   /* titlebar: keep the crumb on one line */
+  .jd-states { flex-direction: column; }
+  .jd-state { border-right: 0; border-bottom: 1px solid var(--card-border); }
+  .jd-state:last-child { border-bottom: 0; }
+  .jd-diff { grid-template-columns: 1fr; }
+  .jd-facts { grid-template-columns: 1fr; }
+  .jd-assert { grid-template-columns: 30px 1fr; }
+  .jd-assert .jd-support { grid-column: 2; justify-self: start; }
+  .jd-ev summary { grid-template-columns: 16px 1fr; }
+  .jd-ev__bear { grid-column: 2; text-align: left; max-width: none; }
+  .jd-record__head { grid-template-columns: 1fr; }
+  .jd-record__id { text-align: left; }
+  .jd-sum { grid-template-columns: 1fr; gap: 2px; }
+}
+
+/* ── Today · the re-entry card (cuts/10-today.html) ───────────────── */
+.jd-reentry .p-read__verdict { margin-bottom: 8px; }
+.jd-reentry__why { font-family: var(--sans); font-size: 0.82rem; line-height: 1.5; color: var(--text-dim); margin: 0 0 12px; }
+.jd-reentry__why b { color: var(--text-mid); font-weight: 500; }
+.jd-reentry .jd-diff { margin-bottom: 12px; }
+.jd-reentry .jd-diff__t { font-size: 0.9rem; }
+
+/* proof bundle · signed packet + the unchanged offline verifier (lib/judgment-proof.js) */
+.jd-record__proof { padding: 0 1.6rem 1.1rem; }
+.jd-proof code { font-family: var(--mono); font-size: var(--fs-mono-xs); overflow-wrap: anywhere; }

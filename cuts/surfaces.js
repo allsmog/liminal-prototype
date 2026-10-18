@@ -62,6 +62,10 @@ export const SURFACES = [
       alt:'L1→L2', framing:'wedge→infra', stage:'full-loop',
       jump:'Correction-as-primary; Today re-entry; Mirror reflect-back; ⌘K palette.',
       check:'⌘K opens; OKR allocation bar renders; Amend marks a read corrected; Mirror reflects the stream.' },
+    { num:'13', file:'13-judgment.html', name:'Judgment · acceptance & correction', meta:'one AI result → one record (LIM-2273)', badge:'live', survey:true,
+      alt:'L1→L2', framing:'wedge→infra', stage:'Decide→Record',
+      jump:'Cut 11’s F-CAL proposal judged as one continuous act: inspect evidence · accept / correct / reject / defer · confirm · six-question record · re-entry on Today.',
+      check:'AI card says not-yet-accepted; opening evidence marks it inspected; selecting an assertion opens the correction form; confirm writes to IndexedDB and the record shows original beside correction; Today shows the card and reopens the same record.' },
   ]},
   { grp: 'Scaffold + exploration', desc: 'authoring tools and in-flight directions', items: [
     { file:'_template.html', name:'_template', badge:'', jump:'Starting shape for a new cut.' },

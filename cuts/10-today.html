@@ -70,6 +70,8 @@
 <link rel="stylesheet" href="../lib/cut-shell.css">
 <link rel="stylesheet" href="../lib/surface-nav.css">
 <link rel="stylesheet" href="../lib/brand-upgrade.css">
+<!-- re-entry card for a stored judgment (cut 13 · LIM-2273) · diff + why-it-returned chrome only -->
+<link rel="stylesheet" href="../lib/judgment.css">
 
 <style>
   /* Initial-paint suppression (canon pattern from cut 01/03 polish pass).
@@ -477,6 +479,14 @@
 
         <!-- LEFT: needs a decision + re-surfaced -->
         <div class="tdy-col">
+          <!-- ── CAME BACK · a judgment you recorded (cut 13 · LIM-2273) ──────
+               Rendered only when this device's vault holds a judgment record
+               (or ?record=<id> names one). Empty vault → this slot stays empty
+               and Today reads exactly as before. The card keeps the AI's text
+               and the operator's correction as two voices; "Reopen" goes back
+               to cut 13 with the stored record, read-only. No daemon: the
+               "why it returned" line is derived from the record itself. -->
+          <div id="tdy-judgment" hidden></div>
           <div>
             <div class="tdy-section-label"><span>Needs a decision</span><span class="meta">held 2 days · re-read 04:12</span></div>
             <!-- .p-read · shared primitive (lib/cut-shell-products.css).
@@ -666,6 +676,55 @@
   })();
 </script>
 
+<script type="module">
+  // ── Came back · the judgment re-entry card (cut 13 · LIM-2273) ──
+  // Reads the device-local vault (lib/vault-store.js via lib/judgment.js).
+  // Fails silent on purpose: an empty or unavailable vault leaves Today
+  // untouched, so the fixture page never depends on this module.
+  import { loadJudgment, latestJudgment, CORRECTION_TAG_LABELS, fmtTime, fmtAgo, fmtDue, shortHash } from "../lib/judgment.js";
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const slot = document.getElementById("tdy-judgment");
+  const want = new URLSearchParams(location.search).get("record");
+  try {
+    let hit = want ? await loadJudgment(want) : await latestJudgment();
+    if (!hit && want) {
+      slot.innerHTML = `<div class="tdy-section-label"><span>Came back</span><span class="meta">record #${esc(want)}</span></div>
+        <div class="jd-notice jd-notice--quiet"><span class="k">not in this device's vault</span>No judgment record #${esc(want)} is stored in this browser. Records never leave the device they were made on.</div>`;
+      slot.hidden = false;
+    } else if (hit) {
+      const r = hit.record;
+      // the left edge names the register that produced the read (Judgment), never the disposition
+      const reg = "judgment";
+      const why = r.disposition === "defer"
+        ? `You held it. It is ${esc(fmtDue(r.defer.dueAt))}; it stays AI-produced and not accepted until you say otherwise.`
+        : r.disposition === "correct"
+          ? `You corrected ${esc(r.change.assertionId)} ${esc(fmtAgo(r.confirmedAt))}. The routing has not run, so no later evidence exists yet; this is the record coming back so you can see both voices again.`
+          : r.disposition === "accept"
+            ? `You accepted it ${esc(fmtAgo(r.confirmedAt))}. The routing has not run, so there is no later evidence yet.`
+            : `You rejected it ${esc(fmtAgo(r.confirmedAt))}. Nothing was routed; this is the record of what was set aside.`;
+      const diff = r.change ? `<div class="jd-diff">
+          <div class="jd-diff__side is-orig"><div class="jd-diff__k"><span>AI said · ${esc(r.original.producer.name)}</span><span>${esc(r.change.assertionId)}</span></div><div class="jd-diff__t">${esc(r.change.originalText)}</div></div>
+          <div class="jd-diff__side is-corr"><div class="jd-diff__k"><span>You said</span><span>${r.change.tag ? esc(CORRECTION_TAG_LABELS[r.change.tag]) : "untagged"}</span></div><div class="jd-diff__t">${esc(r.change.correctedText)}</div></div>
+        </div>` : "";
+      slot.innerHTML = `<div class="tdy-section-label"><span>Came back · a judgment you recorded</span><span class="meta">record #${hit.id} · ${esc(fmtAgo(r.confirmedAt))}</span></div>
+        <div class="p-read p-read--${reg} jd-reentry" data-record="${hit.id}" data-disposition="${esc(r.disposition)}">
+          <div class="p-read__tags"><span class="p-read__tag">${esc(r.caseId)} · ${esc(r.findingId)}</span><span class="p-read__tag">${esc(r.subject)}</span><span class="p-read__tag">device-local · ${r.proof?.signed ? "demonstration-key signature" : "unsigned"}</span></div>
+          <div class="p-read__verdict">${esc(r.dispositionLabel).toUpperCase()} · ${esc(fmtTime(r.confirmedAt))}</div>
+          <p class="p-read__body"><b>${esc(r.original.headline)}</b> The agent proposed it; you ${esc(r.disposition === "correct" ? "corrected" : r.disposition === "accept" ? "accepted" : r.disposition === "reject" ? "rejected" : "deferred")} it.</p>
+          <p class="jd-reentry__why"><b>Why it is here.</b> ${why}</p>
+          ${diff}
+          <div class="p-read__receipt"><span class="p-read__receipt-k">record #${hit.id}</span> · ${esc(r.actor.name)} · SHA-256 ${esc(shortHash(r.contentHash))} · content hash, not a signature · stored in this browser's IndexedDB</div>
+          <div class="p-read__actions">
+            <a class="p-read__btn p-read__btn--primary" href="13-judgment.html?record=${hit.id}">Reopen the record →</a>
+            <a class="p-read__btn" href="13-judgment.html">Judge it afresh</a>
+          </div>
+        </div>`;
+      slot.hidden = false;
+    }
+  } catch (err) {
+    console.warn("[today] judgment re-entry unavailable", err);
+  }
+</script>
 <script src="../lib/surface-nav.js"></script>
 <!-- shared ↺ restart chip · drift-matrix row 3 -->
 <script src="../lib/demo-restart.js" defer></script>

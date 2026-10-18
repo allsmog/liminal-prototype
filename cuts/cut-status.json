@@ -81,6 +81,13 @@
       "frontDoor": true
     },
     {
+      "path": "cuts/13-judgment.html",
+      "status": "live",
+      "kind": "cut",
+      "frontDoor": true,
+      "contract": "LIM-2273: Decide→Record seam · reached from cut 11 (F-CAL) and Today's re-entry card; not in the surface-nav rail (no new top-level navigation)"
+    },
+    {
       "path": "cuts/_archive/00-hero-demo.html",
       "status": "archive",
       "kind": "cut",
