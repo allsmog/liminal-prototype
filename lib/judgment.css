@@ -281,3 +281,7 @@
 .jd-reentry__why b { color: var(--text-mid); font-weight: 500; }
 .jd-reentry .jd-diff { margin-bottom: 12px; }
 .jd-reentry .jd-diff__t { font-size: 0.9rem; }
+
+/* proof bundle · signed packet + the unchanged offline verifier (lib/judgment-proof.js) */
+.jd-record__proof { padding: 0 1.6rem 1.1rem; }
+.jd-proof code { font-family: var(--mono); font-size: var(--fs-mono-xs); overflow-wrap: anywhere; }

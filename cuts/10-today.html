@@ -708,7 +708,7 @@
         </div>` : "";
       slot.innerHTML = `<div class="tdy-section-label"><span>Came back · a judgment you recorded</span><span class="meta">record #${hit.id} · ${esc(fmtAgo(r.confirmedAt))}</span></div>
         <div class="p-read p-read--${reg} jd-reentry" data-record="${hit.id}" data-disposition="${esc(r.disposition)}">
-          <div class="p-read__tags"><span class="p-read__tag">${esc(r.caseId)} · ${esc(r.findingId)}</span><span class="p-read__tag">${esc(r.subject)}</span><span class="p-read__tag">device-local · unsigned</span></div>
+          <div class="p-read__tags"><span class="p-read__tag">${esc(r.caseId)} · ${esc(r.findingId)}</span><span class="p-read__tag">${esc(r.subject)}</span><span class="p-read__tag">device-local · ${r.proof?.signed ? "demonstration-key signature" : "unsigned"}</span></div>
           <div class="p-read__verdict">${esc(r.dispositionLabel).toUpperCase()} · ${esc(fmtTime(r.confirmedAt))}</div>
           <p class="p-read__body"><b>${esc(r.original.headline)}</b> The agent proposed it; you ${esc(r.disposition === "correct" ? "corrected" : r.disposition === "accept" ? "accepted" : r.disposition === "reject" ? "rejected" : "deferred")} it.</p>
           <p class="jd-reentry__why"><b>Why it is here.</b> ${why}</p>

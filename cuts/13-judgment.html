@@ -13,7 +13,7 @@
   Altitude   · L1→L2
   Surface    · desktop
   Framing    · wedge→infra            (spend is the subject · the judgment layer is the product)
-  Maturity   · refining               (prototype · deterministic fixture · device-local record · NOT signed)
+  Maturity   · refining               (prototype · deterministic fixture · device-local record · demonstration-key signature)
   Spec ref   · Linear LIM-2273 (parent LIM-2168) · consumes LIM-2269/2270/2271 as far as they are ruled;
                design decisions those tickets have not yet closed are listed in the PR, not decided here.
   ──────────────────────────────────────────────────────────────────────
@@ -34,6 +34,10 @@
   Claim register · everything on this surface is a deterministic fixture except the
   operator's own judgment, which is genuinely stored in this browser's IndexedDB.
   The content hash is SHA-256 computed here; it is not a signature and says so.
+  On record, lib/judgment-proof.js signs a packet.v2 finding with an Ed25519
+  DEMONSTRATION key made in this browser; the bundle ships the unchanged offline
+  verifier from receipts/2026-10-06/bundle/. The key identifies no person or
+  organization, and the record says which fields the signature does not cover.
   Nothing is propagated, no rule is activated, no external system changes.
 
   Runtime · lib/judgment.js (state, record, persistence) · lib/judgment.css (layer)
@@ -79,7 +83,7 @@
         <span class="app-label">Liminal</span>
         <span class="jd-crumb">&nbsp;/&nbsp; <b>Judgment</b><span class="jd-crumb__id"> &nbsp;/&nbsp; gc-2026-06-A</span></span>
         <span class="spacer"></span>
-        <span class="jd-claim" title="Every figure on this surface is a deterministic fixture. Only your judgment is stored, in this browser.">prototype · deterministic fixture · record unsigned</span>
+        <span class="jd-claim" title="Every figure on this surface is a deterministic fixture. Only your judgment is stored, in this browser.">prototype · deterministic fixture · demonstration-key signature</span>
       </div>
     </header>
     <main class="jd" id="jd" aria-live="polite" aria-busy="true">
@@ -97,6 +101,7 @@ import {
   sha256Hex, shortHash, vaultAvailable, recordJudgment, loadJudgment, correctionPattern,
   fmtTime, fmtAgo, fmtDue,
 } from "../lib/judgment.js";
+import { proveRecord, bundleFiles, bundleName, zipFiles, VERIFIER_FILES, KEY_LABEL } from "../lib/judgment-proof.js";
 
 const $ = (s, r = document) => r.querySelector(s);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -122,6 +127,7 @@ const S = {
   failure: null,
   pattern: null,
   originalHash: null,
+  proof: null,              // signed packet for the confirmed record · kept across a vault retry
   reopened: false,
   focus: null,
 };
@@ -413,6 +419,7 @@ async function confirmJudgment() {
   if (problems.length) { S.problems = problems; S.phase = "form"; renderJudge(); return; }
   const confirmedAt = Date.now();
   S.record = buildRecord({ judgment: currentJudgment(), inspected: [...S.inspected], actor: OPERATOR, confirmedAt });
+  S.proof = null;
   S.state = STATES.CONFIRMED; S.failure = null; S.view = "record"; S.focus = "jd-record-h";
   renderRecord();
   await persist();
@@ -421,20 +428,55 @@ async function confirmJudgment() {
 async function persist() {
   try {
     if (!vaultAvailable()) throw new Error("IndexedDB is not available in this browser context");
-    const { id, record } = await recordJudgment(S.record);
+    /* sign once per confirmed judgment; a retry after a failed write reuses it */
+    if (!S.proof) S.proof = await proveRecord(S.record);
+    const { id, record } = await recordJudgment(S.record, { proof: S.proof });
     S.record = record; S.recordId = id; S.recordTs = Date.now(); S.state = STATES.RECORDED; S.failure = null;
     if (record.change) S.pattern = await correctionPattern({ tag: record.change.tag, lane: record.lane });
     history.replaceState(null, "", `?record=${id}`);
     /* the record re-renders once the write lands; keep the reader on its heading */
     S.focus = "jd-record-h";
     renderRecord();
-    toast(`Recorded · device-local vault · id #${id} · unsigned`);
+    toast(`Recorded · device-local vault · id #${id} · ${record.proof?.signed ? "signed with this browser's demonstration key" : "unsigned"}`);
   } catch (err) {
     console.warn("[judgment] record failed", err);
     S.failure = String(err?.message || err);
     S.focus = "jd-record-h";
     renderRecord();
   }
+}
+
+/* ─── the proof · a bundle the existing offline verifier checks ─────── */
+async function downloadProof() {
+  const r = S.record, proof = r.proof;
+  const verifier = {};
+  for (const [name, path] of Object.entries(VERIFIER_FILES)) {
+    const res = await fetch(`../${path}`);
+    if (!res.ok) throw new Error(`could not load ${name} (${res.status})`);
+    verifier[name] = new Uint8Array(await res.arrayBuffer());
+  }
+  const folder = bundleName(proof);
+  const zip = zipFiles(bundleFiles(proof, r, verifier), { folder, at: proof.preparedAt });
+  const url = URL.createObjectURL(new Blob([zip], { type: "application/zip" }));
+  const a = document.createElement("a");
+  a.href = url; a.download = `${folder}.zip`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function proofBlock(r) {
+  const p = r.proof;
+  if (!p) return `<div class="jd-notice jd-notice--quiet jd-proof" id="jd-proof" data-signed="none"><span class="k">no proof</span>This record was stored before signing existed in this prototype, so it carries no packet.</div>`;
+  const cmd = p.signed ? `node verify.mjs . --expect-fingerprint ${p.fingerprint}` : "node verify.mjs .";
+  return `<div class="jd-notice jd-notice--quiet jd-proof" id="jd-proof" data-signed="${p.signed ? "yes" : "no"}">
+    <span class="k">${p.signed ? "proof · check it offline with Node, no Liminal app" : "proof · not signed"}</span>
+    ${p.signed
+      ? `Packet <code>${esc(p.packet.packet.id)}</code> (${esc(p.packet.schema)}), signed with a <b>${esc(KEY_LABEL)}</b>. Fingerprint <code class="jd-fp">${esc(p.fingerprint)}</code>.`
+      : `This browser could not sign (${esc(p.signError)}). The bundle still carries the packet; the verifier reports it <b>UNVERIFIED</b>, which is the honest result.`}
+    <p style="margin-top:8px">The signature covers the AI result as produced, your disposition, your words, the corrected text and tag, the confirm time and any defer date. It does <b>not</b> cover which evidence you opened, the actor label, the record time or the vault id: the packet format has no field for them.</p>
+    <p style="margin-top:8px">Unzip, then run <code>${esc(cmd)}</code> with Node 18 or newer. The verifier in the bundle is the one published at <code>receipts/2026-10-06/bundle/</code>, unchanged.</p>
+    <span class="jd-actions" style="display:inline-flex;margin-top:8px"><button type="button" class="jd-btn" id="jd-proof-dl">Download proof bundle (.zip)</button></span>
+  </div>`;
 }
 
 /* ─── the record · six questions ────────────────────────────────────── */
@@ -454,7 +496,8 @@ function renderRecord() {
   const origHash = r.originalHash || S.originalHash;
   const recorded = S.state === STATES.RECORDED;
   const failed = !!S.failure;
-  const eyeState = recorded ? "recorded · device-local · unsigned" : failed ? "operator-confirmed · NOT recorded" : "operator-confirmed · recording…";
+  const signed = recorded && !!r.proof?.signed;
+  const eyeState = recorded ? `recorded · device-local · ${signed ? "demonstration-key signature" : "unsigned"}` : failed ? "operator-confirmed · NOT recorded" : "operator-confirmed · recording…";
   const changeBlock = r.change ? `
     <div class="jd-diff">
       <div class="jd-diff__side is-orig"><div class="jd-diff__k"><span>original · ${esc(r.original.producer.name)}</span><span>${r.change.assertionId}</span></div><div class="jd-diff__t">${esc(r.change.originalText)}</div><div class="jd-diff__meta">kept verbatim · ${origHash ? "SHA-256 " + shortHash(origHash) : "hash pending"}</div></div>
@@ -484,7 +527,7 @@ function renderRecord() {
           <div class="jd-record__eyebrow"><span class="stamp">${esc(eyeState)}</span><span>${esc(r.subject)}</span></div>
           <h2 class="jd-record__title">${esc(r.dispositionLabel)} by ${esc(r.actor.name).toLowerCase()} · ${fmtTime(r.confirmedAt)}</h2>
         </div>
-        <div class="jd-record__id">${recorded ? `vault id #${S.recordId}<br>content hash SHA-256 ${shortHash(r.contentHash)}<br>computed in this browser · not a signature` : `no vault id<br>not stored`}</div>
+        <div class="jd-record__id">${recorded ? `vault id #${S.recordId}<br>content hash SHA-256 ${shortHash(r.contentHash)}<br>computed in this browser · not a signature${signed ? `<br>packet signed · key ${shortHash(r.proof.fingerprint)}` : ""}` : `no vault id<br>not stored · no proof issued`}</div>
       </div>
 
       <section class="jd-q"><div><div class="jd-q__n">1</div><h3 class="jd-q__h">What was decided?</h3></div>
@@ -520,7 +563,7 @@ function renderRecord() {
           <div class="jd-facts">
             <div class="jd-fact"><span class="k">stored</span><span class="v ${recorded ? "" : "is-dim"}">${recorded ? esc(r.preservation.store) : "not stored"}</span></div>
             <div class="jd-fact"><span class="k">original AI text</span><span class="v">preserved · ${origHash ? "SHA-256 " + shortHash(origHash) : "hash pending"}</span></div>
-            <div class="jd-fact"><span class="k">signed</span><span class="v">no · a content hash is not a signature</span></div>
+            <div class="jd-fact"><span class="k">signed</span><span class="v">${signed ? "yes · Ed25519 · demonstration key made in this browser" : recorded ? (r.proof ? "no · this browser could not sign" : "no · stored before this prototype signed records") : "no · nothing is signed until the record is stored"}</span><span class="v is-dim" style="font-size:.82rem">${signed ? "proves the packet is unchanged since this browser's key signed it; it does not identify a person or an organization" : "a content hash is not a signature"}</span></div>
             <div class="jd-fact"><span class="k">anchored · propagated</span><span class="v">no · no</span></div>
             <div class="jd-fact"><span class="k">rule activated</span><span class="v">no · corrections are evidence for a proposal, never a rule</span></div>
             <div class="jd-fact"><span class="k">comes back</span><span class="v">${r.disposition === "defer" ? `on Today · ${esc(fmtDue(r.defer.dueAt))}` : "on Today · as a re-entry card you can reopen"}</span></div>
@@ -530,6 +573,7 @@ function renderRecord() {
           ${pattern}
         </div></section>
 
+      ${recorded ? `<div class="jd-record__proof">${proofBlock(r)}</div>` : ""}
       <div class="jd-record__foot">
         ${recorded ? `<a class="jd-btn jd-btn--primary" id="jd-to-today" href="10-today.html?record=${S.recordId}">Continue to Today →</a>` : `<button type="button" class="jd-btn jd-btn--primary" disabled title="Nothing to reopen until the record is stored">Continue to Today →</button>`}
         ${S.reopened ? `<a class="jd-btn" href="10-today.html">Back to Today</a>` : ""}
@@ -540,6 +584,7 @@ function renderRecord() {
     <div class="jd-foot">What the agent said and what you said are two voices in one record. Neither overwrites the other, and the person who was not in the room can tell them apart.</div>
   </div>`;
   const retry = $("#jd-retry"); if (retry) retry.addEventListener("click", async () => { S.failure = null; renderRecord(); await persist(); });
+  const dl = $("#jd-proof-dl"); if (dl) dl.addEventListener("click", () => downloadProof().catch(err => { console.warn("[judgment] proof bundle failed", err); toast(`Proof bundle could not be built · ${esc(err?.message || err)}`); }));
   applyFocus();
 }
 
