@@ -18,7 +18,7 @@ const TONES = ["default", "success", "error", "warning", "info"] as const;
 const label = {
   "font-family": "var(--mono)",
   "font-size": "var(--fs-mono-xs)",
-  "letter-spacing": "var(--ls-mono-sm)",
+  "letter-spacing": "0.08em", // no canon token at 0.08em; matches the sibling reference labels
   "text-transform": "uppercase",
   color: "var(--text-faint)",
   "margin-bottom": "12px",
