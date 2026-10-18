@@ -355,6 +355,36 @@ test("inferred kind (M1): a correction left on its default records, counts and s
   expect(verify(dir).code).toBe(0);
 });
 
+test("typed name and judged-against: shown as unverified, kept in the record, absent from the signed bytes", async ({ page }) => {
+  const NAME = "Rowan Test-Name";
+  const AGAINST = "Launch work is never counted as admin.";
+  await open(page);
+  await page.locator('[data-assert="A2"]').click();
+  await page.fill("#jd-corrected", CORRECTION);
+  await page.fill("#jd-against", AGAINST);
+  await page.fill("#jd-by", NAME);
+  await page.locator("#jd-review").click();
+  await expect(page.locator(".jd-summary")).toContainText(`${NAME} · as typed, not verified`);
+  await expect(page.locator(".jd-summary")).toContainText(/judged against.*not in the signed packet/);
+  await page.locator("#jd-confirm").click();
+  const record = page.locator(".jd-record");
+  await expect(record).toHaveAttribute("data-state", "recorded");
+  await expect(record.locator(".jd-record__title")).toContainText(`${NAME} (as typed, not verified)`);
+  await expect(page.locator("#jd-stated-name")).toContainText(/not checked against any account/);
+  await expect(page.locator("#jd-judged-against")).toContainText(AGAINST);
+  // the signed bytes carry neither, and the bundle still verifies
+  const { dir } = await downloadBundle(page);
+  const signed = readFileSync(join(dir, "packet.json"), "utf8") + readFileSync(join(dir, "corrections.json"), "utf8");
+  expect(signed).not.toContain(NAME);
+  expect(signed).not.toContain(AGAINST);
+  expect(readFileSync(join(dir, "ABOUT.md"), "utf8")).toContain("any name the person typed, the judged-against line");
+  expect(verify(dir).code).toBe(0);
+  // reopen from the vault: both survive in the stored record
+  await page.reload({ waitUntil: "load" });
+  await expect(page.locator("#jd-judged-against")).toContainText(AGAINST);
+  await expect(page.locator("#jd-stated-name")).toContainText(NAME);
+});
+
 test("failed save: no vault means no proof is issued and nothing can be downloaded", async ({ page }) => {
   await page.addInitScript(() => {
     Object.defineProperty(window, "indexedDB", { value: undefined, configurable: true });

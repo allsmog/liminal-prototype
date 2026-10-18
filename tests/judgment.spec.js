@@ -171,7 +171,7 @@ for (const d of ["accept", "reject", "defer"]) {
     await expect(record).toHaveAttribute("data-state", "recorded", { timeout: 10_000 });
     await expect(record).toHaveAttribute("data-disposition", d);
     if (d === "accept") {
-      await expect(record).toContainText(/All 5 assertions are accepted unchanged/);
+      await expect(record).toContainText(/All 5 claims are accepted unchanged/);
       await expect(record).toContainText(/No evidence was opened before acceptance/);
       await expect(record).toContainText(/Your acceptance is a separate line/);
     }
