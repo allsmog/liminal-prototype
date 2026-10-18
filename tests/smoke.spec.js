@@ -18,6 +18,9 @@ const SURFACES = [
   // there would otherwise be invisible.
   { name: "cut 06 margin-read", url: "/cuts/06-margin-read.html", marker: null },
   { name: "cut 10 today", url: "/cuts/10-today.html", marker: null },
+  // Added 2026-10-17 with the as-built cut 12: it fetches inventory.json and
+  // ~20 WebP captures at runtime, so a missing asset is a 404 this test sees.
+  { name: "cut 12 as built", url: "/cuts/12-operating-plane.html", marker: "The operating plane, as built." },
 ];
 
 for (const s of SURFACES) {
