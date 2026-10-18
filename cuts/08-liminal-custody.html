@@ -3007,9 +3007,9 @@
   const REQUIRED_KEYS = ["workflowNodes", "beatMeta", "caseData", "sourceStates", "ruleText", "framing"];
 
   const SCENARIOS = {
-    /* Maritime is the default and the only complete scenario. It references the
-       data defined above rather than copying it, so this registry adds a
-       selection layer without relocating ~440 lines of authored content. */
+    /* Maritime is the default scenario. It references the data defined above
+       rather than copying it, so this registry adds a selection layer without
+       relocating ~440 lines of authored content. */
     maritime: {
       label: "Maritime custody · contested strait transit",
       complete: true,
@@ -3041,11 +3041,12 @@
       ruleText:      MARITIME_ruleText
     },
 
-    /* Healthcare major-incident. Framing was authored on
-       demo/cut08-healthcare-incident-2026-07-06 and landed via #60; the CONSOLE
-       payload was never written, which is precisely what produced the hybrid.
-       Declared here so the scenario is visible and named, and deliberately marked
-       incomplete so it cannot render until its console exists. */
+    /* Healthcare major-incident. Framing was first authored on
+       demo/cut08-healthcare-incident-2026-07-06 and landed via PR 60 without a
+       console, which is what produced the hybrid PR 106 repaired. The console
+       payload (the HEALTHCARE_* constants above) landed in PR 112, so the scenario
+       is complete and renders at ?subject=healthcare. It shows no findings rail:
+       no run happened against this scenario. */
     healthcare: {
       label: "Healthcare major-incident · patient-transport outage",
       complete: true,
