@@ -62,31 +62,46 @@ export const Tiles: Story = {
   ),
 };
 
-/** Same paragraph under the three density registers: spacing tokens scale, the 12px line does not. */
-export const Densities: Story = {
-  render: () => (
-    <div style={{ display: "grid", "grid-template-columns": "repeat(3, 1fr)", gap: "24px" }}>
-      {(["anointed", "shared", "analyst"] as const).map((density) => (
-        <div data-density={density}>
-          <div
-            style={{
-              "font-family": "var(--mono)",
-              "font-size": "10px",
-              "letter-spacing": "0.08em",
-              "text-transform": "uppercase",
-              color: "var(--text-faint)",
-              "margin-bottom": "12px",
-            }}
-          >
-            {density}
-          </div>
-          <Busy width="100%">
-            <SkeletonLine width="short" />
-            <SkeletonLine width="long" />
-            <SkeletonLine width="mid" />
-          </Busy>
-        </div>
-      ))}
-    </div>
-  ),
+// Density is read where canon reads it: design-tokens.css sets --density-scale only on
+// `body[data-density=…]`, so a per-element data-density wrapper changes nothing. Each story pins
+// the gallery's `density` global; preview.tsx's withRegister decorator writes it to <body>, and
+// also to its own wrapper div (for desktop Panda's element-agnostic `[data-density]` rule, which
+// this repo cannot see), so the sample needs no data-density attribute of its own.
+// One story per register, so each Argos snapshot carries a genuinely different scale.
+const label = {
+  "font-family": "var(--mono)",
+  "font-size": "var(--fs-mono-xs)",
+  "letter-spacing": "0.08em", // no canon token at 0.08em; matches the sibling reference labels
+  "text-transform": "uppercase",
+  color: "var(--text-faint)",
+  "margin-bottom": "12px",
+} as const;
+
+const DensitySample = (props: { density: "anointed" | "shared" | "analyst" }) => (
+  <div>
+    <div style={label}>{props.density}</div>
+    <Busy>
+      <SkeletonLine width="short" />
+      <SkeletonLine width="long" />
+      <SkeletonLine width="mid" />
+    </Busy>
+  </div>
+);
+
+/** anointed (--density-scale 1.10): spacing tokens scale up; the 12px line does not. */
+export const DensityAnointed: Story = {
+  globals: { density: "anointed" },
+  render: () => <DensitySample density="anointed" />,
+};
+
+/** shared (--density-scale 1.00): the default register. */
+export const DensityShared: Story = {
+  globals: { density: "shared" },
+  render: () => <DensitySample density="shared" />,
+};
+
+/** analyst (--density-scale 0.85): spacing tokens scale down; the 12px line does not. */
+export const DensityAnalyst: Story = {
+  globals: { density: "analyst" },
+  render: () => <DensitySample density="analyst" />,
 };

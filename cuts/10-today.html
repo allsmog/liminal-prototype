@@ -704,7 +704,7 @@
             : `You rejected it ${esc(fmtAgo(r.confirmedAt))}. Nothing was routed; this is the record of what was set aside.`;
       const diff = r.change ? `<div class="jd-diff">
           <div class="jd-diff__side is-orig"><div class="jd-diff__k"><span>AI said · ${esc(r.original.producer.name)}</span><span>${esc(r.change.assertionId)}</span></div><div class="jd-diff__t">${esc(r.change.originalText)}</div></div>
-          <div class="jd-diff__side is-corr"><div class="jd-diff__k"><span>You said</span><span>${r.change.tag ? esc(CORRECTION_TAG_LABELS[r.change.tag]) : "untagged"}</span></div><div class="jd-diff__t">${esc(r.change.correctedText)}</div></div>
+          <div class="jd-diff__side is-corr"><div class="jd-diff__k"><span>You said</span><span>${r.change.kind ? esc(r.change.kind) : r.change.tag ? esc(CORRECTION_TAG_LABELS[r.change.tag]) : ""}</span></div><div class="jd-diff__t">${esc(r.change.correctedText)}</div></div>
         </div>` : "";
       slot.innerHTML = `<div class="tdy-section-label"><span>Came back · a judgment you recorded</span><span class="meta">record #${hit.id} · ${esc(fmtAgo(r.confirmedAt))}</span></div>
         <div class="p-read p-read--${reg} jd-reentry" data-record="${hit.id}" data-disposition="${esc(r.disposition)}">

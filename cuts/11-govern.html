@@ -13,15 +13,15 @@
   ──────────────────────────────────────────────────────────────────────
   PORTED from the Govern cockpit build (liminal-govern/app) + RECONCILED with cut 11's
   loved prototype interactions. Fixture figures from the emitted govern run, cuts/govern-run.json ($13,045→$4,500 · naïve $486→verified $324; E14/PR-103 dropped $162. The earlier liminal-govern run read $446→$284 on different usage data
-  adversarial catch). Restores: the 4-register read + the CORRECTION FLOW (correction is the
-  primary act), the OKR allocation bar, the OG Today + Mirror surfaces, and the
+  adversarial catch). Restores: the 4-register read (correction is the primary act; since
+  LIM-2292 it is made in Cut 13, the single correction surface, and counted back here), the OKR allocation bar, the OG Today + Mirror surfaces, and the
   ORBITAL agency rail (8 bounded + adversarial reviewer, per liminal-govern canon;
   from slate-tray, re-subjected to spend, canon-color-clean).
   Follows design-system.html canon: register tokens only, NO inline color overrides.
 
   Surfaces (tabs + ⌘K): Today (re-entry) · The Loop (sense→read→catch→ratify) · Mirror
   (calibration) · Registry (verified agents) · Decision log (hash chain).
-  ── Try it: ⌘K · 1–5 tabs · on the Loop: "Amend read" any register (correction) · Sign to ratify.
+  ── Try it: ⌘K · 1–5 tabs · on the Loop: "Amend read" / "Correct this finding" hand off to Cut 13 · Sign to ratify.
 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -147,17 +147,17 @@ body[data-surface="today"] .rail-l,body[data-surface="today"] .rail-r,body[data-
 .urow .cat{color:var(--text-faint);font-size: var(--fs-eyebrow)}.urow .cost{color:var(--text-mid);font-variant-numeric:tabular-nums}
 .urow.flagged{border-color:var(--alarm-edge);background:var(--alarm-bg)}.urow.flagged .cat{color:var(--alarm)}
 
-/* ── the 4-register READ (restored, with correction flow) ── */
+/* ── the 4-register READ (corrections hand off to Cut 13, LIM-2292) ── */
 /* .reg now COMPOSES .p-read (lib/cut-shell-products.css): the box, the register
    left-edge and the head come from the primitive. What stays here is the part
    the primitive has no opinion about: the staggered entrance and the
-   positioning context the amend affordance needs. The `reg` class itself must
+   positioning context the amend hand-off needs. The `reg` class itself must
    remain: the delegated handler resolves targets with closest('.reg'). */
 .reg{position:relative;opacity:0;transform:translateY(5px);animation:rin .5s var(--ease) forwards;margin-bottom:10px}
 .reg .rh{align-items:baseline}  /* p-read__head supplies display/gap/type */
 .reg .rname{font:10px/1 var(--mono);letter-spacing: var(--ls-mono-lg);text-transform:uppercase}
 .reg .rt{font:9px/1 var(--mono);color:var(--text-faint);margin-left: auto}
-.reg .amend{font:8px/1 var(--mono);letter-spacing: .12em;text-transform:uppercase;color:var(--text-faint);border:1px solid var(--card-border);border-radius: var(--radius-2);padding: 3px 7px;cursor:pointer;opacity:0;transition:.15s}
+.reg .amend{text-decoration:none;font:8px/1 var(--mono);letter-spacing: .12em;text-transform:uppercase;color:var(--text-faint);border:1px solid var(--card-border);border-radius: var(--radius-2);padding: 3px 7px;cursor:pointer;opacity:0;transition:.15s}
 .reg:hover .amend{opacity:1}.reg .amend:hover{color:var(--diligence);border-color:var(--diligence)}
 .reg .rbody{margin-top: 9px;font:14px/1.55 var(--serif,"Perfectly Nineties",Georgia,serif);color:var(--text-mid)}
 .reg .rbody .hl{color:var(--text)}
@@ -166,16 +166,6 @@ body[data-surface="today"] .rail-l,body[data-surface="today"] .rail-r,body[data-
    painted var(--connection) rather than var(--outreach). Same hue today, but it
    addressed the FACTOR where every sibling addressed the REGISTER, so a future
    register remap would have silently skipped this one row. */
-.reg.corrected{background:linear-gradient(90deg,var(--diligence-bg),transparent 60%)}
-.reg .cmark{display:none;font:8px/1 var(--mono);letter-spacing: .12em;text-transform:uppercase;color:var(--diligence);margin-left: var(--space-2)}
-.reg.corrected .cmark{display:inline}
-.reg-edit{display:none;margin-top: 9px;gap: var(--space-2)}
-.reg.editing .reg-edit{display:flex;flex-direction:column}
-.reg-edit textarea{width:100%;background:var(--frame-bg);border:1px solid var(--card-border);border-radius: var(--radius-3);color:var(--text);font:12px/1.5 var(--sans);padding: calc(var(--space-2) * var(--density-scale)) 10px;resize:vertical;min-height:54px}
-.reg-edit .er{display:flex;gap: calc(var(--space-2) * var(--density-scale));align-items:center}
-.reg-edit .rsave{font:8px/1 var(--mono);letter-spacing: .12em;text-transform:uppercase;color:#fff;background:var(--diligence);border:1px solid var(--diligence);border-radius: var(--radius-2);padding: 7px calc(var(--space-3) * var(--density-scale));cursor:pointer}
-.reg-edit .rcancel{font:8px/1 var(--mono);letter-spacing: .12em;text-transform:uppercase;color:var(--text-faint);background:transparent;border:1px solid var(--card-border);border-radius: var(--radius-2);padding: 7px calc(var(--space-3) * var(--density-scale));cursor:pointer}
-.reg-edit .hint{margin-left: auto;font:8px/1.4 var(--mono);color:var(--text-faint);letter-spacing: var(--ls-app-wide);max-width:30ch;text-align:right}
 .cite{font:9px/1 var(--mono);letter-spacing: .04em;color:var(--depth);border:1px solid var(--depth-edge);border-radius: var(--radius-2);padding: calc(var(--space-app-0-5) * var(--density-scale)) calc(var(--space-app-1-5) * var(--density-scale));margin-left: calc(var(--space-1) * var(--density-scale));cursor:pointer;transition:.15s;white-space:nowrap}
 .cite:hover{background:var(--depth-bg)}
 
@@ -301,18 +291,11 @@ body[data-surface="today"] .rail-l,body[data-surface="today"] .rail-r,body[data-
 .receipt .full{flex-basis:100%}
 .receipt .vbadge{display:inline-flex;align-items:center;gap: 5px;color:var(--good);letter-spacing: var(--ls-app-wide)}.receipt .vbadge::before{content:"";width:6px;height:6px;border-radius: 50%;background:var(--good)}
 .receipt.bad .vbadge{color:var(--alarm)}.receipt.bad .vbadge::before{background:var(--alarm)}
-.finding-correct{padding: 10px 13px;border-top:1px dashed var(--card-border);background:var(--frame-bg-3)}
-.fc-toggle{font:8px/1 var(--mono);letter-spacing: .12em;text-transform:uppercase;color:var(--text-faint);border:1px solid var(--card-border);border-radius: var(--radius-2);padding: 5px 9px;cursor:pointer;background:transparent}
+.finding-correct{padding: 10px 13px;border-top:1px dashed var(--card-border);background:var(--frame-bg-3);display:flex;flex-wrap:wrap;gap: var(--space-2);align-items:center}
+.fc-toggle{display:inline-block;text-decoration:none;font:8px/1 var(--mono);letter-spacing: .12em;text-transform:uppercase;color:var(--text-faint);border:1px solid var(--card-border);border-radius: var(--radius-2);padding: 5px 9px;cursor:pointer;background:transparent}
 .fc-toggle:hover{color:var(--diligence);border-color:var(--diligence)}
-.fc-box{display:none;margin-top: 9px}.finding.correcting .fc-box{display:block}
-.fc-kinds{display:flex;gap: calc(var(--space-app-1-5) * var(--density-scale));margin-bottom: var(--space-app-1-5)}
-.fc-gloss{font:9px/1.5 var(--mono);letter-spacing: .04em;color:var(--text-faint);margin-bottom: var(--space-2)}
-.fc-kind{font:8px/1 var(--mono);letter-spacing: .08em;text-transform:uppercase;color:var(--text-faint);border:1px solid var(--card-border);border-radius: var(--radius-2);padding: 5px calc(var(--space-2) * var(--density-scale));cursor:pointer;background:transparent}
-.fc-kind.on{color:#fff;background:var(--diligence);border-color:var(--diligence)}
-.fc-box textarea{width:100%;background:var(--frame-bg);border:1px solid var(--card-border);border-radius: var(--radius-3);color:var(--text);font:11px/1.5 var(--sans);padding: calc(var(--space-2) * var(--density-scale)) 10px;resize:vertical;min-height:46px}
-.fc-box .er{display:flex;gap: calc(var(--space-2) * var(--density-scale));align-items:center;margin-top: var(--space-2)}
-.fc-box .save{font:8px/1 var(--mono);letter-spacing: .12em;text-transform:uppercase;color:#fff;background:var(--diligence);border:1px solid var(--diligence);border-radius: var(--radius-2);padding: 7px calc(var(--space-3) * var(--density-scale));cursor:pointer}
-.fc-done{display:none;margin-top: calc(var(--space-2) * var(--density-scale));font:9px/1.4 var(--mono);color:var(--good)}.finding.corrected .fc-done{display:block}.finding.corrected .fc-box{display:none}
+.fc-note{font:9px/1.5 var(--mono);letter-spacing: .04em;color:var(--text-faint)}
+.fc-note a{color:var(--text-mid)}
 /* chain-integrity badge (stays green through corrections) */
 .chain-integ{display:inline-flex;align-items:center;gap: 5px;font:8px/1 var(--mono);letter-spacing: .08em;text-transform:uppercase;color:var(--good);margin-left: auto;flex-shrink:0}
 .chain-integ::before{content:"";width:6px;height:6px;border-radius: 50%;background:var(--good);box-shadow:0 0 6px var(--good)}
@@ -638,6 +621,10 @@ let READS={
   judgment:{rt:'+6.1s',html:'__JUDGMENT__'},
   outreach:{rt:'+7.0s',html:'Drafted · route calendar work to a registry-verified agent <span class="cite" data-cite="registry">agent-registry</span>. Ready to ratify.<div class="swap"><div class="side cur"><span class="ro">current</span><div class="ag">Claude Opus 4.8</div><div class="co">calendar mgmt · frontier tier</div><span class="bd">out of approved scope</span></div><div class="arrow">→</div><div class="side sug"><span class="ro">route to</span><div class="ag">CalendarOps Agent</div><div class="co">~10% of Opus · scoped: calendar</div><span class="bd">registry-verified</span></div></div>'},
 };
+/* corrections = judgment records with disposition "correct" for this case's
+   F-CAL, recorded by Cut 13 in this browser's vault (LIM-2292). Cut 11 no
+   longer corrects inline; it reads the count at boot (see loadJudged) and
+   freezes it at the moment of sealing. */
 let corrections=0, signed=false;
 let STEP=3, STEP_DONE=new Set([1,2]);
 let POLICIES=[
@@ -793,17 +780,10 @@ function renderChain(){
   $('#chain').scrollLeft=99999;
 }
 
-// FINDING · clickable provenance artifact: head → expand → cited rows + receipt → correct
-const KINDS=['inner','outer','cross','emergence'];
-/* correction_kind glosses · canon-faithful per founder-brain
-   liminal-ip/06-evidence/INVENTIONS.md §8 (PPA #5 vocabulary: the labels are
-   load-bearing IP and never renamed; the gloss is for the first-time viewer) */
-const KIND_GLOSS={
-  inner:'the read itself was wrong · bad inference from the evidence',
-  outer:'the operational facts were wrong · wrong data or scope',
-  cross:'the gap between reads was misread',
-  emergence:'you’re naming a frame no read held · the highest-value correction'
-};
+// FINDING · clickable provenance artifact: head → expand → cited rows + receipt → hand-off to Cut 13
+/* the one finding Cut 13 judges (lib/judgment.js FIXTURE) */
+const JUDGED_CASE='gc-2026-06-A', JUDGED_FINDING='F-CAL', JUDGE_HREF='13-judgment.html';
+const JUDGE_NOTE=`Corrections are made in <a href="${JUDGE_HREF}">Cut 13</a>, which judges ${JUDGED_FINDING} only.`;
 function findingHTML(f){
   const gov=f.kind==='governance';
   const badge=f.dropped?'<span class="bdg bad dot">refuted &amp; dropped</span>':gov?'<span class="bdg acc dot">governance · no-surveillance</span>':'<span class="bdg good dot">agent-fit</span>';
@@ -811,15 +791,10 @@ function findingHTML(f){
   const route=f.route?`<div class="finding-route">→ route to <span class="chip">CalendarOps</span> · registry-verified · ~10% of Opus cost</div>`:'';
   const dropStrip=f.dropped?`<div class="finding-route" style="background:var(--alarm-bg);border-color:var(--alarm-edge)">✗ ${f.drop} <span class="cite" data-cite="pr">pr-evidence</span></div>`:gov?`<div class="finding-route" style="background:var(--judgment-bg);border-color:var(--judgment)">⊘ ${f.drop}</div>`:'';
   const r=f.receipt;
-  const correctBlock=f.dropped?'':`<div class="finding-correct">
-      <button class="fc-toggle" data-fcorrect="${f.id}">Correct this finding →</button>
-      <div class="fc-box">
-        <div class="fc-kinds">${KINDS.map((k,i)=>`<button class="fc-kind ${i===2?'on':''}" data-fckind="${k}" title="${KIND_GLOSS[k]}">${k}</button>`).join('')}</div>
-        <div class="fc-gloss" id="fc-gloss-${f.id}">${KIND_GLOSS.cross}</div>
-        <textarea placeholder="What did this finding get wrong?"></textarea>
-        <div class="er"><button class="save" data-fcsave="${f.id}">Sign correction →</button></div>
-      </div>
-      <div class="fc-done"></div></div>`;
+  const correctBlock=f.dropped?'':f.id===JUDGED_FINDING?`<div class="finding-correct">
+      <a class="fc-toggle" href="${JUDGE_HREF}">Correct this finding →</a>
+      <span class="fc-note">opens Cut 13 · the correction is recorded there as one judgment record</span></div>`
+    :`<div class="finding-correct"><span class="fc-note">${JUDGE_NOTE}</span></div>`;
   return `<div class="finding ${f.dropped?'dropped':''}" data-finding="${f.id}">
     <div class="finding-head" data-fexpand="${f.id}">
       <div class="meta"><div class="badges">${badge}<span class="bdg">${f.cat}</span><span class="bdg" style="border:0">· ${f.who}</span></div>
@@ -853,9 +828,8 @@ function judgmentHTML(){
 function regHTML(reg,name,r,delay){
   const bodyHtml=r.html==='__JUDGMENT__'?judgmentHTML():r.html;
   return `<div class="p-read p-read--${reg} reg ${reg}" data-reg="${reg}" style="animation-delay:${delay}s">
-    <div class="p-read__head rh"><span class="rname">${name}</span><span class="cmark">· corrected</span><span class="rt">${r.rt}</span><span class="amend" data-amendreg="${reg}">Amend read</span></div>
-    <div class="rbody">${bodyHtml}</div>
-    <div class="reg-edit"><textarea></textarea><div class="er"><button class="rsave" data-savereg="${reg}">Save correction</button><button class="rcancel">Cancel</button><span class="hint">your correction appends to the chain · never overwrites. signing seals YOUR judgment.</span></div></div></div>`;
+    <div class="p-read__head rh"><span class="rname">${name}</span><span class="rt">${r.rt}</span><a class="amend" href="${JUDGE_HREF}" title="Cut 13 judges ${JUDGED_FINDING}, the calendar routing finding this read feeds. Corrections to the read are recorded there.">Amend read</a></div>
+    <div class="rbody">${bodyHtml}</div></div>`;
 }
 
 // ── THE LOOP (sense → 4-register read → ratify) ─────────────────────────────
@@ -959,7 +933,7 @@ function renderLoop(){
           <div class="ct">$486/mo of frontier spend flagged as routine work · verified realizable $324</div>
           <div class="cb">Five flagged runs put a frontier model on calendar wrangling and digests. The naive savings claim carried <b>E14 ($180)</b>, which PR-103 shows is a shipped product feature. <b>The numbers are agreed; the cause is not.</b></div>
         </div>
-        <div class="sense-h" style="margin-top:4px"><span class="anum">·</span><span class="atitle">Four registers read the case · correct what you disagree with.</span><span class="asub">hover a read → Amend · the correction is the moat</span></div>
+        <div class="sense-h" style="margin-top:4px"><span class="anum">·</span><span class="atitle">Four registers read the case · correct what you disagree with.</span><span class="asub">hover a read → Amend · corrections are judged in Cut 13 (F-CAL only) · the correction is the moat</span></div>
         ${regHTML('diligence','Diligence',READS.diligence,.05)}
         ${regHTML('synthesis','Synthesis',READS.synthesis,.18)}
         ${regHTML('judgment','Judgment',READS.judgment,.31)}
@@ -981,7 +955,7 @@ function renderLoop(){
           <div class="rb7">Judgment's refute stands: E14 stays product work and the claim drops to $324. Diligence's routing ships now. <b>The cap waits a month</b>, so the routing's effect is measurable on its own.</div>
         </div>
         <div class="policy"><div class="pt">Opus 4.8 ≠ calendar management · route to CalendarOps.</div><div class="ps">Verified realizable savings · ${usd(VERIFIED)}/mo · registry-verified agent</div></div>
-        <div class="dispo"><span class="lbl" id="corrcount">${corrections} corrections · the read is the model's until you change it · correct first, then sign</span>
+        <div class="dispo"><span class="lbl" id="corrcount">${corrLabel()}</span>
           <button class="db" data-act="defer">Defer 30d</button>
           <button class="db sign" data-act="sign"><span class="pre">${corrections?'correct →':''}</span> Ratify &amp; write to chain</button></div>
         <div id="artwrap"></div>
@@ -996,7 +970,7 @@ function renderLoop(){
           <div class="lrow7"><div class="lt"><b>jun 30</b>09:11</div><div><div class="lk sev">flag · scope</div><div class="lb">$486/mo of frontier spend on routine work · <b>11% of cohort</b> · case gc-2026-06-A opened.</div></div><div class="lh">ev 1<br>sig c3d4</div></div>
           <div class="lrow7"><div class="lt"><b>jun 30</b>09:14</div><div><div class="lk ref">refused · out of lane</div><div class="lb">Exec-comms asked for a read and <b>refused</b> · not its ground. The bound held; the refusal is on the chain.</div></div><div class="lh">ev 2<br>sig 7d4b</div></div>
           <div class="lrow7"><div class="lt"><b>jun 30</b>09:16</div><div><div class="lk sev">refuted · adversarial</div><div class="lb">E14 refuted · <b>PR-103 proves a shipped product feature</b> · $162 removed from the claim, not anchored.</div></div><div class="lh">ev 3<br>sig b81e</div></div>
-          <div class="lrow7"><div class="lt"><b>jun 30</b>09:22</div><div><div class="lk cor">corrected · operator</div><div class="lb" id="audit-corr">${corrections?corrections+' operator correction'+(corrections>1?'s':'')+' appended · each names the read it corrected.':'No operator corrections yet · amend a read in step 04 and it lands here.'}</div></div><div class="lh">ev 4<br>sig a90c</div></div>
+          <div class="lrow7"><div class="lt"><b>jun 30</b>09:22</div><div><div class="lk cor">corrected · operator</div><div class="lb" id="audit-corr">${auditCorrLine()}</div></div><div class="lh">ev 4<br>sig a90c</div></div>
           <div class="lrow7"><div class="lt"><b>jun 30</b>09:29</div><div><div class="lk rat">ratified · ruling</div><div class="lb" id="audit-rat">${signed?'<b>Route the verified lanes · hold the cap.</b> '+POLICIES.filter(x=>x.on).length+' policies to the chain · decision appended to the device-local vault.':'Awaiting ratification · rule in step 05 and the ruling seals here.'}</div></div><div class="lh">ev 5<br>sig e502</div></div>
         </div>
         <div class="btnrow7"><button class="db sign" data-goto7="7" data-adv7="6">Second pass →</button><span class="note7">the chain survives the person who was in the room</span></div>
@@ -1339,47 +1313,49 @@ function renderRegistry(){
 function renderLog(){
   body.dataset.surface='log';
   const rows=LOG.map(e=>`<tr><td>${e[0]}</td><td>${e[1]}</td><td>${e[2]}</td><td class="num">${e[3]}</td><td class="num">${e[4]}</td></tr>`).join('');
-  $('#work').innerHTML=`<div class="screen"><div class="sh">Govern · decision log</div><h1>Decision log</h1><p class="lede">Append-only trail. Every surviving finding entered the chain; the ratified policy is a new linked entry; the refuted claim is recorded, never silently dropped. Hash-linked, append-only · anchors shown are illustrative (deterministic fixture); the product chain anchors with SHA-256.</p><table class="tbl"><thead><tr><th>#</th><th>Kind</th><th>Entry</th><th>packet_hash</th><th>prev_hash</th></tr></thead><tbody>${rows}</tbody></table><p class="lede" style="font:11px/1.5 var(--mono);color:var(--text-faint)">${LOG.filter(e=>e[0]!=='·').length} anchored · 1 refuted${signed?' · 1 ratified this session':''} · ${corrections} correction${corrections!==1?'s':''} signed.</p></div>`;
+  $('#work').innerHTML=`<div class="screen"><div class="sh">Govern · decision log</div><h1>Decision log</h1><p class="lede">Append-only trail. Every surviving finding entered the chain; the ratified policy is a new linked entry; the refuted claim is recorded, never silently dropped. Hash-linked, append-only · anchors shown are illustrative (deterministic fixture); the product chain anchors with SHA-256.</p><table class="tbl"><thead><tr><th>#</th><th>Kind</th><th>Entry</th><th>packet_hash</th><th>prev_hash</th></tr></thead><tbody>${rows}</tbody></table><p class="lede" style="font:11px/1.5 var(--mono);color:var(--text-faint)">${LOG.filter(e=>e[0]!=='·').length} anchored · 1 refuted${signed?' · 1 ratified this session':''} · ${corrections} correction${corrections!==1?'s':''} recorded in Cut 13 (judgment record) on this device.</p></div>`;
 }
 
-// ── correction flow (restored) ──────────────────────────────────────────────
-function openRegEdit(reg){
-  const r=$(`.reg[data-reg="${reg}"]`); if(!r||r.classList.contains('editing'))return;
-  const plain=r.querySelector('.rbody').textContent.trim().slice(0,180);
-  r.querySelector('textarea').value=plain;
-  r.classList.add('editing'); r.querySelector('textarea').focus();
+// ── corrections come from Cut 13 (LIM-2292) ─────────────────────────────────
+/* Cut 13 is the single correction surface. Here we only READ what it recorded
+   in this browser's vault: judgment records with disposition "correct" for
+   gc-2026-06-A / F-CAL. Each record is counted once (by vault id). Vault
+   unavailable, slow or empty ⇒ zero, the same path as no correction. */
+let JUDGED_IDS=[];
+function plural(n,w){return n+' '+w+(n===1?'':'s');}
+function loadJudged(){
+  const read=import('../lib/judgment.js').then(j=>j.allJudgments()).then(rows=>{
+    const ids=new Set();
+    for(const r of rows||[]){const rec=r&&r.record;
+      if(rec&&rec.disposition==='correct'&&rec.caseId===JUDGED_CASE&&rec.findingId===JUDGED_FINDING&&r.id!=null)ids.add(r.id);}
+    return [...ids];
+  }).catch(()=>[]);
+  const timeout=new Promise(res=>setTimeout(()=>res(null),1500));
+  return Promise.race([read,timeout]).then(ids=>{
+    if(!ids||signed)return;  // sealed: the count is frozen at the seal
+    JUDGED_IDS=ids; corrections=ids.length;
+    syncJudgedChain();
+  });
 }
-function saveRegEdit(reg){
-  const r=$(`.reg[data-reg="${reg}"]`); const val=r.querySelector('textarea').value.trim();
-  if(val){ r.querySelector('.rbody').innerHTML='<span class="hl">'+val+'</span>'; }
-  r.classList.remove('editing'); r.classList.add('corrected');
-  recordCorrection(reg+' read');
+/* one chain entry per recorded correction, keyed by vault id: never twice */
+function syncJudgedChain(){
+  for(const id of JUDGED_IDS){ if(!CHAIN.some(e=>e[4]===id)) CHAIN.push(['t'+CHAIN.length,'correction · '+JUDGED_FINDING+' · judgment record (Cut 13)','corr','',id]); }
 }
-function recordCorrection(where){
-  corrections++; logChain('correction · '+where+' · operator','corr');
-  const cc=$('#corrcount'); if(cc) cc.textContent=corrections+' correction'+(corrections>1?'s':'')+' · this is YOUR read now';
-  const pre=$('.db.sign .pre'); if(pre) pre.textContent='correct →';
-  toast('Correction recorded · appended to the chain (entry '+(5+corrections)+')');
+function corrLabel(){
+  return corrections
+    ? plural(corrections,'correction')+' recorded in Cut 13 (judgment record) on this device · this is YOUR read now'
+    : '0 corrections · the read is the model\'s until you change it · correct it in <a href="'+JUDGE_HREF+'">Cut 13</a> first, then sign';
 }
-// typed finding correction → new linked entry (kind) → re-anchors, badge stays green
-function signFindingCorrection(fid,btn){
-  const card=$(`.finding[data-finding="${fid}"]`);
-  const kind=card.querySelector('.fc-kind.on')?.dataset.fckind||'cross';
-  const note=card.querySelector('textarea').value.trim()||'operator amended the read';
-  corrections++;
-  const h=(0x7d4b+corrections).toString(16);
-  logChain('correction · '+kind+' · '+fid+' · re-anchored','corr');
-  card.classList.add('corrected');
-  card.querySelector('.fc-done').innerHTML=`✓ correction appended &amp; re-anchored · <span class="mono">${kind}</span> · anchor ${h}…a${corrections}9 · <span style="color:var(--good)">chain linked</span>`;
-  const cc=$('#corrcount'); if(cc) cc.textContent=corrections+' correction'+(corrections>1?'s':'')+' · this is YOUR read now';
-  const pre=$('.db.sign .pre'); if(pre) pre.textContent='correct →';
-  toast('Correction signed · '+kind+' · new linked entry, chain stays verifiable ✓');
+function auditCorrLine(){
+  return corrections
+    ? plural(corrections,'operator correction')+' to '+JUDGED_FINDING+' recorded in Cut 13 (judgment record) on this device · each names the assertion it corrected.'
+    : 'No operator corrections yet · correct '+JUDGED_FINDING+' in <a href="'+JUDGE_HREF+'">Cut 13</a> and it lands here.';
 }
 function logChain(text,cls){CHAIN.push(['t'+(5+corrections),text,cls,'new']);renderChain();}
 // invisible presenter affordance · reset demo to a clean opening state (⌥R / 0)
 const CHAIN0=CHAIN.slice(0,5).map(e=>e.slice(0,3));
 function resetDemo(){
-  corrections=0; signed=false;
+  signed=false;  // corrections are Cut 13's records on this device: re-read below, not zeroed
   // the 7-step ritual is part of the demo state, so restart has to rewind it
   // too: must match the declaration at the top (`let STEP=3, STEP_DONE=...`).
   // #66 introduced the ritual but not this line, so ↺ left the walk wherever
@@ -1387,6 +1363,9 @@ function resetDemo(){
   // second run-through opened mid-ritual with steps still marked done.
   STEP=3; STEP_DONE=new Set([1,2]);
   CHAIN=CHAIN0.map(e=>e.slice());
+  /* Cut 13's records live in this device's vault and survive a restart:
+     re-read them rather than pretend they are gone */
+  loadJudged().then(()=>{renderChain();});
   SIGNALS.forEach(s=>{ if(s.id==='tickets'||s.id==='model') s.state='tray'; });
   body.dataset.relationship='operator';
   $$('.rel button').forEach(x=>x.classList.toggle('on',x.dataset.rel==='operator'));
@@ -1431,11 +1410,12 @@ function mintArtifact(){
       await vs.init();
       await vs.appendDecision({surface:'govern',kind:'ratify',hash:'7d4b-a284',
         payload:{caseId:'gc-2026-06-A',ruling:'route verified lanes · hold cap',
-                 policies:POLICIES.filter(x=>x.on).map(x=>x.t),corrections}});
+                 policies:POLICIES.filter(x=>x.on).map(x=>x.t),corrections,
+                 correctionsFrom:{surface:'judgment',cut:'13-judgment.html',ids:JUDGED_IDS.slice()}}});
       toast('Decision appended to the device-local vault · IndexedDB');
     }).catch(()=>{});
   }
-  const corrLine = corrections? `<span class="corr" style="color:var(--coherence,#7AA9FF)">Operator made ${corrections} correction${corrections>1?'s':''} to the read before sealing · this reflects the corrected judgment.</span> ` : '';
+  const corrLine = corrections? `<span class="corr" style="color:var(--coherence,#7AA9FF)">Operator made ${plural(corrections,'correction')} to the read before sealing, recorded in Cut 13 (judgment record) on this device · this reflects the corrected judgment.</span> ` : '';
   const artifactHTML=`<div class="artifact"><div class="ab"><span class="stamp">ratified</span><span class="wh">2026-06 · operator · effective immediately</span></div>
     <div class="abody"><p class="adec">Opus 4.8 cannot be used for calendar management or routine admin work.</p>
     <p class="arat">${corrLine}Calendar/admin usage does not map to the approved OKRs, and a registry-verified lower-cost agent (CalendarOps, ~10% of Opus) covers it. E14 is product engineering (PR-103) and is NOT reclassified.</p>
@@ -1471,21 +1451,14 @@ function highlightSignal(id){ $$('.sig').forEach(s=>s.classList.remove('cited'))
   const el=$(`.sig[data-sig="${id}"]`); if(el){el.classList.add('cited');el.classList.add('open');el.scrollIntoView({block:'nearest'});} }
 
 document.addEventListener('click',e=>{
-  const subj=e.target.closest('[data-subj]'); if(subj){ SUBJECT=subj.dataset.subj; corrections=0; signed=false; renderLoop(); return; }
+  const subj=e.target.closest('[data-subj]'); if(subj){ SUBJECT=subj.dataset.subj; signed=false; renderLoop(); return; }
   const go_=e.target.closest('[data-go]'); if(go_){go(go_.dataset.go);return;}
   const cite=e.target.closest('[data-cite]'); if(cite){highlightSignal(cite.dataset.cite);return;}
   const sig=e.target.closest('[data-sig]'); if(sig){const s=SIGNALS.find(x=>x.id===sig.dataset.sig);
     if(s.state==='tray'){s.state='slate';renderSignals();toast('Hardened '+s.src+' onto the slate');logChain('slate · hardened '+s.id,'corr');}
     else sig.classList.toggle('open'); return;}
-  const ar=e.target.closest('[data-amendreg]'); if(ar){openRegEdit(ar.dataset.amendreg);return;}
-  const sr=e.target.closest('[data-savereg]'); if(sr){saveRegEdit(sr.dataset.savereg);return;}
-  if(e.target.closest('.rcancel')){e.target.closest('.reg').classList.remove('editing');return;}
-  // FINDING interactions (the hero): expand → evidence+receipt; correct (typed)
+  // FINDING interactions (the hero): expand → evidence+receipt; correcting is a link to Cut 13
   const fx=e.target.closest('[data-fexpand]'); if(fx){fx.closest('.finding').classList.toggle('open');return;}
-  const fct=e.target.closest('[data-fcorrect]'); if(fct){fct.closest('.finding').classList.toggle('correcting');return;}
-  const fk=e.target.closest('[data-fckind]'); if(fk){const box=fk.closest('.fc-kinds');box.querySelectorAll('.fc-kind').forEach(x=>x.classList.toggle('on',x===fk));
-    const gloss=box.parentElement.querySelector('.fc-gloss'); if(gloss)gloss.textContent=KIND_GLOSS[fk.dataset.fckind]||'';return;}
-  const fcs=e.target.closest('[data-fcsave]'); if(fcs){signFindingCorrection(fcs.dataset.fcsave,fcs);return;}
   /* palette rows carry data-act too: they must be handled (and the palette
      closed) BEFORE the generic [data-act] branch, or the palette sticks open */
   const pr=e.target.closest('.pal-row'); if(pr){pr.dataset.act?doPalAct(pr.dataset.act):go(pr.dataset.goto);togglePalette(false);return;}
@@ -1503,11 +1476,11 @@ document.addEventListener('click',e=>{
 });
 
 // ⌘K palette
-const PAL=[{goto:'today',label:'Go · Today (re-entry)',k:'1'},{goto:'loop',label:'Go · The loop (sense→ratify)',k:'2'},{goto:'mirror',label:'Go · Mirror (calibration)',k:'3'},{goto:'registry',label:'Go · Agent registry',k:'4'},{goto:'log',label:'Go · Decision log',k:'5'},{act:'correct',label:'Correct the read · amend Synthesis',k:'C'},{act:'sign',label:'Sign & hand off (ratify)',k:'S'}];
+const PAL=[{goto:'today',label:'Go · Today (re-entry)',k:'1'},{goto:'loop',label:'Go · The loop (sense→ratify)',k:'2'},{goto:'mirror',label:'Go · Mirror (calibration)',k:'3'},{goto:'registry',label:'Go · Agent registry',k:'4'},{goto:'log',label:'Go · Decision log',k:'5'},{act:'correct',label:'Correct the read · judge F-CAL in Cut 13',k:'C'},{act:'sign',label:'Sign & hand off (ratify)',k:'S'}];
 function renderPal(q=''){const list=PAL.filter(p=>p.label.toLowerCase().includes(q.toLowerCase()));
   $('#pal-list').innerHTML=list.map((p,i)=>`<div class="pal-row ${i===0?'sel':''}" ${p.goto?`data-goto="${p.goto}"`:`data-act="${p.act}"`}>${p.label}<span class="pk">${p.k}</span></div>`).join('');}
 function togglePalette(open){const p=$('#palette');p.classList.toggle('open',open);if(open){$('#pal-input').value='';renderPal();$('#pal-input').focus();}}
-function doPalAct(a){ if(a==='correct'){go('loop');setTimeout(()=>openRegEdit('synthesis'),60);} else if(a==='sign'){go('loop');setTimeout(mintArtifact,60);} }
+function doPalAct(a){ if(a==='correct'){location.href=JUDGE_HREF;} else if(a==='sign'){go('loop');setTimeout(mintArtifact,60);} }
 $('#pal-input').addEventListener('input',e=>renderPal(e.target.value));
 document.addEventListener('keydown',e=>{
   if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();togglePalette(!$('#palette').classList.contains('open'));return;}
@@ -1517,7 +1490,7 @@ document.addEventListener('keydown',e=>{
   // invisible presenter affordance: ⌥R (or "0") resets demo state between rehearsals/takes
   if((e.key==='0')||(e.altKey&&e.key.toLowerCase()==='r')){e.preventDefault();resetDemo();return;}
   const map={'1':'today','2':'okr','3':'loop','4':'report','5':'mirror','6':'registry','7':'log'}; if(map[e.key])go(map[e.key]);
-  if(e.key.toLowerCase()==='c'&&body.dataset.surface==='loop')openRegEdit('synthesis');
+  if(e.key.toLowerCase()==='c'&&body.dataset.surface==='loop')location.href=JUDGE_HREF;
   if(e.key.toLowerCase()==='s'&&body.dataset.surface==='loop'&&!signed)mintArtifact();
 });
 
@@ -1533,6 +1506,7 @@ const RUN_LABELS={demo:'demo',demonstration:'demonstration run',recorded:'record
 function runLabel(){return RUN_LABELS[RUN_MODE]||RUN_LABELS.recorded;}
 
 async function initGovernData(){
+  const judged=loadJudged(); // in parallel with the ?run fetch
   const run=new URLSearchParams(location.search).get('run');
   if(run||window.GOVERN_DATA){
     try{
@@ -1565,6 +1539,8 @@ async function initGovernData(){
   const wantSubject=params.get('subject');
   if(wantSubject&&SUBJECTS[wantSubject])SUBJECT=wantSubject;
   const wantLoop=params.get('beat')==='loop'||!!wantSubject;
+  await judged; // after ?run may have replaced CHAIN, so the entries land on the live chain
+  syncJudgedChain();
   renderChain(); go(wantLoop?'loop':'today');
 }
 

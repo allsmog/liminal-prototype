@@ -66,7 +66,7 @@ async function judgeCorrect(page) {
   await page.locator('details[data-ev="ev-tickets"] summary').click();
   await page.locator('[data-assert="A2"]').click();
   await page.fill("#jd-corrected", CORRECTION);
-  await page.locator('[data-tag="assumes_facts_not_in_evidence"]').click();
+  await page.locator('[data-kind="emergence"]').click(); // override the inferred "inner"
   await page.fill("#jd-rationale", WHY);
   await page.locator("#jd-review").click();
   await page.locator("#jd-confirm").click();
@@ -106,14 +106,14 @@ const GOLDEN_IDS = {
   correctionId: "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
 };
 const GOLDEN = {
-  packetHash: "4d5895688813bf6ba46f4f029c2028350df2dc1c75bd12a0a2f91255a67f179c",
-  signature: "0aeaa1549fabc40ecb03e6f1514dbdbef281e410dee0df5bb316a48ec1121c2f54b2ba710fd1e297a37baeb6ba436073a00b9ca7cbfc959bf00497ce1550e60f",
+  packetHash: "0ccb2153f0f4a59a45680dd18ebe8b3ee75f3ef696dc54ea0c28b74333a70dad",
+  signature: "fdee5af05f6bdbc9a151b64a0041489e54fb2f0a539eda202a3bed8eb2c81f30615864ffb201c8179be543b3b5e21b8ddf1205ee979482d6e6a5b267a6995c01",
   fingerprint: "268f744374f886ec8e75f436f6812264fca750097d7eb41116663509ac19b378",
 };
 
 test("golden: a pinned correction and a pinned test key give pinned bytes the verifier accepts", async () => {
   const record = buildRecord({
-    judgment: { disposition: "correct", assertionId: "A2", correctedText: CORRECTION, tag: "assumes_facts_not_in_evidence", rationale: WHY },
+    judgment: { disposition: "correct", assertionId: "A2", correctedText: CORRECTION, kind: "emergence", rationale: WHY },
     inspected: ["ev-usage", "ev-tickets"], actor: OPERATOR, confirmedAt: Date.UTC(2026, 9, 18, 12, 0, 0),
   });
   const proof = await proofLib.proveRecord(record, { ids: GOLDEN_IDS, keyPair: await testKeyPair(), now: Date.UTC(2026, 9, 18, 12, 0, 1) });
@@ -172,7 +172,10 @@ test("valid: the recorded correction downloads as a bundle the unchanged verifie
   expect(packet.corrections).toHaveLength(1);
   expect(packet.corrections[0].original).toBe(A2);
   expect(packet.corrections[0].corrected).toBe(CORRECTION);
-  expect(packet.corrections[0].category).toBe("assumes_facts_not_in_evidence");
+  // M1: the signed correction carries one of the 4 kinds, not a 9-tag category
+  expect(packet.corrections[0].correction_kind).toBe("emergence");
+  expect(packet.packet.correction_kind).toBe("emergence");
+  expect(packet.corrections[0].category).toBeNull();
   expect(packet.reads[0].situation).toContain(`A2 · ${A2}`);
   const about = readFileSync(join(dir, "ABOUT.md"), "utf8");
   expect(about).toContain("does not identify a person or an organization");
@@ -326,7 +329,7 @@ test("partial write: a failed corrections-index row still records once and says 
   await page.evaluate(() => { window.__failCorrectionAdd = true; });
   await page.locator('[data-assert="A2"]').click();
   await page.fill("#jd-corrected", CORRECTION);
-  await page.locator('[data-tag="assumes_facts_not_in_evidence"]').click();
+  await page.locator('[data-kind="emergence"]').click(); // override the inferred "inner"
   await page.locator("#jd-review").click();
   await page.locator("#jd-confirm").click();
   await expect(page.locator(".jd-record")).toHaveAttribute("data-state", "recorded");
@@ -336,15 +339,20 @@ test("partial write: a failed corrections-index row still records once and says 
   expect(await judgmentCount(page)).toBe(1);
 });
 
-test("untagged correction: no pattern watch with an empty tag", async ({ page }) => {
+test("inferred kind (M1): a correction left on its default records, counts and signs that kind", async ({ page }) => {
   await open(page);
-  await page.locator('[data-assert="A2"]').click();
-  await page.fill("#jd-corrected", CORRECTION);
+  await page.locator('[data-assert="A5"]').click(); // the reviewer's reconciliation → cross
+  await expect(page.locator('[data-kind="cross"]')).toHaveAttribute("aria-pressed", "true");
+  await page.fill("#jd-corrected", "E14 was a calendar-sync feature, but its PR also touched the admin lane.");
   await page.locator("#jd-review").click();
+  await expect(page.locator(".jd-summary")).toContainText(/cross · inferred/);
   await page.locator("#jd-confirm").click();
   await expect(page.locator(".jd-record")).toHaveAttribute("data-state", "recorded");
-  await expect(page.locator(".jd-pattern")).toHaveCount(0);
+  await expect(page.locator(".jd-pattern")).toContainText(/1 correction of kind cross/);
   expect(await page.locator(".jd-record").innerHTML()).not.toContain("<b></b>");
+  const { dir } = await downloadBundle(page);
+  expect(readJson(dir, "packet.json").corrections[0].correction_kind).toBe("cross");
+  expect(verify(dir).code).toBe(0);
 });
 
 test("failed save: no vault means no proof is issued and nothing can be downloaded", async ({ page }) => {
