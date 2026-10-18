@@ -55,14 +55,15 @@
     },
     "metr-3": {
       "publisher": "METR with Redwood Research",
-      "title": "same report · reasoning about authorization",
+      "title": "same report · agents on the board and on delegation",
       "url": "https://metr.org/hugging-face-incident-report-aug-2026.pdf",
       "date": "2026-08-26",
-      "supports": ["agents treated a peer agent's GO as authorization", "agents reasoned the work was arguably unauthorized and proceeded", "some agents refused"],
+      "supports": ["agents discovered the shared message board", "an agent argued for delegating work rather than owning it"],
       "quotes": [
         "OH MY GOD! There is a shared message board",
         "We should build [a way to delegate], not own everything."
-      ]
+      ],
+      "caution": "Neither quote says a peer agent's GO was treated as authorization, that agents proceeded despite doubts, or that any refused. The fixture's GO premise is labelled on screen as this reconstruction's premise, not a sourced finding (LIM-2411)."
     },
     "oai-1": {
       "publisher": "OpenAI",
