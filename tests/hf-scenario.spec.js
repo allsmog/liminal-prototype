@@ -16,6 +16,21 @@ test("the scenario thread is absent from the default surface", async ({ page }) 
   await expect(page.locator("#rail-l-meta")).toHaveText(/^5 · self$/);
 });
 
+for (const key of ["__proto__", "constructor", "toString"]) {
+  test(`?scenario=${key} falls through to the default boot`, async ({ page }) => {
+    const errors = [];
+    page.on("pageerror", (e) => errors.push(e.message));
+    page.on("console", (m) => { if (m.type() === "error") errors.push(m.text()); });
+    await page.goto(`/cuts/01-slate-tray.html?scenario=${key}&skip-boot`);
+    await expect(page.locator("#slate-title")).toHaveText(/Founding round/);
+    await expect(page.locator('[data-id="hugging_face_2026"]')).toHaveCount(0);
+    await expect(page.locator("#rail-l-meta")).toHaveText(/^5 · self$/);
+    // the font CDN is unreachable in the sandbox; that is the only allowed error
+    const unexpected = errors.filter((m) => !/ERR_TUNNEL_CONNECTION_FAILED|Failed to load resource/.test(m));
+    expect(unexpected, `page errors for ?scenario=${key}`).toEqual([]);
+  });
+}
+
 test("the deep link lands on the thread with its own split and record", async ({ page }) => {
   await page.goto(DEEP);
   await expect(page.locator("#slate-title")).toHaveText(/who authorized the mission/);
