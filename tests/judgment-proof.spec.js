@@ -139,7 +139,9 @@ test("valid: the recorded correction downloads as a bundle the unchanged verifie
   const proof = page.locator("#jd-proof");
   await expect(proof).toHaveAttribute("data-signed", "yes");
   await expect(proof).toContainText(/demonstration key · generated in this browser · not tied to a person or organization/);
-  await expect(proof).toContainText(/does not cover which evidence you opened/);
+  // coverage text names what is NOT signed, including AI-side material
+  await expect(proof).toContainText(/does not cover the evidence contents or support notes/);
+  await expect(proof).toContainText(/reviewer agent's action on A5, which evidence you opened/);
   await expect(page.locator(".jd-record")).toContainText(/not a signature/); // the content hash is still labelled as one
   const fp = (await page.locator(".jd-fp").textContent()).trim();
   expect(fp).toMatch(/^[0-9a-f]{64}$/);
@@ -172,7 +174,23 @@ test("valid: the recorded correction downloads as a bundle the unchanged verifie
   expect(packet.corrections[0].corrected).toBe(CORRECTION);
   expect(packet.corrections[0].category).toBe("assumes_facts_not_in_evidence");
   expect(packet.reads[0].situation).toContain(`A2 · ${A2}`);
-  expect(readFileSync(join(dir, "ABOUT.md"), "utf8")).toContain("does not identify a person or an organization");
+  const about = readFileSync(join(dir, "ABOUT.md"), "utf8");
+  expect(about).toContain("does not identify a person or an organization");
+  expect(about).toContain("only evidence ids are signed");
+  expect(about).toContain("the adversarial reviewer's action on A5");
+  // and the claim matches the bytes: no support note or evidence body is in the signed payload
+  const signedText = JSON.stringify(packet);
+  for (const a of FIXTURE.assertions) expect(signedText).not.toContain(a.supportNote);
+  for (const e of FIXTURE.evidence) if (e.body) expect(signedText).not.toContain(e.body.slice(0, 40));
+
+  // the record's content hash is recomputable from the stored row minus contentHash
+  const [stored, recomputed] = await page.evaluate(async () => {
+    const m = await import("/lib/judgment.js");
+    const id = new URLSearchParams(location.search).get("record");
+    const { contentHash, ...rest } = (await m.loadJudgment(id)).record;
+    return [contentHash, await m.sha256Hex(rest)];
+  });
+  expect(recomputed).toBe(stored);
 });
 
 test("tampered: one changed byte in the correction, the AI original or the decision fails", async ({ page }) => {
@@ -255,6 +273,80 @@ test("unsigned: a browser that cannot sign records the judgment and the verifier
   expect(r.code).toBe(2);
 });
 
+// Switches the test injects before the page loads. `__vaultDown` makes every
+// open of the judgment vault throw; `__noEd25519` makes key generation fail;
+// `__failCorrectionAdd` fails the next write to the corrections index.
+async function injectFaults(page) {
+  await page.addInitScript(() => {
+    const open = IDBFactory.prototype.open;
+    IDBFactory.prototype.open = function (name, ...rest) {
+      if (window.__vaultDown && name === "liminal-vault") throw new DOMException("injected: vault down", "UnknownError");
+      return open.call(this, name, ...rest);
+    };
+    const add = IDBObjectStore.prototype.add;
+    IDBObjectStore.prototype.add = function (...args) {
+      if (window.__failCorrectionAdd && this.name === "corrections") {
+        window.__failCorrectionAdd = false;
+        throw new DOMException("injected: quota", "QuotaExceededError");
+      }
+      return add.apply(this, args);
+    };
+    const gen = crypto.subtle.generateKey.bind(crypto.subtle);
+    crypto.subtle.generateKey = (alg, ...rest) =>
+      window.__noEd25519 && (alg?.name || alg) === "Ed25519" ? Promise.reject(new DOMException("injected: no Ed25519", "NotSupportedError")) : gen(alg, ...rest);
+  });
+}
+const judgmentCount = (page) => page.evaluate(async () => (await (await import("/lib/judgment.js")).allJudgments()).length);
+
+test("retry: a vault that failed to open records on the next try, signed, exactly once", async ({ page }) => {
+  await injectFaults(page);
+  await open(page);
+  await page.evaluate(() => { window.__vaultDown = true; window.__noEd25519 = true; });
+  await page.locator('[data-dispo="accept"]').click();
+  await page.locator("#jd-review").click();
+  await page.locator("#jd-confirm").click();
+  await expect(page.locator(".jd-record")).toHaveAttribute("data-state", "operator-confirmed");
+  await expect(page.locator("#jd-proof-dl")).toHaveCount(0);
+  // the outage ends; one press of retry must record it, and sign it now that signing works
+  await page.evaluate(() => { window.__vaultDown = false; window.__noEd25519 = false; });
+  await page.locator("#jd-retry").click();
+  await expect(page.locator(".jd-record")).toHaveAttribute("data-state", "recorded");
+  await expect(page.locator("#jd-proof")).toHaveAttribute("data-signed", "yes");
+  expect(await judgmentCount(page)).toBe(1);
+  const fp = (await page.locator(".jd-fp").textContent()).trim();
+  const { dir } = await downloadBundle(page);
+  const r = verify(dir, "--expect-fingerprint", fp);
+  expect(r.out).toContain("✓ VERIFIED");
+  expect(r.code).toBe(0);
+});
+
+test("partial write: a failed corrections-index row still records once and says what was not indexed", async ({ page }) => {
+  await injectFaults(page);
+  await open(page);
+  await page.evaluate(() => { window.__failCorrectionAdd = true; });
+  await page.locator('[data-assert="A2"]').click();
+  await page.fill("#jd-corrected", CORRECTION);
+  await page.locator('[data-tag="assumes_facts_not_in_evidence"]').click();
+  await page.locator("#jd-review").click();
+  await page.locator("#jd-confirm").click();
+  await expect(page.locator(".jd-record")).toHaveAttribute("data-state", "recorded");
+  await expect(page.locator("#jd-retry")).toHaveCount(0);
+  await expect(page.locator("#jd-index-note")).toContainText(/record is stored/);
+  await expect(page.locator(".jd-record")).not.toContainText(/nothing is stored/i);
+  expect(await judgmentCount(page)).toBe(1);
+});
+
+test("untagged correction: no pattern watch with an empty tag", async ({ page }) => {
+  await open(page);
+  await page.locator('[data-assert="A2"]').click();
+  await page.fill("#jd-corrected", CORRECTION);
+  await page.locator("#jd-review").click();
+  await page.locator("#jd-confirm").click();
+  await expect(page.locator(".jd-record")).toHaveAttribute("data-state", "recorded");
+  await expect(page.locator(".jd-pattern")).toHaveCount(0);
+  expect(await page.locator(".jd-record").innerHTML()).not.toContain("<b></b>");
+});
+
 test("failed save: no vault means no proof is issued and nothing can be downloaded", async ({ page }) => {
   await page.addInitScript(() => {
     Object.defineProperty(window, "indexedDB", { value: undefined, configurable: true });
@@ -265,6 +357,8 @@ test("failed save: no vault means no proof is issued and nothing can be download
   await page.locator("#jd-confirm").click();
   await expect(page.locator(".jd-record")).toHaveAttribute("data-state", "operator-confirmed");
   await expect(page.locator(".jd-record__id")).toContainText(/no proof issued/);
+  // the no-IndexedDB path itself, not a downstream open failure
+  await expect(page.locator(".jd-notice").first()).toContainText(/IndexedDB is not available in this browser context/);
   await expect(page.locator("#jd-proof")).toHaveCount(0);
   await expect(page.locator("#jd-proof-dl")).toHaveCount(0);
   await expect(page.locator(".jd-record")).toContainText(/nothing is signed until the record is stored/);

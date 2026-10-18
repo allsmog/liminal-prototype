@@ -128,6 +128,7 @@ const S = {
   pattern: null,
   originalHash: null,
   proof: null,              // signed packet for the confirmed record · kept across a vault retry
+  indexError: null,         // record stored, but its corrections-index row was not
   reopened: false,
   focus: null,
 };
@@ -419,7 +420,7 @@ async function confirmJudgment() {
   if (problems.length) { S.problems = problems; S.phase = "form"; renderJudge(); return; }
   const confirmedAt = Date.now();
   S.record = buildRecord({ judgment: currentJudgment(), inspected: [...S.inspected], actor: OPERATOR, confirmedAt });
-  S.proof = null;
+  S.proof = null; S.indexError = null;
   S.state = STATES.CONFIRMED; S.failure = null; S.view = "record"; S.focus = "jd-record-h";
   renderRecord();
   await persist();
@@ -428,10 +429,17 @@ async function confirmJudgment() {
 async function persist() {
   try {
     if (!vaultAvailable()) throw new Error("IndexedDB is not available in this browser context");
-    /* sign once per confirmed judgment; a retry after a failed write reuses it */
-    if (!S.proof) S.proof = await proveRecord(S.record);
-    const { id, record } = await recordJudgment(S.record, { proof: S.proof });
+    /* sign once per confirmed judgment; a retry after a failed write reuses a
+       signed proof, and tries again (same packet ids) if the last attempt
+       could not sign */
+    if (!S.proof?.signed) {
+      const p = S.proof?.packet;
+      const ids = p ? { packetId: p.packet.id, readId: p.reads[0].id, correctionId: p.corrections[0]?.id || crypto.randomUUID() } : undefined;
+      S.proof = await proveRecord(S.record, { ids });
+    }
+    const { id, record, indexError } = await recordJudgment(S.record, { proof: S.proof });
     S.record = record; S.recordId = id; S.recordTs = Date.now(); S.state = STATES.RECORDED; S.failure = null;
+    S.indexError = indexError;
     if (record.change) S.pattern = await correctionPattern({ tag: record.change.tag, lane: record.lane });
     history.replaceState(null, "", `?record=${id}`);
     /* the record re-renders once the write lands; keep the reader on its heading */
@@ -473,7 +481,7 @@ function proofBlock(r) {
     ${p.signed
       ? `Packet <code>${esc(p.packet.packet.id)}</code> (${esc(p.packet.schema)}), signed with a <b>${esc(KEY_LABEL)}</b>. Fingerprint <code class="jd-fp">${esc(p.fingerprint)}</code>.`
       : `This browser could not sign (${esc(p.signError)}). The bundle still carries the packet; the verifier reports it <b>UNVERIFIED</b>, which is the honest result.`}
-    <p style="margin-top:8px">The signature covers the AI result as produced, your disposition, your words, the corrected text and tag, the confirm time and any defer date. It does <b>not</b> cover which evidence you opened, the actor label, the record time or the vault id: the packet format has no field for them.</p>
+    <p style="margin-top:8px">The signature covers the AI's headline, its five assertions word for word, each one's evidence ids and support level, and its stated uncertainty; then your disposition, your words, the corrected text and tag, the confirm time and any defer date. It does <b>not</b> cover the evidence contents or support notes, the reviewer agent's action on A5, which evidence you opened, the remaining-uncertainty lines, the actor label, the record time or the vault id: the packet format has no field for them.</p>
     <p style="margin-top:8px">Unzip, then run <code>${esc(cmd)}</code> with Node 18 or newer. The verifier in the bundle is the one published at <code>receipts/2026-10-06/bundle/</code>, unchanged.</p>
     <span class="jd-actions" style="display:inline-flex;margin-top:8px"><button type="button" class="jd-btn" id="jd-proof-dl">Download proof bundle (.zip)</button></span>
   </div>`;
@@ -571,6 +579,7 @@ function renderRecord() {
           <p style="margin-top:12px"><b>Still uncertain.</b></p>
           <ul class="jd-list">${r.remainingUncertainty.map(u => `<li>${esc(u)}</li>`).join("")}</ul>
           ${pattern}
+          ${recorded && S.indexError ? `<p class="jd-hint" id="jd-index-note" style="margin-top:8px">The record is stored. Its row in the corrections index could not be written (${esc(S.indexError)}), so cut 03 and the pattern watch will not count this correction.</p>` : ""}
         </div></section>
 
       ${recorded ? `<div class="jd-record__proof">${proofBlock(r)}</div>` : ""}
