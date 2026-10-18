@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Liminal · Vault + Agents · The Founder OS</title>
-<meta name="description" content="Drag any window in. Bounded agents read it and disagree. Founder corrects what they got wrong; the correction appends to the chain. Vault commits the signed record. Local SQLCipher vault, no inbound network surface, no vault-content telemetry.">
+<meta name="description" content="Drag any window in. Bounded agents read it and disagree. Founder corrects what they got wrong; the correction appends to the chain. Vault commits the signed record. Local SQLCipher vault, no listening ports by default, no telemetry; reads go only to the model you choose.">
 <meta property="og:title" content="Liminal · The Founder OS">
 <meta property="og:description" content="Compose → read → dispatch → commit. The founder OS, running.">
 <meta property="og:type" content="website">
@@ -405,10 +405,13 @@
      Every cut in cuts/ carries a chip row; the three embeds carried none,
      despite being the most forwardable pages in the repo. That is LIM-1600.
      Founder ruled 2026-08-20: label the surface, leave the live pills alone.
-     Note the vault claims in this deck's right foot (SQLCipher, no inbound
-     surface) are NOT aspirational: verified 2026-08-20 against liminal-desktop:
-     sqlcipher in Cargo.toml + src-tauri/src/commands/vault.rs, and 0o600
-     enforcement in ai_spend.rs. Do not soften them without re-checking there. */
+     The vault claims in this deck's right foot and in the commit pane were
+     re-verified 2026-10-17 against liminal-desktop ce2b62a1 (LIM-1599, PR 135):
+     SQLCipher is linked and new vaults are keyed; older plaintext vaults stay
+     plaintext until encrypted in Settings; no listening socket by default (the
+     lab Spine server is opt-in); no telemetry, but slated text goes to the
+     chosen model, and refusals come from the model. Re-check there before
+     changing any of them in either direction. */
   .honesty-chips {
     border-top: 1px solid var(--frame-border);
     background: var(--frame-bg-2);
@@ -633,20 +636,20 @@
             <span class="live">Architecture PPA</span>
           </div>
           <div class="pane-caption">
-            Vault on-device, model-agnostic by design. <em>Refusals run local; synthesis can route to frontier.</em> No vault-content telemetry; the vault has no inbound network surface.
+            Vault on-device, model-agnostic by design. <em>Reads, refusals included, come from the model you connect; quotes are checked locally against your source.</em> No analytics or telemetry; no listening ports by default.
           </div>
           <div class="vault-rows">
             <div class="vault-row">
               <span class="cmd"><span class="prompt">$</span>sqlcipher vault.db ".schema correction_stream"</span>
-              <span class="out">→ <em>encrypted at rest</em> · AES-256 · founder is the only key-holder</span>
+              <span class="out">→ <em>new vaults encrypted at rest</em> · SQLCipher, AES-256 · key made on this Mac, in Keychain by default · no server copy</span>
             </div>
             <div class="vault-row">
               <span class="cmd"><span class="prompt">$</span>ls -la ~/.liminal/vault.db</span>
-              <span class="out">→ <em>0600 · user-only</em> · vault file unreadable to any other process</span>
+              <span class="out">→ <em>user-only</em> · other accounts on this Mac cannot read it · not a process-isolation boundary</span>
             </div>
             <div class="vault-row">
               <span class="cmd"><span class="prompt">$</span>liminal --inspect-routes</span>
-              <span class="out">refusal: <em>local</em> · synth: <em>frontier</em> · vault: <em>no inbound surface · no content telemetry</em></span>
+              <span class="out">refusal: <em>from the model · quote-checked locally</em> · synth: <em>frontier or local model</em> · vault: <em>no listening ports by default · no telemetry</em></span>
             </div>
           </div>
           <div class="pane-foot">
@@ -665,7 +668,7 @@
       <div class="deck-foot">
         <span class="left">compose → read → dispatch → commit · <b>the founder's own door into the loop</b></span>
         <span class="center">refusal-as-trust · <b>AgentHansa judges: “refusal as designed output”: most original architectural idea in their cohort</b></span>
-        <span class="right">local SQLCipher vault · no inbound network surface · no vault-content telemetry</span>
+        <span class="right">local SQLCipher vault · no listening ports by default · no telemetry</span>
       </div>
 
     </div>
