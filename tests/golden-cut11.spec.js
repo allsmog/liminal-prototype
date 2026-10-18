@@ -1,6 +1,8 @@
 // Golden path · cut 11 (P0): objective → reads → refusal → correction →
 // ratify → sealed artifact → decision log. Asserted twice (fresh load and
-// after the visible restart) to lock determinism.
+// after the visible restart) to lock determinism. Since LIM-2292 (C1) the
+// correction is made in Cut 13, the single correction surface; Cut 11 hands
+// off to it and counts what Cut 13 recorded in this browser's vault.
 import { test, expect } from "@playwright/test";
 import { CUT_11_CANONICAL, trackConsoleErrors } from "./helpers.js";
 
@@ -25,14 +27,22 @@ async function runGoldenPath(page, { correct }) {
   // 3. reconciliation strip: naïve → dropped → verified figures render
   await expect(page.getByText(/dropped by verifier/i)).toBeVisible();
 
-  // 4. optional operator correction on a finding
+  // 4. correction is a hand-off: "Correct this finding →" (inside the
+  //    expanded F-CAL finding) and every "Amend read" link to Cut 13, and no
+  //    inline correction editor survives on Cut 11
+  await page.locator('[data-finding="F-CAL"] [data-fexpand]').click({ force: true });
+  const correctLink = page.getByRole("link", { name: "Correct this finding →" });
+  await expect(correctLink).toHaveCount(1);
+  await expect(correctLink).toHaveAttribute("href", "13-judgment.html");
+  const amend = page.locator(".reg .amend");
+  await expect(amend).toHaveCount(4);
+  for (const href of await amend.evaluateAll((els) => els.map((el) => el.getAttribute("href")))) {
+    expect(href).toBe("13-judgment.html");
+  }
+  await expect(page.locator(".fc-kind, [data-fcsave], .reg-edit")).toHaveCount(0);
   if (correct) {
-    // a viewer expands the finding first: the correct affordance lives inside
-    await page.locator("[data-fexpand]").first().click({ force: true });
-    await page.locator("[data-fcorrect]").first().click({ force: true });
-    await page.locator(".fc-kind").first().click({ force: true });
-    await page.locator("[data-fcsave]").first().click({ force: true });
-    await expect(page.getByText(/correction appended/i)).toBeVisible();
+    // the correction recorded in Cut 13 is counted back on this case
+    await expect(page.locator("#chain")).toContainText("judgment record (Cut 13)");
   }
 
   // 4b. rule → enforcement: the ratify action lives on step 5, one past the
@@ -56,6 +66,7 @@ async function runGoldenPath(page, { correct }) {
   await expect(artifact).toContainText(entries);
   if (correct) {
     await expect(artifact).toContainText("Operator made 1 correction");
+    await expect(artifact).toContainText("recorded in Cut 13 (judgment record) on this device");
   }
 
   // 6a. the pointer path to a second ratify is closed: Sign hides itself
@@ -97,9 +108,21 @@ test("golden path is deterministic across a restart", async ({ page }) => {
   await page.locator("#reset-demo").click();
   await expect(page.locator("body")).toHaveAttribute("data-surface", "today");
 
-  // run 2: after restart, the full path (now with a correction) completes
-  await page.keyboard.press("3"); // The loop
+  // run 2: record one correction in Cut 13 (same browser context, same
+  // vault), come back on the canonical URL, and the full path counts it
+  await page.goto("/cuts/13-judgment.html");
+  await page.locator('[data-assert="A2"]').click();
+  await page.locator("#jd-corrected").fill(
+    "E12 and E13 may be routine administration; nothing in the evidence links them to a ticket or PR."
+  );
+  await page.locator("#jd-review").click();
+  await page.locator("#jd-confirm").click();
+  await expect(page.locator('.jd-record[data-state="recorded"]')).toBeVisible({ timeout: 10_000 });
+
+  await page.goto(CUT_11_CANONICAL);
   await runGoldenPath(page, { correct: true });
+  // the decision log line reads the same Cut 13 record
+  await expect(page.getByText(/1 correction recorded in Cut 13 \(judgment record\) on this device/)).toBeVisible();
 
   expect(errors, "console errors across both runs").toEqual([]);
 });
