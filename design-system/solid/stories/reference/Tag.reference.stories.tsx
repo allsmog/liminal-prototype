@@ -17,8 +17,8 @@ const TONES = ["default", "success", "error", "warning", "info"] as const;
 
 const label = {
   "font-family": "var(--mono)",
-  "font-size": "10px",
-  "letter-spacing": "0.08em",
+  "font-size": "var(--fs-mono-xs)",
+  "letter-spacing": "var(--ls-mono-sm)",
   "text-transform": "uppercase",
   color: "var(--text-faint)",
   "margin-bottom": "12px",
