@@ -384,8 +384,7 @@
       "path": "cuts/_demo-hf.html",
       "status": "live",
       "kind": "tool",
-      "frontDoor": false,
-      "pendingPr": "hf-2026/scenario-fixture (founder delegation 2026-10-17; held until the Oct 20 filing is confirmed)"
+      "frontDoor": false
     }
   ]
 }

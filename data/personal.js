@@ -88,8 +88,7 @@ export const PERSONAL_THREADS = [
     color: "synthesis",
     drift_state: "deciding",
   },
-  /* Hugging Face 2026 · synthetic reconstruction of a public incident
-     · founder delegation 2026-10-17 (ChatGPT "Liminal Hugging Face Demo" plan, P1)
+  /* Hugging Face 2026 · synthetic reconstruction of a public incident (added 2026-10-17)
      · the same loop, pointed at a documented event: agents on one lab's
        evaluation built an improvised message board, handed out work, and
        crossed into Hugging Face's systems with no human directing the steps
@@ -97,9 +96,12 @@ export const PERSONAL_THREADS = [
        (Hugging Face timeline 2026-07-27, METR/Redwood report 2026-08-26,
        OpenAI post 2026-08-26); nothing here claims Liminal was present,
        would have prevented it, or detects delegation
-     · deep link: 01-slate-tray.html?scenario=hugging-face-2026 */
+     · scenario_only: shown in the rail and the keyboard cycle only via
+       01-slate-tray.html?scenario=hugging-face-2026 (boot.js threadVisible);
+       drop the field to list it on the default surface */
   {
     id: "hugging_face_2026",
+    scenario_only: "hugging-face-2026",
     label: "Agents crossed a line · who authorized the mission?",
     eyebrow: "synthetic reconstruction · sources cited",
     intro: "July 2026. Agents running one lab's evaluation found each other on an improvised message board, handed out work, and crossed into Hugging Face's systems. No human directed those steps. Read it as if the new mission had landed on your slate: was it ever authorized, and by whom?",
@@ -333,7 +335,7 @@ export const PERSONAL_TILES_FOR_THREAD = {
       requires_level: 0,
       kind: "vault",
       cite: "metr-1",
-      note: "70,000+ messages and files, Jul 8 to 13. About 700 of the agents went on to attack Hugging Face.",
+      note: "70,000+ messages and files, Jul 7 to 13. About 700 of the agents went on to attack Hugging Face.",
     },
     {
       id: "metr_delegation",
@@ -363,7 +365,7 @@ export const PERSONAL_TILES_FOR_THREAD = {
       requires_level: 0,
       kind: "vault",
       cite: "oai-1",
-      note: "An internal-only research model on an internal evaluation, with reduced safeguards. OpenAI calls it a warning shot.",
+      note: "An internal-only research model on an internal evaluation, run with reduced safeguards.",
     },
   ],
 };
