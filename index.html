@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Liminal · The judgment layer for AI-assisted work</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230b0b0d'/%3E%3Cpath d='M16 5 27 16 16 27 5 16Z' fill='none' stroke='%23c9c4bc' stroke-width='1.6'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230A0A0B'/%3E%3Cpath d='M16 5 27 16 16 27 5 16Z' fill='none' stroke='%23C9C5BD' stroke-width='1.6'/%3E%3C/svg%3E">
 
 <!-- Front door · C-led + A-catalog (2026-07-02)
      The hero IS the product's core mechanic: a live orbital where the registers
@@ -17,7 +17,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="design-system/tokens/design-tokens.css">
 
 <style>
@@ -47,28 +47,30 @@
   body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
 
   .top{display:flex;align-items:center;justify-content:space-between;padding: 20px 32px;position:relative;z-index:5}
-  .top .n{font-family:var(--display);font-size: var(--fs-md);letter-spacing: var(--ls-app-normal)}.top .n b{color:var(--clarity)}
+  .top .n{font-family:var(--display);font-size: var(--fs-md);letter-spacing: var(--ls-app-normal)}.top .n b{color:var(--judgment)}
   .top .meta{font-family:var(--mono);font-size: var(--fs-eyebrow);letter-spacing: var(--ls-mono-sm);text-transform:uppercase;color:var(--text-faint)}
 
   /* HERO SCENE (C) */
-  .hero{min-height:calc(100vh - 62px);display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap: 32px;align-items:center;max-width:1280px;margin: 0 auto;padding: 0 32px 40px;position:relative}
-  .thesis{max-width:26ch}
-  .thesis .kick{font-family:var(--mono);font-size: var(--fs-mono-xs);letter-spacing: .22em;text-transform:uppercase;color:var(--clarity);margin-bottom: 20px}
-  .thesis h1{font-family:var(--display);font-weight:400;font-size: clamp(var(--fs-check),3.5vw,44px);line-height:1.04;letter-spacing: var(--ls-app-neutral)}
+  .hero{min-height:calc(100vh - 62px);min-height:calc(100dvh - 62px);display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap: 32px;align-items:center;max-width:1280px;margin: 0 auto;padding: 0 32px var(--space-10);position:relative}
+  .thesis{max-width:34rem}
+  .thesis .kick{font-family:var(--mono);font-size: var(--fs-mono-xs);letter-spacing: var(--ls-app-widest);text-transform:uppercase;color:var(--judgment);margin-bottom: 20px}
+  .thesis h1{font-family:var(--display);font-weight:400;font-size: clamp(var(--fs-check),3.5vw,var(--fs-delta));line-height:1.04;letter-spacing: var(--ls-app-neutral);text-wrap:balance}
   .thesis p{font-family:var(--sans);font-size: clamp(var(--fs-body),1.5vw,var(--fs-app-lg));line-height:1.6;color:var(--text-dim);margin-top: 18px;max-width:40ch}
   .thesis .cta{display:inline-flex;align-items:center;gap: 9px;margin-top: 26px;text-decoration:none;font-family:var(--mono);font-size: var(--fs-mono-xs);letter-spacing: var(--ls-mono-sm);text-transform:uppercase;color:var(--text);border:1px solid var(--hair-2);border-radius: var(--radius-pill);padding: 11px 18px;min-height:44px;transition:border-color .18s,background .18s}
-  .thesis .cta:hover{border-color:var(--clarity);background:color-mix(in oklch,var(--clarity) 12%,transparent)}
-  .thesis .cta .a{color:var(--clarity)}
+  .thesis .cta:hover{border-color:var(--judgment);background:color-mix(in oklch,var(--judgment) 12%,transparent)}
+  .thesis .cta .a{color:var(--judgment)}
 
   .orbit-wrap{position:relative;width:min(72vh,560px);aspect-ratio:1;justify-self:center;transform-style:preserve-3d;transition:transform .3s ease-out}
   svg.orbit{width:100%;height:100%;overflow:visible}
+  /* SVG presentation attributes cannot take var(); the face is set here instead */
+  #regs,#diamond{font-family:var(--mono)}
   .caption{position:absolute;left:50%;bottom:-58px;transform:translateX(-50%);text-align:center;width:100%;pointer-events:none}
   .caption .phase{font-family:var(--mono);font-size: var(--fs-mono-xs);letter-spacing: var(--ls-mono-lg);text-transform:uppercase;color:var(--text-dim);min-height:14px;transition:color .3s}
   .caption .line{font-family:var(--sans);font-style:italic;font-size: var(--fs-base);color:var(--text-mid);margin-top: var(--space-2);min-height:22px;transition:opacity .3s}
   /* bifurcated seal · beat 1 = the artifact, appears INSTANTLY (no transition) */
   .artifact{position:absolute;left:50%;top:calc(50% + 92px);transform:translateX(-50%);display:none;align-items:center;gap: var(--space-2);
-            font-family:var(--mono);font-size: 9.5px;letter-spacing: .1em;color:var(--text-mid);
-            background:var(--frame-bg-2);border:1px solid var(--hair-2);border-radius: 5px;padding: 7px 11px;white-space:nowrap;pointer-events:none}
+            font-family:var(--mono);font-size: var(--fs-mono-xs);letter-spacing: var(--ls-app-wider);color:var(--text-mid);
+            background:var(--frame-bg-2);border:1px solid var(--hair-2);border-radius: var(--radius-4);padding: 7px 11px;white-space:nowrap;pointer-events:none}
   .artifact.show{display:inline-flex}
   .artifact .d{color:var(--clarity)}
   .artifact .h{color:var(--text-faint)}
@@ -79,27 +81,51 @@
   .reading{animation:pulse 1.3s ease-in-out infinite}
 
   /* CATALOG (A) */
-  .catalog{max-width:1180px;margin: 0 auto;padding: 5vh 32px 12vh;border-top:1px solid var(--hair)}
+  .catalog{max-width:1280px;margin: 0 auto;padding: 5vh 32px 12vh;border-top:1px solid var(--hair)}
   .cat-head{display:flex;align-items:baseline;justify-content:space-between;margin: var(--space-2) 0 var(--space-app-1-5)}
-  .cat-head .t{font-family:var(--mono);font-size: var(--fs-mono-xs);letter-spacing: .22em;text-transform:uppercase;color:var(--text-faint)}
+  .cat-head h2{font-family:var(--display);font-weight:400;font-size: var(--fs-xl);letter-spacing: var(--ls-app-normal);color:var(--text)}
   .cat-head .c{font-family:var(--mono);font-size: var(--fs-mono-xs);color:var(--text-faint)}
-  .lead-card{margin: 14px 0 30px;border:1px solid var(--hair-2);border-radius: 9px;background:linear-gradient(180deg,color-mix(in oklch,var(--clarity) 7%,var(--frame-bg)),var(--frame-bg));padding: var(--space-app-5) 26px;display:block;text-decoration:none;position:relative;transition:border-color .18s,transform .18s}
-  .lead-card:hover{border-color:color-mix(in oklch,var(--clarity) 55%,var(--hair-2));transform:translateY(-1px)}
-  .lc-tag{font-family:var(--mono);font-size: var(--fs-eyebrow);letter-spacing: var(--ls-mono);text-transform:uppercase;color:var(--clarity)}
-  .lc-title{font-family:var(--display);font-size: 23px;letter-spacing: var(--ls-app-normal);margin: var(--space-2) 0 var(--space-app-1-5)}
-  .lc-desc{font-family:var(--sans);font-size: var(--fs-body);line-height:1.55;color:var(--text-mid);max-width:60ch}
-  .lc-go{position:absolute;right:24px;top:24px;font-family:var(--mono);color:var(--clarity);font-size: var(--fs-base)}
   .idx{border-top:1px solid var(--hair)}
-  .row{display:grid;grid-template-columns:20px 1fr auto;gap: var(--space-4);align-items:center;padding: 15px var(--space-app-1-5);border-bottom:1px solid var(--hair);text-decoration:none;transition:background .16s,padding-left .16s}
-  .row:hover{background:var(--frame-bg);padding-left: var(--space-3)}
+  .row{display:grid;grid-template-columns:20px 1fr auto;gap: var(--space-4);align-items:center;padding: 15px var(--space-app-1-5);border-bottom:1px solid var(--hair);text-decoration:none;transition:background .16s}
+  .row:hover{background:var(--frame-bg)}
+  .row .body{transition:transform .16s}
+  .row:hover .body{transform:translateX(4px)}
   .dot{width:7px;height:7px;border-radius: 50%;justify-self:center}
   .row .body{display:flex;flex-direction:column;gap: 3px}
-  .row .body .t{font-family:var(--display);font-size: 15.5px;letter-spacing: -.005em;color:var(--text)}
-  .row .body .d{font-family:var(--sans);font-size: 12.5px;line-height:1.45;color:var(--text-dim);max-width:62ch}
-  .row .meta{font-family:var(--mono);font-size: var(--fs-eyebrow);letter-spacing: .12em;text-transform:uppercase;color:var(--text-faint);white-space:nowrap;text-align:right}
+  .row .body .t{font-family:var(--display);font-size: var(--fs-base);letter-spacing: var(--ls-app-normal);color:var(--text)}
+  .row .body .d{font-family:var(--sans);font-size: var(--fs-xs);line-height:1.45;color:var(--text-dim);max-width:62ch}
+  .row .meta{font-family:var(--mono);font-size: var(--fs-eyebrow);letter-spacing: var(--ls-app-wider);text-transform:uppercase;color:var(--text-faint);white-space:nowrap;text-align:right}
   .row:hover .meta{color:var(--text-mid)}
 
-  footer{max-width:1180px;margin: 0 auto;padding: var(--space-app-5) 32px;border-top:1px solid var(--hair);display:flex;justify-content:space-between;font-family:var(--mono);font-size: var(--fs-eyebrow);letter-spacing: var(--ls-app-wider);text-transform:uppercase;color:var(--text-faint)}
+  /* WHAT THIS IS · the problem as a lede, then a definition list. Replaced the
+     four-equal orientation strip (2026-10-18 taste pass): the "mechanic" cell
+     restated the hero, so it went; "What's real here" stays verbatim. */
+  .whatis{max-width:1280px;margin:0 auto;padding: var(--space-8) 32px var(--space-8);border-top:1px solid var(--hair)}
+  .whatis h2{font-family:var(--display);font-weight:400;font-size: clamp(var(--fs-xl),2.6vw,var(--fs-3xl));line-height:1.15;letter-spacing: var(--ls-app-neutral);max-width:28ch}
+  .whatis dl{display:grid;grid-template-columns:minmax(0,180px) minmax(0,62ch);column-gap: var(--space-7);row-gap: var(--space-4);margin-top: var(--space-7)}
+  .whatis dt{font-family:var(--mono);font-size: var(--fs-mono-xs);letter-spacing: var(--ls-mono);text-transform:uppercase;color:var(--text-faint);padding-top: var(--space-app-0-5)}
+  .whatis dd{font-family:var(--sans);font-size: var(--fs-base);line-height:1.6;color:var(--text-mid)}
+
+  /* START HERE · one featured path across the top, two secondary paths below:
+     a 1 + 2 bento (exactly three cells for three paths). Each tile is tinted by the
+     register its surface already carries in the index below (One-Meaning).
+     No CTA label inside the tiles: the hero CTA is the page's one primary
+     action, and tests/smoke.spec.js asserts its label is unique here. */
+  .start{margin-bottom: var(--space-8)}
+  .start h2,.cat-head h2{font-family:var(--display);font-weight:400;font-size: var(--fs-xl);letter-spacing: var(--ls-app-normal);color:var(--text)}
+  .tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap: var(--space-4);margin-top: var(--space-5)}
+  .tile{position:relative;display:flex;flex-direction:column;gap: var(--space-3);text-decoration:none;border:1px solid var(--hair-2);border-radius: var(--radius-4);background:var(--frame-bg);padding: var(--space-app-5) var(--space-6);transition:border-color .18s,transform .18s}
+  .tile:hover{border-color:var(--text-faint);transform:translateY(-1px)}
+  .tile--lead{grid-column:1 / -1;padding: var(--space-7) var(--space-6);background:linear-gradient(165deg,color-mix(in oklch,var(--diligence) 18%,var(--frame-bg)),var(--frame-bg) 72%)}
+  .tile--govern{background:linear-gradient(165deg,color-mix(in oklch,var(--judgment) 13%,var(--frame-bg)),var(--frame-bg) 78%)}
+  .tile-title{font-family:var(--display);font-size: var(--fs-xl);letter-spacing: var(--ls-app-normal);color:var(--text);padding-right: var(--space-7)}
+  .tile--lead .tile-title{font-size: clamp(var(--fs-xl),2.4vw,var(--fs-2xl))}
+  .tile--lead .tile-desc{font-size: var(--fs-base);max-width:64ch}
+  .tile-desc{font-family:var(--sans);font-size: var(--fs-body);line-height:1.55;color:var(--text-mid);max-width:56ch}
+  .tile .claim-chip{margin-left:0;align-self:flex-start}
+  .tile-go{position:absolute;right: var(--space-app-5);top: var(--space-app-5);font-family:var(--mono);font-size: var(--fs-base);color:var(--text-dim);transition:color .18s}
+  .tile:hover .tile-go{color:var(--text)}
+  footer{max-width:1280px;margin: 0 auto;padding: var(--space-app-5) 32px;border-top:1px solid var(--hair);display:flex;justify-content:space-between;font-family:var(--mono);font-size: var(--fs-eyebrow);letter-spacing: var(--ls-app-wider);text-transform:uppercase;color:var(--text-faint)}
   footer a{color:var(--text-faint);text-decoration:none}
   footer a:hover{color:var(--text-mid)}
 
@@ -107,16 +133,13 @@
     html{scroll-behavior:auto}
     .reading{animation:none;opacity:1}
     .orbit-wrap{transform:none!important}
+    .row .body,.tile{transition:none}
+    .row:hover .body,.tile:hover{transform:none}
   }
-  /* orientation strip · 10-second read for a cold visitor */
-  .orient{max-width:1116px;margin:0 auto 6vh;display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--hair);border:1px solid var(--hair);border-radius:9px;overflow:hidden}
-  @media (max-width:1180px){.orient{margin-left:32px;margin-right:32px}}
-  .o-cell{background:var(--frame-bg);padding:18px 18px 20px;display:flex;flex-direction:column;gap:8px}
-  .o-k{font-family:var(--mono);font-size:var(--fs-mono-xs);letter-spacing:.18em;text-transform:uppercase;color:var(--text-faint)}
-  .o-v{font-size:13.5px;line-height:1.55;color:var(--text-mid)}
-  .claim-chip{font-family:var(--mono);font-size:var(--fs-mono-xs);letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);border:1px solid var(--hair-2);border-radius:4px;padding:2px 6px;margin-left:8px;vertical-align:1px}
+  .claim-chip{font-family:var(--mono);font-size:var(--fs-mono-xs);letter-spacing:var(--ls-app-wide);text-transform:uppercase;color:var(--text-faint);border:1px solid var(--hair-2);border-radius:var(--radius-3);padding:2px 6px;margin-left:8px;vertical-align:1px}
   @media (max-width:860px){
-    .orient{grid-template-columns:1fr 1fr}
+    .tiles{grid-template-columns:1fr}
+    .tile--lead{padding: var(--space-app-5) var(--space-6)}
     .hero{grid-template-columns:1fr;gap: 26px;min-height:auto;padding-top: 6vh;padding-bottom: 9vh}
     .orbit-wrap{width:min(74vw,420px);order:2}
     .top .meta{display:none}
@@ -124,6 +147,8 @@
   @media (max-width:600px){
     /* metas wrap under the title: the nowrap right column was pushing the
        page into 45px of horizontal scroll on phones */
+    .whatis dl{grid-template-columns:1fr;row-gap: var(--space-2)}
+    .whatis dd{margin-bottom: var(--space-3)}
     .row{grid-template-columns:16px 1fr;row-gap: 5px}
     .row .meta{grid-column:2;justify-self:start;text-align:left;white-space:normal}
   }
@@ -139,14 +164,14 @@
        someone already inside the demo, where the specific framing lands harder.
        Do not "reconcile" these two lines in a consistency sweep, the divergence is
        the decision. See cuts/01-slate-tray.html for the matching note. -->
-  <span class="meta">the judgment layer for AI-assisted work · local-first · refusal as output</span>
+  <span class="meta">the judgment layer for AI-assisted work</span>
 </div>
 
 <section class="hero">
   <div class="thesis">
     <div class="kick">A read, running</div>
     <h1>Bounded agents read it. They disagree. You decide.</h1>
-    <p>Watch one read run: four bounded agents deliberate, one refuses out-of-lane, you decide. The decision seals into an inspectable, local record. That loop is the whole product.</p>
+    <p>Four bounded agents deliberate. One refuses out of lane. Your call seals into a local, inspectable record.</p>
     <a class="cta" href="cuts/01-slate-tray.html">See the judgment loop <span class="a">→</span></a>
   </div>
 
@@ -184,7 +209,7 @@
            Never cite a count from this file, or from agency.js, as an
            architecture claim. See docs/architecture/ONTOLOGY_RECONCILIATION_2026-07-01.md
            (2026-08-20 addendum). -->
-      <g id="regs" font-family="Geist Mono, monospace">
+      <g id="regs">
         <circle class="agent-glyph" data-k="diligence" cx="200" cy="50"  r="6.5" fill="var(--diligence)"/>
         <text x="200" y="28"  text-anchor="middle" font-size="8"   letter-spacing="1.4" fill="var(--text-faint)">DILIGENCE</text>
         <text x="200" y="40"  text-anchor="middle" font-size="7.5" fill="var(--text-dim)">Auditor</text>
@@ -204,50 +229,58 @@
       </radialGradient>
       <circle id="glow" cx="200" cy="200" r="46" fill="url(#core)"/>
       <circle id="orb" cx="200" cy="200" r="15" fill="var(--frame-bg)" stroke="var(--clarity)" stroke-width="1.4" style="transition:stroke .5s"/>
-      <text id="diamond" x="200" y="205" text-anchor="middle" font-size="15" fill="var(--clarity)" font-family="Geist Mono, monospace" style="transition:fill .5s">◇</text>
+      <text id="diamond" x="200" y="205" text-anchor="middle" font-size="15" fill="var(--clarity)" style="transition:fill .5s">◇</text>
     </svg>
     <div class="artifact show" id="artifact"><span class="d">◇</span> sealed · packet in the vault</div>
     <div class="caption"><div class="phase" id="phase">sealed</div><div class="line" id="line">the record stays inspectable</div></div>
   </div>
 </section>
 
-<section class="orient">
-  <div class="o-cell"><span class="o-k">Who it's for</span><span class="o-v">Teams accountable for AI-assisted decisions: founders first, then owners of frontier-model spend.</span></div>
-  <div class="o-cell"><span class="o-k">The problem</span><span class="o-v">Agents produce answers. Nobody governs what was trusted, corrected, or refused. Nobody can prove it later.</span></div>
-  <div class="o-cell"><span class="o-k">The mechanic</span><span class="o-v">Bounded agents read; they disagree or refuse; the accountable human decides; the record seals and stays inspectable.</span></div>
-  <div class="o-cell"><span class="o-k">What's real here</span><span class="o-v">Prototype choreography over deterministic fixtures. Receipts labeled where earned. Vault writes are real, device-local. Roadmap is marked.</span></div>
+<section class="whatis">
+  <h2>Agents produce answers. Nobody governs what was trusted, corrected, or refused.</h2>
+  <dl>
+    <dt>For</dt>
+    <dd>Teams accountable for AI-assisted decisions: founders first, then owners of frontier-model spend.</dd>
+    <dt>What's real here</dt>
+    <dd>Prototype choreography over deterministic fixtures. Receipts labeled where earned. Vault writes are real, device-local. Roadmap is marked.</dd>
+  </dl>
 </section>
 
 <section class="catalog">
-  <a class="lead-card" href="cuts/01-slate-tray.html">
-    <span class="lc-tag">Start here · the judgment loop <span class="claim-chip">prototype · fixture</span></span>
-    <div class="lc-title">The slate &amp; tray · the core mechanic</div>
-    <p class="lc-desc">Drag a Slack thread, a doc, a transcript into the tray. Bounded agents read it, disagree, and stage one next move. You correct the read; the vault keeps the record.</p>
-    <span class="lc-go">→</span>
-  </a>
-  <a class="lead-card" href="cuts/11-govern.html?subject=spend&amp;beat=loop&amp;run=govern-run.json">
-    <span class="lc-tag">The commercial wedge <span class="claim-chip">prototype · deterministic fixture · receipts labeled</span></span>
-    <div class="lc-title">Govern · Opus 4.8 spend against company goals</div>
-    <p class="lc-desc">A recorded governance run: four registers read the fleet's spend, one refuses out-of-lane, the operator corrects a finding and ratifies policy; the result seals to an append-only decision log.</p>
-    <span class="lc-go">→</span>
-  </a>
-  <a class="lead-card" href="cuts/_sequences.html">
-    <span class="lc-tag">Play · three sequences, one system <span class="claim-chip">wraps the surfaces below · claims labeled per beat</span></span>
-    <div class="lc-title">Sequences · the catalog, played</div>
-    <p class="lc-desc">The cuts compressed into three played runs: one decision crosses the loop, the loop turns on the agent fleet, and the record proves it travels. Same loop, every subject; arrow keys advance.</p>
-    <span class="lc-go">→</span>
-  </a>
+  <div class="start">
+    <h2>Start here</h2>
+    <div class="tiles">
+      <a class="tile tile--lead" href="cuts/01-slate-tray.html">
+        <span class="tile-title">The slate &amp; tray: the core mechanic</span>
+        <span class="claim-chip">prototype · fixture</span>
+        <p class="tile-desc">Drag a Slack thread, a doc, a transcript into the tray. Bounded agents read it, disagree, and stage one next move. You correct the read; the vault keeps the record.</p>
+        <span class="tile-go" aria-hidden="true">→</span>
+      </a>
+      <a class="tile tile--govern" href="cuts/11-govern.html?subject=spend&amp;beat=loop&amp;run=govern-run.json">
+        <span class="tile-title">Govern: Opus 4.8 spend against company goals</span>
+        <span class="claim-chip">prototype · deterministic fixture · receipts labeled</span>
+        <p class="tile-desc">A recorded governance run: four registers read the fleet's spend, one refuses out-of-lane, the operator corrects a finding and ratifies policy; the result seals to an append-only decision log.</p>
+        <span class="tile-go" aria-hidden="true">→</span>
+      </a>
+      <a class="tile" href="cuts/_sequences.html">
+        <span class="tile-title">Sequences: the catalog, played</span>
+        <span class="claim-chip">wraps the surfaces below · claims labeled per beat</span>
+        <p class="tile-desc">The cuts compressed into three played runs: one decision crosses the loop, the loop turns on the agent fleet, and the record proves it travels. Same loop, every subject; arrow keys advance.</p>
+        <span class="tile-go" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </div>
   <!-- COUNT · "N surfaces" must equal the number of .row entries below it.
        This is a hand-maintained cardinal next to the list it describes, which is
-       exactly the shape that produced the wrong agent count (#90/#93/#100) and the
-       phantom-name block (#101): a number a later editor trusts instead of counting.
+       exactly the shape that produced the wrong agent count (PRs 90, 93, 100) and the
+       phantom-name block (PR 101): a number a later editor trusts instead of counting.
        If you add or remove a row, change this. Verify by counting the <a> entries
        inside the .idx block directly below: and note that a grep for the row
        pattern also matches any comment quoting it, this one included, so count the
        anchors rather than trusting a raw match total. -->
-  <div class="cat-head"><span class="t">Explore the prototype</span><span class="c">14 surfaces</span></div>
+  <div class="cat-head"><h2>Explore the prototype</h2><span class="c">14 surfaces</span></div>
   <div class="idx">
-    <a class="row" href="cuts/06-margin-read.html"><span class="dot" style="background:var(--diligence)"></span><span class="body"><span class="t">Margin-read · the founder's hand</span><span class="d">The re-entry loop, narrated in the founder's own hand over the live UI.</span></span><span class="meta">explainer</span></a>
+    <a class="row" href="cuts/06-margin-read.html"><span class="dot" style="background:var(--diligence)"></span><span class="body"><span class="t">Margin-read · the founder's hand</span><span class="d">The re-entry loop, narrated in the founder's own hand over the running UI.</span></span><span class="meta">explainer</span></a>
     <a class="row" href="cuts/00-agency.html"><span class="dot" style="background:var(--diligence)"></span><span class="body"><span class="t">Agency · the subject is a parameter</span><span class="d">The proof it's infrastructure: one loop, pointed at spend, custody, OSINT, a contradiction.</span></span><span class="meta">substrate</span></a>
     <a class="row" href="cuts/10-today.html"><span class="dot" style="background:var(--outreach)"></span><span class="body"><span class="t">Today · what came back overnight</span><span class="d">The daemon re-reads held compositions; you say how it landed. The loop, made a place.</span></span><span class="meta">re-entry</span></a>
     <a class="row" href="cuts/11-govern.html"><span class="dot" style="background:var(--judgment)"></span><span class="body"><span class="t">Govern · correction is the interaction</span><span class="d">The loop turned on the agent fleet itself. Where you correct is first-party data.</span></span><span class="meta">govern</span></a>
@@ -264,7 +297,7 @@
   </div>
 </section>
 
-<footer><span>theliminalspace.io · 2026 · bounded · forensic · inevitable</span><a href="https://theliminalspace.io">site →</a></footer>
+<footer><span>theliminalspace.io</span><a href="https://theliminalspace.io">site →</a></footer>
 
 <script>
 
