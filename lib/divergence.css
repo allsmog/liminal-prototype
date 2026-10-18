@@ -187,7 +187,7 @@
 .dvg-agent-name { font-size: 11px; letter-spacing: 0.04em; color: var(--text); }
 
 .dvg-reg {
-  font-size: 9px;
+  font-size: var(--fs-eyebrow);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   margin-left: auto;
@@ -305,7 +305,7 @@
 }
 
 .dvg-terminal-kind {
-  font-size: 9px;
+  font-size: var(--fs-eyebrow);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--judgment);
@@ -343,7 +343,7 @@
 
 .dvg-edge-label {
   flex: 0 0 auto;
-  font-size: 9px;
+  font-size: var(--fs-eyebrow);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   white-space: nowrap;
