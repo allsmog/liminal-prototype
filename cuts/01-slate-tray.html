@@ -1585,6 +1585,16 @@
       ],
       receipt: { id: 'sr-founding-0512', body: '3 tiles · 2 agents · 38 prior', state: 'vault-sealed · device-local' }
     },
+    /* thread-keyed · Hugging Face 2026 synthetic reconstruction · numbers each
+       from one source (cuts/assets/hugging-face-2026/sources.json) */
+    'personal:hugging_face_2026': {
+      metrics: [
+        { label: 'Attacker actions', number: '~17,600', caption: 'Hugging Face timeline · Jul 9 to 13 UTC' },
+        { label: 'Agents on the board', number: '~1,200', caption: 'METR · about 700 joined the attack' },
+        { label: 'Human owner of the mission', number: 'none on the slate', caption: 'no human named on the slate · authority unknown' }
+      ],
+      receipt: { id: 'hf-2026-reconstruction', body: '5 excerpts · 3 agents · 0 prior', state: 'synthetic reconstruction · sources cited' }
+    },
     team: {
       metrics: [
         { label: 'Substrate gap', number: '3 → 1', caption: 'corrections to ship · 1 defer' },
@@ -1603,6 +1613,8 @@
     }
   };
   const currentProduct = () => document.body.dataset.product || 'personal';
+  const currentScenario = () =>
+    SCENARIOS[`${currentProduct()}:${document.body.dataset.context || ''}`] || SCENARIOS[currentProduct()] || SCENARIOS.personal;
   const renderBand = (band, sc) => {
     band.innerHTML = sc.metrics.map(m => `
       <div class="metric-cell">
@@ -1625,7 +1637,7 @@
     const slateArea = document.querySelector('.slate-area');
     const frame = document.querySelector('.frame');
     if (!slateArea || !frame) return;
-    const sc = SCENARIOS[currentProduct()] || SCENARIOS.personal;
+    const sc = currentScenario();
     let band = slateArea.querySelector('.metric-band');
     if (!band) {
       band = document.createElement('div'); band.className = 'metric-band';
@@ -1658,9 +1670,9 @@
     setTimeout(inject, 50);
     new MutationObserver(records => {
       for (const r of records) {
-        if (r.attributeName === 'data-product') { requestAnimationFrame(inject); return; }
+        if (r.attributeName === 'data-product' || r.attributeName === 'data-context') { requestAnimationFrame(inject); return; }
       }
-    }).observe(document.body, { attributes: true, attributeFilter: ['data-product'] });
+    }).observe(document.body, { attributes: true, attributeFilter: ['data-product', 'data-context'] });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();

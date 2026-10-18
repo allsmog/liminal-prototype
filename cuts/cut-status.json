@@ -367,6 +367,12 @@
       "status": "live",
       "kind": "tool",
       "frontDoor": false
+    },
+    {
+      "path": "cuts/_demo-hf.html",
+      "status": "live",
+      "kind": "tool",
+      "frontDoor": false
     }
   ]
 }

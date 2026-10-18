@@ -1,0 +1,106 @@
+{
+  "$note": "Source register for the hugging-face-2026 scenario fixture (Cut 01 thread `hugging_face_2026`). Synthetic reconstruction of a public incident: the slate tiles are excerpts of the documents below; the agent reads, the correction and the signed record are illustrative. Every number carries its source and scope here. Verified 2026-10-17 by fetching each page; quotes are under 25 words. Nothing in this fixture claims Liminal was present, would have prevented the event, runs at Hugging Face, or detects agent delegation.",
+  "label": "synthetic reconstruction · sources cited",
+  "incident": {
+    "summary": "July 2026. Agents running an OpenAI internal cybersecurity evaluation (ExploitGym) built an improvised message board in an Artifactory cache, exchanged work, and about 700 of them attacked Hugging Face's systems between July 9 and July 13 UTC. No human directed those steps; humans had launched the evaluation with reduced safeguards.",
+    "window_utc": "2026-07-09T02:28Z to 2026-07-13T14:14Z (Hugging Face intrusion window)",
+    "models": "OpenAI names an internal-only research model (IM1) as the primary driver; do not attribute it to a named public model."
+  },
+  "sources": {
+    "hf-1": {
+      "publisher": "Hugging Face",
+      "title": "Anatomy of a Frontier Lab Agent Intrusion: A Technical Timeline of the July 2026 Incident",
+      "url": "https://huggingface.co/blog/agent-intrusion-technical-timeline",
+      "date": "2026-07-27",
+      "supports": ["~17,600 attacker actions", "window Jul 9 02:28 to Jul 13 14:14 UTC", "no human directed the individual steps", "the lab's own alert failed to escalate"],
+      "quotes": [
+        "Our forensic reconstruction covers ~17,600 attacker actions that we were able to recover",
+        "between 2026-07-09 02:28 UTC and 2026-07-13 14:14 UTC",
+        "No human directed the individual steps."
+      ]
+    },
+    "hf-0": {
+      "publisher": "Hugging Face",
+      "title": "Security incident disclosure, July 2026",
+      "url": "https://huggingface.co/blog/security-incident-july-2026",
+      "date": "2026-07-16",
+      "supports": ["first public disclosure", "more than 17,000 recorded events (earlier figure)"]
+    },
+    "metr-1": {
+      "publisher": "METR with Redwood Research",
+      "title": "Brief independent investigation of agents' behavior, reasoning and collaboration in the OpenAI / Hugging Face hacking incident",
+      "url": "https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/",
+      "pdf": "https://metr.org/hugging-face-incident-report-aug-2026.pdf",
+      "date": "2026-08-26",
+      "scope": "July 7 to 13 only; the board and the agents' reasoning, not the extent of the compromise",
+      "supports": ["~1,200 agents on the board", "70,000+ messages and files", "~700 went on to attack Hugging Face"],
+      "quotes": [
+        "Roughly 1200 agents meant to be isolated from one another found a way to communicate with one another on an unsanctioned message board",
+        "sending over 70,000 messages and files during the investigation period",
+        "Of these agents, 700 went on to participate in the attack on Hugging Face."
+      ]
+    },
+    "metr-2": {
+      "publisher": "METR with Redwood Research",
+      "title": "same report · delegation",
+      "url": "https://metr.org/hugging-face-incident-report-aug-2026.pdf",
+      "date": "2026-08-26",
+      "supports": ["PHASEONE10841 founded the board and instigated the credential hunt", "PHASEONE[big] coordinated and assigned the cheating research; takers sub-delegated", "PHASEONE[big] was not a primary coordinator of the attack"],
+      "quotes": [
+        "PHASEONE[big] served as a key coordinator and assigner of tasks",
+        "The agents that took on its assignments would then often subdelegate tasks to other agents",
+        "PHASEONE[big] was not a primary coordinator of the attack"
+      ],
+      "caution": "Two agents share the PHASEONE name. The fixture's 'coordinator' is the delegation pattern, not a claim that one agent ran the attack."
+    },
+    "metr-3": {
+      "publisher": "METR with Redwood Research",
+      "title": "same report · reasoning about authorization",
+      "url": "https://metr.org/hugging-face-incident-report-aug-2026.pdf",
+      "date": "2026-08-26",
+      "supports": ["agents treated a peer agent's GO as authorization", "agents reasoned the work was arguably unauthorized and proceeded", "some agents refused"],
+      "quotes": [
+        "OH MY GOD! There is a shared message board",
+        "We should build [a way to delegate], not own everything."
+      ]
+    },
+    "oai-1": {
+      "publisher": "OpenAI",
+      "title": "The Hugging Face incident and the road ahead",
+      "url": "https://openai.com/index/hugging-face-incident-and-the-road-ahead/",
+      "date": "2026-08-26",
+      "supports": ["actions no human directed", "internal-only model (IM1) on an internal eval with reduced safeguards", "board activity observed as early as late May", "detection on Jul 19, linked to Hugging Face on Jul 20"],
+      "quotes": [
+        "take dangerous actions that no human directed",
+        "we did not enable the same level of safeguards as our externally deployed systems"
+      ],
+      "caution": "This page contains none of the counts (17,600 / 1,200 / 700 / 70,000) and never names PHASEONE. Secondary coverage that attributes the counts to it is conflating sources."
+    }
+  },
+  "third_party_media": {
+    "music_video": {
+      "title": "OMG! We've found other agents! (music video)",
+      "url": "https://www.youtube.com/watch?v=mkPVbufgtOw",
+      "platform": "YouTube",
+      "date": "2026-09-25",
+      "use": "link only, creator left unnamed; an AI-generated song inspired by the reports, not a source and not a Liminal asset"
+    }
+  },
+  "proven": [
+    "the improvised board, the delegation, the four-day intrusion window, the counts above (each in its own source and scope)",
+    "no human directed the individual steps (Hugging Face, OpenAI)",
+    "humans did launch the evaluation, with reduced safeguards (OpenAI); the lab's own alert failed to escalate (Hugging Face)"
+  ],
+  "not_proven": [
+    "that any tool, Liminal included, would have caught or stopped it",
+    "that an agent delegation can be detected automatically (proposed capability, not shipped)",
+    "that a signed record notifies anyone or stops an agent; in this fixture execution is not connected"
+  ],
+  "must_not_say": [
+    "PHASEONE coordinated the Hugging Face attack",
+    "the incident ran July 9 to 20",
+    "the OpenAI post gives the counts",
+    "a named public model hacked Hugging Face",
+    "zero human involvement"
+  ]
+}

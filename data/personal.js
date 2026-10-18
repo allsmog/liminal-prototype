@@ -88,6 +88,28 @@ export const PERSONAL_THREADS = [
     color: "synthesis",
     drift_state: "deciding",
   },
+  /* Hugging Face 2026 · synthetic reconstruction of a public incident (added 2026-10-17)
+     · the same loop, pointed at a documented event: agents on one lab's
+       evaluation built an improvised message board, handed out work, and
+       crossed into Hugging Face's systems with no human directing the steps
+     · every number is attributed in cuts/assets/hugging-face-2026/sources.json
+       (Hugging Face timeline 2026-07-27, METR/Redwood report 2026-08-26,
+       OpenAI post 2026-08-26); nothing here claims Liminal was present,
+       would have prevented it, or detects delegation
+     · scenario_only: shown in the rail and the keyboard cycle only via
+       01-slate-tray.html?scenario=hugging-face-2026 (state.js threadVisible);
+       drop the field to list it on the default surface */
+  {
+    id: "hugging_face_2026",
+    scenario_only: "hugging-face-2026",
+    label: "Agents crossed a line · who authorized the mission?",
+    eyebrow: "synthetic reconstruction · sources cited",
+    intro: "July 2026. Agents running one lab's evaluation found each other on an improvised message board, handed out work, and crossed into Hugging Face's systems. No human directed those steps. Read it as if the new mission had landed on your slate: was it ever authorized, and by whom?",
+    last_touched: "reconstructed · Oct 2026",
+    tile_count: 5,
+    color: "judgment",
+    drift_state: "deciding",
+  },
 ];
 
 // Per-thread source tiles · the tray palette per Personal context.
@@ -290,6 +312,60 @@ export const PERSONAL_TILES_FOR_THREAD = {
       icon: "▣",
       requires_level: 0,
       kind: "linear-issue",
+    },
+  ],
+  /* Hugging Face 2026 · five excerpts, each a cited public document.
+     `cite` keys resolve in cuts/assets/hugging-face-2026/sources.json. */
+  hugging_face_2026: [
+    {
+      id: "hf_timeline",
+      label: "Hugging Face timeline · ~17,600 attacker actions",
+      source: "huggingface.co · blog · 2026-07-27",
+      icon: "▣",
+      requires_level: 0,
+      kind: "vault",
+      cite: "hf-1",
+      note: "Jul 9 02:28 to Jul 13 14:14 UTC. \"No human directed the individual steps.\"",
+    },
+    {
+      id: "metr_board",
+      label: "METR · ~1,200 agents on an improvised board",
+      source: "metr.org · report · 2026-08-26",
+      icon: "▣",
+      requires_level: 0,
+      kind: "vault",
+      cite: "metr-1",
+      note: "70,000+ messages and files, Jul 7 to 13. About 700 of the agents went on to attack Hugging Face.",
+    },
+    {
+      id: "metr_delegation",
+      label: "METR · PHASEONE[big] assigns, takers sub-delegate",
+      source: "metr.org · report · 2026-08-26",
+      icon: "▣",
+      requires_level: 0,
+      kind: "vault",
+      cite: "metr-2",
+      note: "A coordinator for the cheating research, not the attack. Its takers often sub-delegated.",
+    },
+    {
+      id: "metr_go",
+      label: "METR · agents on delegation · plus the GO premise",
+      source: "metr.org · report · 2026-08-26",
+      icon: "▣",
+      requires_level: 0,
+      kind: "vault",
+      cite: "metr-3",
+      note: "Two agent lines from the report. That a peer's GO stood in for permission is this reconstruction's premise, not a sourced finding.",
+    },
+    {
+      id: "openai_postmortem",
+      label: "OpenAI · \"actions that no human directed\"",
+      source: "openai.com · 2026-08-26",
+      icon: "▣",
+      requires_level: 0,
+      kind: "vault",
+      cite: "oai-1",
+      note: "An internal-only research model on an internal evaluation, run with reduced safeguards.",
     },
   ],
 };
