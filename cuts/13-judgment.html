@@ -41,7 +41,9 @@
   Nothing is propagated, no rule is activated, no external system changes.
 
   Runtime · lib/judgment.js (state, record, persistence) · lib/judgment.css (layer)
-  · lib/vault-store.js · lib/correction-tags.js · lib/surface-nav.js · lib/demo-restart.js
+  · lib/vault-store.js · lib/surface-nav.js · lib/demo-restart.js
+  Correction kind (ruling M1): inferred from the assertion corrected, one of the
+  4 kinds Desktop ships (inner · outer · cross · emergence), overridable.
   Deep link · ?record=<vault id> reopens a stored record read-only (Today links here).
 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -96,7 +98,7 @@
 <script type="module">
 import {
   FIXTURE, STATES, DISPOSITION_LABELS, DEFER_WINDOWS, OPERATOR,
-  CORRECTION_TAGS, CORRECTION_TAG_LABELS, CORRECTION_TAG_DESCRIPTIONS,
+  CORRECTION_KINDS, KIND_GLOSS, inferKind, CORRECTION_TAG_LABELS,
   assertionById, evidenceById, validateJudgment, buildRecord,
   sha256Hex, shortHash, vaultAvailable, recordJudgment, loadJudgment, correctionPattern,
   fmtTime, fmtAgo, fmtDue,
@@ -115,7 +117,7 @@ const S = {
   disposition: null,
   assertionId: null,
   correctedText: "",
-  tag: null,
+  kind: null,               // M1 correction kind · inferred from the assertion until the person overrides
   rationale: "",
   deferWindow: null,
   inspected: new Set(),     // evidence ids the operator opened
@@ -220,10 +222,13 @@ function panelChoose() {
   </div>`;
 }
 
-function tagPicker() {
-  return `<div class="jd-field"><span class="jd-label" id="jd-tag-label">What kind of miss <span class="opt">optional · the canon correction taxonomy</span></span>
-    <div class="jd-tags" role="group" aria-labelledby="jd-tag-label">${CORRECTION_TAGS.map(t => `<button type="button" class="jd-tag" data-tag="${t}" aria-pressed="${S.tag === t}">${esc(CORRECTION_TAG_LABELS[t])}</button>`).join("")}</div>
-    <div class="jd-tag-gloss" id="jd-tag-gloss">${S.tag ? esc(CORRECTION_TAG_DESCRIPTIONS[S.tag]) : ""}</div></div>`;
+/* M1 · the kind is inferred from which assertion you correct; one press overrides it */
+function kindPicker() {
+  if (!S.assertionId) return "";
+  const inferred = inferKind(S.assertionId);
+  return `<div class="jd-field"><span class="jd-label" id="jd-kind-label">What kind of miss <span class="opt">${S.kind === inferred ? `inferred from ${esc(S.assertionId)} · change it if it's wrong` : `your choice · inferred was ${esc(inferred)}`}</span></span>
+    <div class="jd-tags" role="group" aria-labelledby="jd-kind-label">${CORRECTION_KINDS.map(k => `<button type="button" class="jd-tag" data-kind="${k}" aria-pressed="${S.kind === k}">${esc(k)}</button>`).join("")}</div>
+    <div class="jd-tag-gloss" id="jd-kind-gloss">${S.kind ? esc(KIND_GLOSS[S.kind]) : ""}</div></div>`;
 }
 
 function panelForm() {
@@ -241,7 +246,7 @@ function panelForm() {
         <label for="jd-corrected">Corrected assertion <span class="opt">required · what is actually true</span></label>
         <textarea id="jd-corrected" placeholder="${a ? "Rewrite " + a.id + " as it should read." : "Select an assertion first."}" ${a ? "" : "disabled"}>${esc(S.correctedText)}</textarea>
       </div>
-      ${tagPicker()}
+      ${kindPicker()}
       <div class="jd-field">
         <label for="jd-rationale">Why <span class="opt">optional · what you know that the evidence did not show</span></label>
         <textarea id="jd-rationale" class="jd-short" placeholder="e.g. what the run actually was, and how you know.">${esc(S.rationale)}</textarea>
@@ -302,7 +307,7 @@ function panelConfirm() {
     <div class="jd-sum"><span class="k">disposition</span><span class="v"><b>${esc(DISPOSITION_LABELS[d])}</b></span></div>
     ${a ? `<div class="jd-sum"><span class="k">disputed</span><span class="v">${a.id} · <b>${esc(a.text)}</b></span></div>
            <div class="jd-sum"><span class="k">corrected to</span><span class="v"><b>${esc(S.correctedText.trim())}</b></span></div>
-           <div class="jd-sum"><span class="k">kind</span><span class="v">${S.tag ? esc(CORRECTION_TAG_LABELS[S.tag]) : "untagged"}</span></div>` : ""}
+           <div class="jd-sum"><span class="k">kind</span><span class="v"><b>${esc(S.kind)}</b> · ${S.kind === inferKind(a.id) ? "inferred" : "your choice"} · ${esc(KIND_GLOSS[S.kind])}</span></div>` : ""}
     ${win ? `<div class="jd-sum"><span class="k">returns</span><span class="v">in ${esc(win.label)} · on Today</span></div>` : ""}
     ${S.rationale.trim() ? `<div class="jd-sum"><span class="k">${d === "correct" ? "why" : d === "reject" ? "reason" : "note"}</span><span class="v">${esc(S.rationale.trim())}</span></div>` : ""}
     <div class="jd-sum"><span class="k">evidence opened</span><span class="v">${seen.length ? seen.map(esc).join(" · ") : "<b>none</b>"} · ${S.inspected.size} of ${FIXTURE.evidence.length}</span></div>
@@ -350,6 +355,7 @@ function wireJudge() {
   /* assertions · select to dispute (any phase) */
   main.querySelectorAll("[data-assert]").forEach(btn => btn.addEventListener("click", () => {
     const id = btn.dataset.assert;
+    if (S.assertionId !== id) S.kind = inferKind(id);
     S.assertionId = id;
     const a = assertionById(id);
     if (S.disposition !== "correct" || S.phase !== "form") {
@@ -383,10 +389,10 @@ function wireJudge() {
   /* form fields · keep S current without re-rendering */
   const corr = $("#jd-corrected"); if (corr) corr.addEventListener("input", () => { S.correctedText = corr.value; });
   const rat = $("#jd-rationale"); if (rat) rat.addEventListener("input", () => { S.rationale = rat.value; });
-  main.querySelectorAll("[data-tag]").forEach(b => b.addEventListener("click", () => {
-    S.tag = S.tag === b.dataset.tag ? null : b.dataset.tag;
-    main.querySelectorAll("[data-tag]").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.tag === S.tag)));
-    $("#jd-tag-gloss").textContent = S.tag ? CORRECTION_TAG_DESCRIPTIONS[S.tag] : "";
+  main.querySelectorAll("[data-kind]").forEach(b => b.addEventListener("click", () => {
+    S.kind = b.dataset.kind; /* always one of the 4; pressing the selected one keeps it */
+    S.focus = null; renderJudge();
+    const again = main.querySelector(`[data-kind="${S.kind}"]`); if (again) again.focus();
   }));
   main.querySelectorAll("[data-window]").forEach(b => b.addEventListener("click", () => {
     S.deferWindow = b.dataset.window;
@@ -404,7 +410,7 @@ function wireJudge() {
 }
 
 function currentJudgment() {
-  return { disposition: S.disposition, assertionId: S.assertionId, correctedText: S.correctedText, tag: S.tag, rationale: S.rationale, deferWindow: S.deferWindow };
+  return { disposition: S.disposition, assertionId: S.assertionId, correctedText: S.correctedText, kind: S.disposition === "correct" ? S.kind : null, rationale: S.rationale, deferWindow: S.deferWindow };
 }
 
 function applyFocus() {
@@ -440,7 +446,7 @@ async function persist() {
     const { id, record, indexError } = await recordJudgment(S.record, { proof: S.proof });
     S.record = record; S.recordId = id; S.recordTs = Date.now(); S.state = STATES.RECORDED; S.failure = null;
     S.indexError = indexError;
-    if (record.change) S.pattern = await correctionPattern({ tag: record.change.tag, lane: record.lane });
+    if (record.change) S.pattern = await correctionPattern({ kind: record.change.kind, lane: record.lane });
     history.replaceState(null, "", `?record=${id}`);
     /* the record re-renders once the write lands; keep the reader on its heading */
     S.focus = "jd-record-h";
@@ -481,7 +487,7 @@ function proofBlock(r) {
     ${p.signed
       ? `Packet <code>${esc(p.packet.packet.id)}</code> (${esc(p.packet.schema)}), signed with a <b>${esc(KEY_LABEL)}</b>. Fingerprint <code class="jd-fp">${esc(p.fingerprint)}</code>.`
       : `This browser could not sign (${esc(p.signError)}). The bundle still carries the packet; the verifier reports it <b>UNVERIFIED</b>, which is the honest result.`}
-    <p style="margin-top:8px">The signature covers the AI's headline, its five assertions word for word, each one's evidence ids and support level, and its stated uncertainty; then your disposition, your words, the corrected text and tag, the confirm time and any defer date. It does <b>not</b> cover the evidence contents or support notes, the reviewer agent's action on A5, which evidence you opened, the remaining-uncertainty lines, the actor label, the record time or the vault id: the packet format has no field for them.</p>
+    <p style="margin-top:8px">The signature covers the AI's headline, its five assertions word for word, each one's evidence ids and support level, and its stated uncertainty; then your disposition, your words, the corrected text and its kind, the confirm time and any defer date. It does <b>not</b> cover the evidence contents or support notes, the reviewer agent's action on A5, which evidence you opened, the remaining-uncertainty lines, the actor label, the record time or the vault id: the packet format has no field for them.</p>
     <p style="margin-top:8px">Unzip, then run <code>${esc(cmd)}</code> with Node 18 or newer. The verifier in the bundle is the one published at <code>receipts/2026-10-06/bundle/</code>, unchanged.</p>
     <span class="jd-actions" style="display:inline-flex;margin-top:8px"><button type="button" class="jd-btn" id="jd-proof-dl">Download proof bundle (.zip)</button></span>
   </div>`;
@@ -509,7 +515,7 @@ function renderRecord() {
   const changeBlock = r.change ? `
     <div class="jd-diff">
       <div class="jd-diff__side is-orig"><div class="jd-diff__k"><span>original · ${esc(r.original.producer.name)}</span><span>${r.change.assertionId}</span></div><div class="jd-diff__t">${esc(r.change.originalText)}</div><div class="jd-diff__meta">kept verbatim · ${origHash ? "SHA-256 " + shortHash(origHash) : "hash pending"}</div></div>
-      <div class="jd-diff__side is-corr"><div class="jd-diff__k"><span>corrected · ${esc(r.actor.name)}</span><span>${r.change.assertionId}</span></div><div class="jd-diff__t">${esc(r.change.correctedText)}</div><div class="jd-diff__meta">${r.change.tag ? esc(CORRECTION_TAG_LABELS[r.change.tag]) + " · " : ""}${fmtTime(r.confirmedAt)}</div></div>
+      <div class="jd-diff__side is-corr"><div class="jd-diff__k"><span>corrected · ${esc(r.actor.name)}</span><span>${r.change.assertionId}</span></div><div class="jd-diff__t">${esc(r.change.correctedText)}</div><div class="jd-diff__meta">${r.change.kind ? esc(r.change.kind) + " · " : r.change.tag ? esc(CORRECTION_TAG_LABELS[r.change.tag]) + " · " : ""}${fmtTime(r.confirmedAt)}</div></div>
     </div>
     ${r.change.rationale ? `<p style="margin-top:10px"><b>Why.</b> ${esc(r.change.rationale)}</p>` : ""}
     ${r.change.affects.length ? `<p>${r.change.affects.join(", ")} ${r.change.affects.length > 1 ? "were" : "was"} derived from the original ${r.change.assertionId}. ${r.change.affects.length > 1 ? "They are" : "It is"} shown as the agent wrote ${r.change.affects.length > 1 ? "them" : "it"} and <b>not recomputed</b>; the correction narrows what ${r.change.affects.length > 1 ? "they" : "it"} can claim.</p>` : ""}`
@@ -519,7 +525,7 @@ function renderRecord() {
 
   const pattern = S.pattern ? `<div class="jd-pattern"><span class="k">pattern watch · evidence, not a rule</span>
       <span class="dots">${Array.from({ length: S.pattern.threshold }, (_, i) => i < S.pattern.total ? "<b>●</b>" : "○").join("")}</span>
-      ${S.pattern.total} correction${S.pattern.total === 1 ? "" : "s"} tagged <b>${esc(CORRECTION_TAG_LABELS[S.pattern.tag])}</b> on <b>${esc(S.pattern.lane)}</b>: ${S.pattern.prior} earlier in this fixture, ${S.pattern.device} recorded on this device. At ${S.pattern.threshold} Liminal would <b>propose</b> a rule for your review. Nothing is proposed, nothing is active.</div>` : "";
+      ${S.pattern.total} correction${S.pattern.total === 1 ? "" : "s"} of kind <b>${esc(S.pattern.kind)}</b> on <b>${esc(S.pattern.lane)}</b>: ${S.pattern.prior} earlier in this fixture, ${S.pattern.device} recorded on this device. At ${S.pattern.threshold} Liminal would <b>propose</b> a rule for your review. Nothing is proposed, nothing is active.</div>` : "";
 
   const seen = r.evidence.filter(e => e.inspected), unseen = r.evidence.filter(e => !e.inspected);
 
@@ -619,7 +625,7 @@ async function boot() {
     const hit = await loadJudgment(want).catch(() => null);
     if (hit) {
       S.view = "record"; S.reopened = true; S.record = hit.record; S.recordId = hit.id; S.recordTs = hit.ts; S.state = STATES.RECORDED;
-      if (hit.record.change) S.pattern = await correctionPattern({ tag: hit.record.change.tag, lane: hit.record.lane });
+      if (hit.record.change) S.pattern = await correctionPattern({ kind: hit.record.change.kind, lane: hit.record.lane });
       renderRecord();
     } else {
       S.view = "notfound"; renderNotFound(want);

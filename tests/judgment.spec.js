@@ -64,8 +64,13 @@ test("correct path: inspect → dispute A2 → correct → confirm → record �
   await page.locator("#jd-review").click();
   await expect(page.locator("#jd-problems")).toContainText(/identical to the original/i);
   await page.fill("#jd-corrected", CORRECTION);
-  await page.locator('[data-tag="assumes_facts_not_in_evidence"]').click();
-  await expect(page.locator("#jd-tag-gloss")).toContainText(/Projected context/);
+  // M1: the kind is inferred from the assertion (A2 is an inference → inner) and overridable
+  await expect(page.locator('[data-kind="inner"]')).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator("#jd-kind-gloss")).toContainText(/bad inference from the evidence/);
+  await page.locator('[data-kind="outer"]').click();
+  await expect(page.locator('[data-kind="outer"]')).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator("#jd-kind-label")).toContainText(/your choice · inferred was inner/);
+  await page.locator('[data-kind="inner"]').click();
   await page.fill("#jd-rationale", WHY);
   await page.locator("#jd-review").click();
 
@@ -113,7 +118,7 @@ test("correct path: inspect → dispute A2 → correct → confirm → record �
   await expect(record).toContainText(/rule activated/i);
   await expect(record).toContainText(/Nothing is proposed, nothing is active/);
   // repeated-correction evidence: 1 fixture prior + this one, threshold 3
-  await expect(record.locator(".jd-pattern")).toContainText(/2 corrections tagged/);
+  await expect(record.locator(".jd-pattern")).toContainText(/2 corrections of kind inner/);
 
   // Today · the contextual re-entry card, with both voices intact
   await page.locator("#jd-to-today").click();
