@@ -292,3 +292,32 @@ test("vault unavailable: the judgment is confirmed but honestly not recorded, wi
   await expect(page.locator("#jd-retry")).toBeVisible();
   await expect(page.locator(".jd-record__foot button[disabled]")).toHaveText(/Continue to Today/);
 });
+
+// Operator interviews (LIM-2187): accepting should be a look, not a reflex; a
+// useful note says what you know, what it changes and how you know; a held
+// item should come back with a question. These lock the prompts, not a block.
+test("accept names the thin claims you have not examined, and updates as you open evidence", async ({ page }) => {
+  await open(page);
+  await page.locator('[data-dispo="accept"]').click();
+  const check = page.locator("#jd-accept-check");
+  await expect(check).toContainText(/not opened any evidence/i);
+  await expect(check).toContainText(/A2 is thin/);
+  await expect(check).toContainText(/A4 is derived/);
+  await page.locator('details[data-ev="ev-usage"] summary').click();
+  await page.locator('details[data-ev="ev-tickets"] summary').click();
+  await expect(check).not.toContainText(/not opened any evidence/i);
+  await expect(check).not.toContainText(/A2 is thin/);
+  await expect(check).toContainText(/A4 is derived/); // derived claims have no evidence to open
+  await page.locator("#jd-review").click();
+  await page.locator("#jd-confirm").click();
+  await expect(page.locator(".jd-record")).toHaveAttribute("data-state", "recorded");
+});
+
+test("correct and defer prompt for a reason a reader can act on", async ({ page }) => {
+  await open(page);
+  await page.locator('[data-assert="A2"]').click();
+  await expect(page.locator('label[for="jd-rationale"]')).toContainText(/what you know, what it changes, how you know/);
+  await open(page); // dispositions are offered before a form is open
+  await page.locator('[data-dispo="defer"]').click();
+  await expect(page.locator('label[for="jd-rationale"]')).toContainText(/What would change your call/);
+});

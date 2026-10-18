@@ -231,6 +231,22 @@ function kindPicker() {
     <div class="jd-tag-gloss" id="jd-kind-gloss">${S.kind ? esc(KIND_GLOSS[S.kind]) : ""}</div></div>`;
 }
 
+/* accept-time check: name the claims that are weakest and not yet examined,
+   so accepting is a look, not a reflex. Never blocks (ruling C3). */
+function acceptCheckHTML() {
+  const open = (ids) => ids.filter(id => !S.inspected.has(id)).map(id => evidenceById(id)?.title || id);
+  const lines = FIXTURE.assertions
+    .filter(a => a.support === "thin" || a.support === "derived")
+    .map(a => {
+      if (!a.evidence.length) return `<b>${a.id}</b> is ${a.support === "derived" ? "derived" : "thin"} (${esc(a.supportNote)}) and has no evidence of its own.`;
+      const unopened = open(a.evidence);
+      return unopened.length ? `<b>${a.id}</b> is thin (${esc(a.supportNote)}). Not opened: ${unopened.map(esc).join(" · ")}.` : "";
+    }).filter(Boolean);
+  const none = S.inspected.size === 0 ? `You have not opened any evidence. ` : "";
+  if (!none && !lines.length) return "";
+  return `<div class="jd-warn">${none}${lines.length ? `Before you take this as yours: ${lines.join(" ")}` : ""} You can still accept; the record will say what you opened.</div>`;
+}
+
 function panelForm() {
   const d = S.disposition;
   let body = "";
@@ -248,12 +264,12 @@ function panelForm() {
       </div>
       ${kindPicker()}
       <div class="jd-field">
-        <label for="jd-rationale">Why <span class="opt">optional · what you know that the evidence did not show</span></label>
-        <textarea id="jd-rationale" class="jd-short" placeholder="e.g. what the run actually was, and how you know.">${esc(S.rationale)}</textarea>
+        <label for="jd-rationale">Why <span class="opt">optional · what you know, what it changes, how you know</span></label>
+        <textarea id="jd-rationale" class="jd-short" placeholder="What you know: E13 came off the launch checklist.&#10;What it changes: only E12 is routine admin.&#10;How you know: I assigned it.">${esc(S.rationale)}</textarea>
       </div>`;
   } else if (d === "accept") {
     body = `
-      ${S.inspected.size === 0 ? `<div class="jd-warn">You have not opened any evidence. You can still accept; the record will say so.</div>` : ""}
+      <div id="jd-accept-check">${acceptCheckHTML()}</div>
       <div class="jd-field">
         <label for="jd-rationale">Note <span class="opt">optional</span></label>
         <textarea id="jd-rationale" class="jd-short" placeholder="Anything a reader of the record should know about why this stands.">${esc(S.rationale)}</textarea>
@@ -273,8 +289,8 @@ function panelForm() {
         <div class="jd-windows" role="group" aria-labelledby="jd-win-label">${DEFER_WINDOWS.map(w => `<button type="button" class="jd-tag" data-window="${w.id}" aria-pressed="${S.deferWindow === w.id}">${esc(w.label)}</button>`).join("")}</div>
       </div>
       <div class="jd-field">
-        <label for="jd-rationale">What you are waiting for <span class="opt">optional</span></label>
-        <textarea id="jd-rationale" class="jd-short" placeholder="e.g. ask Bianca what E13 was.">${esc(S.rationale)}</textarea>
+        <label for="jd-rationale">What would change your call <span class="opt">optional · so it comes back with a question, not just a date</span></label>
+        <textarea id="jd-rationale" class="jd-short" placeholder="e.g. If Bianca confirms E13 was launch work, correct A2.">${esc(S.rationale)}</textarea>
       </div>
       <div class="jd-pick">Deferring holds the result as <b>AI-produced, not accepted</b>. Today shows it again on the date you pick. Nothing fires on its own.</div>`;
   }
@@ -376,6 +392,7 @@ function wireJudge() {
     if (d.open) { S.open.add(id); S.inspected.add(id); d.classList.add("is-inspected"); d.querySelector(".jd-ev__seen").textContent = "opened"; }
     else S.open.delete(id);
     const m = $("#jd-ev-meta"); if (m) m.textContent = `${inspectedMeta()} · open any to inspect`;
+    const ac = $("#jd-accept-check"); if (ac) ac.innerHTML = acceptCheckHTML();
   }));
   /* dispositions */
   main.querySelectorAll("[data-dispo]").forEach(b => b.addEventListener("click", () => {
@@ -521,7 +538,7 @@ function renderRecord() {
     ${r.change.affects.length ? `<p>${r.change.affects.join(", ")} ${r.change.affects.length > 1 ? "were" : "was"} derived from the original ${r.change.assertionId}. ${r.change.affects.length > 1 ? "They are" : "It is"} shown as the agent wrote ${r.change.affects.length > 1 ? "them" : "it"} and <b>not recomputed</b>; the correction narrows what ${r.change.affects.length > 1 ? "they" : "it"} can claim.</p>` : ""}`
     : r.disposition === "accept" ? `<p>Nothing in the text. All five assertions stand as the agent wrote them. Your acceptance is a separate line, below, not an edit of the AI's words.${r.rationale ? ` <b>Note.</b> ${esc(r.rationale)}` : ""}</p>`
     : r.disposition === "reject" ? `<p>Nothing in the text. The whole result is set aside. <b>Reason.</b> ${esc(r.rationale)}</p>`
-    : `<p>Nothing yet. The result is held, unchanged, and comes back ${esc(fmtDue(r.defer.dueAt))}.${r.rationale ? ` <b>Waiting for.</b> ${esc(r.rationale)}` : ""}</p>`;
+    : `<p>Nothing yet. The result is held, unchanged, and comes back ${esc(fmtDue(r.defer.dueAt))}.${r.rationale ? ` <b>What would change the call.</b> ${esc(r.rationale)}` : ""}</p>`;
 
   const pattern = S.pattern ? `<div class="jd-pattern"><span class="k">pattern watch · evidence, not a rule</span>
       <span class="dots">${Array.from({ length: S.pattern.threshold }, (_, i) => i < S.pattern.total ? "<b>●</b>" : "○").join("")}</span>
