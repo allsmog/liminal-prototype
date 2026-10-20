@@ -22,6 +22,8 @@ explicit commit to `canon-baseline.json` that a reviewer can see.
 
 **`no-raw-hex`**: a literal colour outside the token file leaves the cascade.
 The token file is exempt: it is where literals are supposed to live.
+Hex inside `/* */` and `<!-- -->` comments is not counted, nor is a PR
+citation like `PR #106` anywhere: both are prose, not colours.
 
 **`no-bare-font-size`**: a literal `px` size escapes the 15-step type scale.
 

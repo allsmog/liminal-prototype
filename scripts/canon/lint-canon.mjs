@@ -85,9 +85,17 @@ const RULES = [
     /* Skips url(#...) SVG refs, &#123; entities, and var() fallbacks. The
        last of those ARE consuming the token and get their own rule below.
        Conflating the two was the mistake that sent an audit chasing
-       "hardcoded colours" in a file that had none. */
+       "hardcoded colours" in a file that had none.
+       Reads the comment-masked line (see maskComments): "#106" is a valid
+       3-digit hex AND the usual way prose cites a PR, and the PR citations
+       vastly outnumber colours in this repo's comments. The same citation in
+       a runtime string ("defect PR #106 had to repair") is skipped by the
+       PR-reference strip. Before this, PRs 140 and 143 had to spell
+       "PR 106" to keep a comment from failing the ratchet. */
+    masked: true,
     test(line) {
       const stripped = line
+        .replace(/\b(?:PRs?|pull request|issue)\s*#\d+\b/gi, "")
         .replace(/url\(#[^)]*\)/g, "")
         .replace(/&#\d+;/g, "")
         .replace(/var\(\s*--[a-z0-9-]+\s*,\s*#[0-9A-Fa-f]{3,8}\s*\)/gi, "");
@@ -133,15 +141,24 @@ function walk(dir, out = []) {
   return out;
 }
 
+/* Blank out /* *\/ and <!-- --> comments, keeping every newline so line
+   numbers still point at the source. Only rules marked `masked` read this. */
+function maskComments(text) {
+  const blank = s => s.replace(/[^\n]/g, " ");
+  return text.replace(/\/\*[\s\S]*?\*\//g, blank).replace(/<!--[\s\S]*?-->/g, blank);
+}
+
 /* ─── scan ────────────────────────────────────────────────────────────── */
 function scan() {
   const findings = {};
   for (const rel of walk(ROOT).sort()) {
     if (EXEMPT.includes(rel)) continue;
-    const lines = readFileSync(join(ROOT, rel), "utf8").split("\n");
+    const text = readFileSync(join(ROOT, rel), "utf8");
+    const lines = text.split("\n");
+    const masked = maskComments(text).split("\n");
     lines.forEach((line, i) => {
       for (const rule of RULES) {
-        for (const hit of rule.test(line)) {
+        for (const hit of rule.test(rule.masked ? masked[i] : line)) {
           (findings[rel] ??= {});
           (findings[rel][rule.name] ??= []).push({ line: i + 1, hit: hit.trim() });
         }
