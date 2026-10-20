@@ -321,3 +321,15 @@ test("correct and defer prompt for a reason a reader can act on", async ({ page 
   await page.locator('[data-dispo="defer"]').click();
   await expect(page.locator('label[for="jd-rationale"]')).toContainText(/What would change your call/);
 });
+
+test("cut 10 close-the-loop says it is a demonstration and claims no vault write (O5)", async ({ page }) => {
+  await page.goto("/cuts/10-today.html", { waitUntil: "load" });
+  const loop = page.locator("#tdy-loop");
+  await expect(loop).toContainText("demonstration · not stored");
+  await page.locator('[data-disp="mixed"]').click();
+  await expect(loop).toHaveClass(/is-sealed/);
+  await expect(page.locator("#tdy-sealed")).toContainText("nothing stored");
+  await expect(page.locator("#tdy-sealed")).not.toContainText(/sealed to vault|seal [0-9a-f]{4}/);
+  const writes = await page.evaluate(async () => (await indexedDB.databases?.() || []).map((d) => d.name));
+  expect(writes.filter((n) => /outcome/i.test(n || ""))).toEqual([]);
+});

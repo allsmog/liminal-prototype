@@ -42,9 +42,11 @@
 
   The daemon re-reads held compositions overnight and brings them back:
   one needs a decision today, one outcome is due to close, your pattern
-  has a note. The "close the loop" outcome buttons are the only REAL
-  interaction: answering one seals the read to the vault and ticks
-  calibration. Everything else is scripted fixtures.
+  has a note. The "close the loop" outcome buttons are a DEMONSTRATION:
+  answering one shows the closed state and ticks the fixture calibration
+  count, but nothing is written to the vault (founder ruling O5, 2026-10-20,
+  LIM-2274; the real outcome entry is to come). Everything else is scripted
+  fixtures.
 
   CANON CONTRACT (per cuts/CONTRIBUTING.md rule #1):
   consumes design-tokens.css + cut-shell.css; adds tdy-* per-cut aliases
@@ -349,6 +351,7 @@
     font-size: 1.05rem;
     color: var(--text);
   }
+  .tdy-demo { font-family: var(--mono); font-size: var(--fs-mono-xs); letter-spacing: var(--ls-app-wide); text-transform: uppercase; color: var(--text-faint); border: 1px solid var(--card-border-2); border-radius: var(--radius-3); padding: 1px 6px; white-space: nowrap; }
   .tdy-sealed-hash {
     font-family: var(--mono, "Geist Mono", monospace);
     font-size: 9.5px;
@@ -538,7 +541,7 @@
             <div class="tdy-section-label"><span>Close the loop</span><span class="meta">outcome due · 27 days ago</span></div>
             <div class="tdy-loop" id="tdy-loop">
               <div class="tdy-loop-q">You held the seed round to chase a cleaner close.</div>
-              <p class="tdy-loop-sub">How did that land? <em>Your answer is what keeps the vault's calibration honest.</em></p>
+              <p class="tdy-loop-sub">How did that land? <em>Your answer is what keeps the vault's calibration honest.</em> <span class="tdy-demo">demonstration · not stored</span></p>
 
               <div class="tdy-outcomes" id="tdy-outcomes">
                 <button class="tdy-outcome good" data-outcome="Resolved well · right call" data-disp="resolved-well">Resolved well <span class="gloss">· right call</span></button>
@@ -548,9 +551,9 @@
               </div>
 
               <div class="tdy-sealed" id="tdy-sealed">
-                <div class="tdy-sealed-line"><span class="ok">●</span> outcome recorded · sealed to vault</div>
+                <div class="tdy-sealed-line"><span class="ok">●</span> outcome shown · demonstration, nothing stored</div>
                 <div class="tdy-sealed-verdict" id="tdy-sealed-verdict">Resolved well · right call</div>
-                <div class="tdy-sealed-hash" id="tdy-sealed-hash">seal 9f4c · 7e21 · 0d8a · b3f0 · device-local</div>
+                <div class="tdy-sealed-hash">In the product this is written to the vault beside the decision; this page does not write it.</div>
               </div>
 
               <div class="tdy-cal">
@@ -630,23 +633,15 @@
 </div>
 
 <script>
-  // ── Close-the-loop interaction (the one real interaction) ──
-  // Choosing an outcome seals the held read into the vault and ticks
-  // calibration. Scripted: there is no daemon backend; this is the
-  // demoable beat that shows the loop closing.
+  // ── Close-the-loop interaction (demonstration · O5, 2026-10-20) ──
+  // Choosing an outcome shows the closed state and ticks the fixture
+  // calibration count. Nothing is written: there is no vault write here,
+  // and the page says so. The real outcome entry is LIM-2274.
   (function () {
     const loop      = document.getElementById('tdy-loop');
     const outcomes  = document.getElementById('tdy-outcomes');
     const verdictEl = document.getElementById('tdy-sealed-verdict');
     const calNum    = document.getElementById('tdy-cal-num');
-
-    // small deterministic hash-ish stamp per outcome so the seal looks live
-    const SEALS = {
-      'resolved-well': '9f4c · 7e21 · 0d8a · b3f0',
-      'mixed':         'a1d8 · 3b07 · ee52 · 6c19',
-      'regret':        '4e90 · c2aa · 71f3 · 08bd',
-      'open':          '0c3f · 5512 · 9a8e · d7b1',
-    };
 
     outcomes.addEventListener('click', function (e) {
       const btn = e.target.closest('.tdy-outcome');
@@ -656,8 +651,6 @@
       const disp    = btn.getAttribute('data-disp');
 
       verdictEl.textContent = verdict;
-      document.getElementById('tdy-sealed-hash').textContent =
-        'seal ' + (SEALS[disp] || SEALS['resolved-well']) + ' · device-local';
 
       loop.classList.add('is-sealed');
 
