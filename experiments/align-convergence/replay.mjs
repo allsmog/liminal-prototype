@@ -1,0 +1,21 @@
+import { readFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { preset, reduce, currentGoal } from './state.mjs';
+
+const bytes = await readFile(new URL('./fixture.json',import.meta.url));
+const pin = (await readFile(new URL('./fixture.sha256',import.meta.url),'utf8')).split(/\s/)[0];
+const digest = createHash('sha256').update(bytes).digest('hex');
+if (digest !== pin) throw new Error('FIXTURE_PIN_MISMATCH');
+const fixture = JSON.parse(bytes);
+let state = preset(fixture,'failed');
+const id = state.pending.id;
+const step = action => { state = reduce(state,action,fixture); if (state.error) throw new Error(state.error); };
+step({type:'RETRY_SAVE'});
+step({type:'SAVE_SUCCEEDED',recordId:id});
+step({type:'SOURCE_REVISED'});
+step({type:'NAVIGATE',view:'Today'});
+step({type:'OPEN_RECORD',recordId:state.returns[0].recordId});
+if (state.selectedRecordId !== id || state.records.length !== 1 || state.records[0].signed !== false) throw new Error('EXACT_RECORD_INVARIANT_FAILED');
+const refused = reduce(preset(fixture,'stale'), {type:'APPROVE',actor:'security',planHash:currentGoal(fixture).accepted_plan.sha256},fixture);
+if (refused.error !== 'STALE_EVIDENCE_BLOCK') throw new Error('STALE_GATE_FAILED');
+console.log(JSON.stringify({fixture:fixture.id,sha256:digest,owner_approval:'source_claimed_simulated',historical_reports:['UNSIGNED FAIL 2/9','UNSIGNED PASS 9/9'],failed_save_records:0,retried_record:id,today_reopened:state.selectedRecordId,records:state.records.length,stale_refusal:refused.error,durable:false,signed:false,policy_in_force:false,execution_permission:false},null,2));

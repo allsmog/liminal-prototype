@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en" data-density="shared">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Owner agreement and your judgment · Liminal study</title>
+  <link rel="stylesheet" href="../../design-system/tokens/colors-and-type.css">
+  <link rel="stylesheet" href="../../lib/cut-shell.css">
+  <link rel="stylesheet" href="../../lib/brand-upgrade.css">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body data-product="personal">
+  <a class="skip-link" href="#main">Skip to the study</a>
+  <aside class="lab" aria-label="Prototype controls">
+    <strong>Unratified prototype study</strong>
+    <label for="scenario">Replay</label>
+    <select id="scenario">
+      <option value="conflict">Start: conflicting work</option>
+      <option value="proposed">Product proposal</option>
+      <option value="countered">Security counter</option>
+      <option value="approved">Source owner approved</option>
+      <option value="stale">Stale evidence block</option>
+      <option value="untested">Explicitly untested</option>
+      <option value="declined">Declined proposal</option>
+      <option value="confirm">Operator confirmation</option>
+      <option value="failed">Save failure and retry</option>
+      <option value="record">Created record</option>
+      <option value="today">Later re-entry</option>
+    </select>
+    <button id="reset" type="button">Reset replay</button>
+    <button id="availability" type="button" aria-pressed="false">Simulate offline evidence</button>
+    <button id="revise" type="button">Simulate changed parameters</button>
+    <a href="./review.html">A/B ruling packet</a>
+    <span id="load-status" role="status">Loading pinned synthetic fixture</span>
+  </aside>
+  <div id="app"></div>
+  <noscript>This functional study needs JavaScript. It stores no browser records.</noscript>
+  <script type="module" src="./app.mjs"></script>
+</body>
+</html>

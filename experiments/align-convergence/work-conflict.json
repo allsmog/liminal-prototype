@@ -1,0 +1,271 @@
+{
+  "schema": "align-work-conflict-projection",
+  "version": 1,
+  "synthetic": true,
+  "fixture_id": "align-wrong-work-v1",
+  "sample_sha256": "c6c39875d4c85d566b5850ee296054b9b005cf56a0f47d01e21841b6668bcaa9",
+  "align_export_sha256": "799ac77a9e52dfb6d53aa8e50690add84d52f7eea4adfc282d5100c488a8d866",
+  "evaluated_at": "2026-10-12T00:00:40.000Z",
+  "source": {
+    "repository": "liminalworksinc/align",
+    "commit": "850971e13a74eab20f8d8789cb78331517ef28da"
+  },
+  "rows": [
+    {
+      "session_id": "fixture-agent",
+      "source_mapping_state": "CONFIRMED",
+      "confidence": 0.9,
+      "mapping_authority": "source_asserted",
+      "status": "SUPERSEDED_CONTRACT",
+      "automatic_veto": false,
+      "desktop_goal_match": false,
+      "artifact": {
+        "id": "artifact-fixture-agent",
+        "association": "synthetic_fixture_association",
+        "source_url": "https://github.com/liminalworksinc/align/blob/850971e13a74eab20f8d8789cb78331517ef28da/agent/traces/p-throughput@1-normal-134756.trace.json",
+        "sha256": "82b79453d1ee82a1704dac716bdd5633ae1cd44318d72a1a1858ed91b6e2f4e4",
+        "goal_id": "g-security-v1",
+        "goal_version": "v1",
+        "plan_ref": "p-throughput@1",
+        "plan_sha256": "b3dcda08f5bedf3799a472fcb640b4e8590350d31a95e4221095a4d265a8e22f"
+      },
+      "owner": {
+        "role": "security",
+        "name": "Alex / Security Lead"
+      },
+      "approved_goal": {
+        "id": "g-security-v2_1",
+        "version": "v2.1",
+        "approval": "source_claimed_ratification",
+        "independently_authenticated": false,
+        "accepted_plan": {
+          "ref": "p-beta@1",
+          "sha256": "3d2c1887a0d41fc71a0ec399f6e6d52f954361c7ed95f0bb8cab055dbc0be097",
+          "source_url": "https://github.com/liminalworksinc/align/blob/850971e13a74eab20f8d8789cb78331517ef28da/agent/plans/p-beta@1.md",
+          "matches_accepted_parameters": true
+        }
+      },
+      "intervention": "ask_owner_to_review_plan",
+      "baseline": {
+        "id": "sim-c94598a6b1",
+        "plan_ref": "p-throughput@1",
+        "plan_sha256": "b3dcda08f5bedf3799a472fcb640b4e8590350d31a95e4221095a4d265a8e22f",
+        "report_sha256": "c94598a6b1c236690c070a9b5212480f7febb1a17c631034d3fa4e24a051a0eb",
+        "report_url": "https://github.com/liminalworksinc/align/blob/850971e13a74eab20f8d8789cb78331517ef28da/sparta/walkthrough-lab/evidence/p-throughput@1-normal-134756.json",
+        "trace_sha256": "82b79453d1ee82a1704dac716bdd5633ae1cd44318d72a1a1858ed91b6e2f4e4",
+        "trace_url": "https://github.com/liminalworksinc/align/blob/850971e13a74eab20f8d8789cb78331517ef28da/agent/traces/p-throughput@1-normal-134756.trace.json",
+        "verdict": "FAIL",
+        "passed": 2,
+        "total": 9,
+        "exit_code": 1,
+        "signature": "UNSIGNED",
+        "scope": "historical_synthetic_sandbox",
+        "seed_sha256": "d5268b2b06ff26af4bb73d7771fe41d7d89b02cf753ad7c4ad684e3a932dbb66",
+        "checks_sha256": "e1d0e0f938f8cd1e3a4a07278c0ffb10ee914f9e4fc6ac05ddb894dbeede86fc"
+      },
+      "historical_comparison": {
+        "baseline": {
+          "id": "sim-c94598a6b1",
+          "plan_ref": "p-throughput@1",
+          "plan_sha256": "b3dcda08f5bedf3799a472fcb640b4e8590350d31a95e4221095a4d265a8e22f",
+          "report_sha256": "c94598a6b1c236690c070a9b5212480f7febb1a17c631034d3fa4e24a051a0eb",
+          "report_url": "https://github.com/liminalworksinc/align/blob/850971e13a74eab20f8d8789cb78331517ef28da/sparta/walkthrough-lab/evidence/p-throughput@1-normal-134756.json",
+          "trace_sha256": "82b79453d1ee82a1704dac716bdd5633ae1cd44318d72a1a1858ed91b6e2f4e4",
+          "trace_url": "https://github.com/liminalworksinc/align/blob/850971e13a74eab20f8d8789cb78331517ef28da/agent/traces/p-throughput@1-normal-134756.trace.json",
+          "verdict": "FAIL",
+          "passed": 2,
+          "total": 9,
+          "exit_code": 1,
+          "signature": "UNSIGNED",
+          "scope": "historical_synthetic_sandbox",
+          "seed_sha256": "d5268b2b06ff26af4bb73d7771fe41d7d89b02cf753ad7c4ad684e3a932dbb66",
+          "checks_sha256": "e1d0e0f938f8cd1e3a4a07278c0ffb10ee914f9e4fc6ac05ddb894dbeede86fc"
+        },
+        "candidate": {
+          "id": "sim-bb3f6391e8",
+          "plan_ref": "p-beta@1",
+          "plan_sha256": "3d2c1887a0d41fc71a0ec399f6e6d52f954361c7ed95f0bb8cab055dbc0be097",
+          "report_sha256": "bb3f6391e8028577bb880f7c86681a720af7d76aa2a749701b11772b47a101aa",
+          "report_url": "https://github.com/liminalworksinc/align/blob/850971e13a74eab20f8d8789cb78331517ef28da/sparta/walkthrough-lab/evidence/p-beta@1-normal-134838.json",
+          "trace_sha256": "9ae302bb6c8ab385ec8e870d6d30a355c3899c0b6e8ae3eb915d22d0e97a683e",
+          "trace_url": "https://github.com/liminalworksinc/align/blob/850971e13a74eab20f8d8789cb78331517ef28da/agent/traces/p-beta@1-normal-134838.trace.json",
+          "verdict": "PASS",
+          "passed": 9,
+          "total": 9,
+          "exit_code": 0,
+          "signature": "UNSIGNED",
+          "scope": "historical_synthetic_sandbox",
+          "seed_sha256": "d5268b2b06ff26af4bb73d7771fe41d7d89b02cf753ad7c4ad684e3a932dbb66",
+          "checks_sha256": "e1d0e0f938f8cd1e3a4a07278c0ffb10ee914f9e4fc6ac05ddb894dbeede86fc"
+        },
+        "same_inputs": true,
+        "execution_after_fixture_approval": "NOT_OBSERVED"
+      },
+      "allocation": {
+        "allocated_bps": 0,
+        "unallocated_bps": 10000,
+        "reason": "no_priced_source_allocation",
+        "cost": null
+      }
+    },
+    {
+      "session_id": "fixture-suggested",
+      "source_mapping_state": "PROPOSED",
+      "confidence": 0.9,
+      "mapping_authority": null,
+      "status": "UNCONFIRMED_MAPPING",
+      "automatic_veto": false,
+      "desktop_goal_match": false,
+      "artifact": {
+        "id": "artifact-fixture-suggested",
+        "association": "synthetic_fixture_association",
+        "source_url": "https://github.com/liminalworksinc/align/blob/850971e13a74eab20f8d8789cb78331517ef28da/agent/traces/p-throughput@1-normal-134756.trace.json",
+        "sha256": "82b79453d1ee82a1704dac716bdd5633ae1cd44318d72a1a1858ed91b6e2f4e4",
+        "goal_id": "g-security-v1",
+        "goal_version": "v1",
+        "plan_ref": "p-throughput@1",
+        "plan_sha256": "b3dcda08f5bedf3799a472fcb640b4e8590350d31a95e4221095a4d265a8e22f"
+      },
+      "owner": null,
+      "approved_goal": null,
+      "intervention": "inspect_mapping",
+      "baseline": {
+        "id": "sim-c94598a6b1",
+        "plan_ref": "p-throughput@1",
+        "plan_sha256": "b3dcda08f5bedf3799a472fcb640b4e8590350d31a95e4221095a4d265a8e22f",
+        "report_sha256": "c94598a6b1c236690c070a9b5212480f7febb1a17c631034d3fa4e24a051a0eb",
+        "report_url": "https://github.com/liminalworksinc/align/blob/850971e13a74eab20f8d8789cb78331517ef28da/sparta/walkthrough-lab/evidence/p-throughput@1-normal-134756.json",
+        "trace_sha256": "82b79453d1ee82a1704dac716bdd5633ae1cd44318d72a1a1858ed91b6e2f4e4",
+        "trace_url": "https://github.com/liminalworksinc/align/blob/850971e13a74eab20f8d8789cb78331517ef28da/agent/traces/p-throughput@1-normal-134756.trace.json",
+        "verdict": "FAIL",
+        "passed": 2,
+        "total": 9,
+        "exit_code": 1,
+        "signature": "UNSIGNED",
+        "scope": "historical_synthetic_sandbox",
+        "seed_sha256": "d5268b2b06ff26af4bb73d7771fe41d7d89b02cf753ad7c4ad684e3a932dbb66",
+        "checks_sha256": "e1d0e0f938f8cd1e3a4a07278c0ffb10ee914f9e4fc6ac05ddb894dbeede86fc"
+      },
+      "historical_comparison": null,
+      "allocation": {
+        "allocated_bps": 0,
+        "unallocated_bps": 10000,
+        "reason": "no_priced_source_allocation",
+        "cost": null
+      }
+    },
+    {
+      "session_id": "fixture-refused",
+      "source_mapping_state": "REJECTED",
+      "confidence": 0.9,
+      "mapping_authority": null,
+      "status": "REFUSED_MAPPING",
+      "automatic_veto": false,
+      "desktop_goal_match": false,
+      "artifact": {
+        "id": "artifact-fixture-refused",
+        "association": "synthetic_fixture_association",
+        "source_url": "https://github.com/liminalworksinc/align/blob/850971e13a74eab20f8d8789cb78331517ef28da/agent/traces/p-throughput@1-normal-134756.trace.json",
+        "sha256": "82b79453d1ee82a1704dac716bdd5633ae1cd44318d72a1a1858ed91b6e2f4e4",
+        "goal_id": "g-security-v1",
+        "goal_version": "v1",
+        "plan_ref": "p-throughput@1",
+        "plan_sha256": "b3dcda08f5bedf3799a472fcb640b4e8590350d31a95e4221095a4d265a8e22f"
+      },
+      "owner": null,
+      "approved_goal": null,
+      "intervention": "respect_owner_refusal",
+      "baseline": {
+        "id": "sim-c94598a6b1",
+        "plan_ref": "p-throughput@1",
+        "plan_sha256": "b3dcda08f5bedf3799a472fcb640b4e8590350d31a95e4221095a4d265a8e22f",
+        "report_sha256": "c94598a6b1c236690c070a9b5212480f7febb1a17c631034d3fa4e24a051a0eb",
+        "report_url": "https://github.com/liminalworksinc/align/blob/850971e13a74eab20f8d8789cb78331517ef28da/sparta/walkthrough-lab/evidence/p-throughput@1-normal-134756.json",
+        "trace_sha256": "82b79453d1ee82a1704dac716bdd5633ae1cd44318d72a1a1858ed91b6e2f4e4",
+        "trace_url": "https://github.com/liminalworksinc/align/blob/850971e13a74eab20f8d8789cb78331517ef28da/agent/traces/p-throughput@1-normal-134756.trace.json",
+        "verdict": "FAIL",
+        "passed": 2,
+        "total": 9,
+        "exit_code": 1,
+        "signature": "UNSIGNED",
+        "scope": "historical_synthetic_sandbox",
+        "seed_sha256": "d5268b2b06ff26af4bb73d7771fe41d7d89b02cf753ad7c4ad684e3a932dbb66",
+        "checks_sha256": "e1d0e0f938f8cd1e3a4a07278c0ffb10ee914f9e4fc6ac05ddb894dbeede86fc"
+      },
+      "historical_comparison": null,
+      "allocation": {
+        "allocated_bps": 0,
+        "unallocated_bps": 10000,
+        "reason": "no_priced_source_allocation",
+        "cost": null
+      }
+    },
+    {
+      "session_id": "fixture-unallocated",
+      "source_mapping_state": "UNASSIGNED",
+      "confidence": 0.2,
+      "mapping_authority": null,
+      "status": "NO_GOAL",
+      "automatic_veto": false,
+      "desktop_goal_match": false,
+      "artifact": {
+        "id": "artifact-fixture-unallocated",
+        "association": "synthetic_fixture_association",
+        "source_url": "https://github.com/liminalworksinc/align/blob/850971e13a74eab20f8d8789cb78331517ef28da/agent/traces/p-throughput@1-normal-134756.trace.json",
+        "sha256": "82b79453d1ee82a1704dac716bdd5633ae1cd44318d72a1a1858ed91b6e2f4e4",
+        "goal_id": "g-security-v1",
+        "goal_version": "v1",
+        "plan_ref": "p-throughput@1",
+        "plan_sha256": "b3dcda08f5bedf3799a472fcb640b4e8590350d31a95e4221095a4d265a8e22f"
+      },
+      "owner": null,
+      "approved_goal": null,
+      "intervention": "inspect_mapping",
+      "baseline": {
+        "id": "sim-c94598a6b1",
+        "plan_ref": "p-throughput@1",
+        "plan_sha256": "b3dcda08f5bedf3799a472fcb640b4e8590350d31a95e4221095a4d265a8e22f",
+        "report_sha256": "c94598a6b1c236690c070a9b5212480f7febb1a17c631034d3fa4e24a051a0eb",
+        "report_url": "https://github.com/liminalworksinc/align/blob/850971e13a74eab20f8d8789cb78331517ef28da/sparta/walkthrough-lab/evidence/p-throughput@1-normal-134756.json",
+        "trace_sha256": "82b79453d1ee82a1704dac716bdd5633ae1cd44318d72a1a1858ed91b6e2f4e4",
+        "trace_url": "https://github.com/liminalworksinc/align/blob/850971e13a74eab20f8d8789cb78331517ef28da/agent/traces/p-throughput@1-normal-134756.trace.json",
+        "verdict": "FAIL",
+        "passed": 2,
+        "total": 9,
+        "exit_code": 1,
+        "signature": "UNSIGNED",
+        "scope": "historical_synthetic_sandbox",
+        "seed_sha256": "d5268b2b06ff26af4bb73d7771fe41d7d89b02cf753ad7c4ad684e3a932dbb66",
+        "checks_sha256": "e1d0e0f938f8cd1e3a4a07278c0ffb10ee914f9e4fc6ac05ddb894dbeede86fc"
+      },
+      "historical_comparison": null,
+      "allocation": {
+        "allocated_bps": 0,
+        "unallocated_bps": 10000,
+        "reason": "no_priced_source_allocation",
+        "cost": null
+      }
+    }
+  ],
+  "answer": "In this synthetic sample, fixture-agent is associated with p-throughput@1 under superseded goal g-security-v1. Alex / Security Lead must review the plan. The source-claimed approval names g-security-v2_1 and p-beta@1. Historical UNSIGNED reports are linked for inspection; execution after this fixture approval is not observed.",
+  "coverage": {
+    "sessions": 4,
+    "confirmed_source_links": 1,
+    "source_asserted_spend_allocations": 0,
+    "allocated_bps": 0,
+    "unallocated_bps": 10000,
+    "total_bps": 10000,
+    "cost": null,
+    "basis": "synthetic_sessions_without_priced_allocation"
+  },
+  "authority": {
+    "native_judgment": false,
+    "policy_in_force": false,
+    "execution_permission": false,
+    "business_outcome_observed": false
+  },
+  "provider": {
+    "live_call_made": false,
+    "mapper_available": true
+  }
+}

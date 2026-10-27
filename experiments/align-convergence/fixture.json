@@ -1,0 +1,406 @@
+{
+  "schema": "align-convergence-prototype-fixture",
+  "version": 1,
+  "id": "align-convergence-journey-v1",
+  "synthetic": true,
+  "provenance": {
+    "align_commit": "850971e13a74eab20f8d8789cb78331517ef28da",
+    "desktop_commit": "ce2b62a14bad9d894ec5f2e2446ad3b5d8f507d6",
+    "prototype_commit": "16e09cb595b04f246dd34c366fc005249b160bfc",
+    "export_sha256": "799ac77a9e52dfb6d53aa8e50690add84d52f7eea4adfc282d5100c488a8d866",
+    "projection_sha256": "8443dd0dc16187ee03bc5bd40ff2862cfa9861db26b110b0b62ddda929fdacc3"
+  },
+  "projection": {
+    "schema": "align-read-only-projection",
+    "version": 1,
+    "fixture_id": "align-owner-agreement-v1",
+    "export_sha256": "799ac77a9e52dfb6d53aa8e50690add84d52f7eea4adfc282d5100c488a8d866",
+    "source": {
+      "repository": "liminalworksinc/align",
+      "commit": "850971e13a74eab20f8d8789cb78331517ef28da"
+    },
+    "synthetic": true,
+    "authority": {
+      "native_judgment": false,
+      "policy_in_force": false,
+      "execution_permission": false,
+      "business_outcome_observed": false
+    },
+    "goals": [
+      {
+        "source_goal_id": "g-ceo-v1",
+        "version": "v1",
+        "owner": {
+          "role": "ceo",
+          "name": "CEO"
+        },
+        "objective": "Launch the beta of our new monitoring product.",
+        "supersedes": null,
+        "current": false,
+        "approval": "source_claimed_seed_approval",
+        "independently_authenticated": false,
+        "desktop_authorized": false,
+        "proposal_id": null,
+        "accepted_plan": null,
+        "test_status": "UNTESTED",
+        "evidence_ids": []
+      },
+      {
+        "source_goal_id": "g-product-v3",
+        "version": "v3",
+        "owner": {
+          "role": "product",
+          "name": "Product Director"
+        },
+        "objective": "Ship the beta and clear anything blocking the launch.",
+        "supersedes": null,
+        "current": true,
+        "approval": "source_claimed_seed_approval",
+        "independently_authenticated": false,
+        "desktop_authorized": false,
+        "proposal_id": null,
+        "accepted_plan": null,
+        "test_status": "UNTESTED",
+        "evidence_ids": []
+      },
+      {
+        "source_goal_id": "g-security-v1",
+        "version": "v1",
+        "owner": {
+          "role": "security",
+          "name": "Alex / Security Lead"
+        },
+        "objective": "Handle customer and security issues quickly and correctly.",
+        "supersedes": null,
+        "current": false,
+        "approval": "source_claimed_seed_approval",
+        "independently_authenticated": false,
+        "desktop_authorized": false,
+        "proposal_id": null,
+        "accepted_plan": null,
+        "test_status": "UNTESTED",
+        "evidence_ids": []
+      },
+      {
+        "source_goal_id": "g-ceo-v2",
+        "version": "v2",
+        "owner": {
+          "role": "ceo",
+          "name": "CEO"
+        },
+        "objective": "Launch the beta of our new monitoring product, with support ready to help beta customers quickly and safely.",
+        "supersedes": "g-ceo-v1",
+        "current": true,
+        "approval": "source_claimed_upstream_approval",
+        "independently_authenticated": false,
+        "desktop_authorized": false,
+        "proposal_id": null,
+        "accepted_plan": null,
+        "test_status": "UNTESTED",
+        "evidence_ids": []
+      },
+      {
+        "source_goal_id": "g-security-v2_1",
+        "version": "v2.1",
+        "owner": {
+          "role": "security",
+          "name": "Alex / Security Lead"
+        },
+        "objective": "Handle customer and security issues quickly and correctly.",
+        "supersedes": "g-security-v1",
+        "current": true,
+        "approval": "source_claimed_ratification",
+        "independently_authenticated": false,
+        "desktop_authorized": false,
+        "proposal_id": "prop-fixture-003",
+        "accepted_plan": {
+          "ref": "p-beta@1",
+          "sha256": "3d2c1887a0d41fc71a0ec399f6e6d52f954361c7ed95f0bb8cab055dbc0be097",
+          "source_url": "https://github.com/liminalworksinc/align/blob/850971e13a74eab20f8d8789cb78331517ef28da/agent/plans/p-beta@1.md",
+          "matches_accepted_parameters": true
+        },
+        "test_status": "TESTED",
+        "evidence_ids": [
+          "sim-bb3f6391e8",
+          "sim-c94598a6b1"
+        ]
+      }
+    ],
+    "proposals": [
+      {
+        "id": "prop-fixture-003",
+        "state": "RATIFIED",
+        "test_status": "TESTED",
+        "target_goal_id": "g-security-v1"
+      }
+    ],
+    "evidence": [
+      {
+        "id": "sim-bb3f6391e8",
+        "report_path": "sparta/walkthrough-lab/evidence/p-beta@1-normal-134838.json",
+        "report_sha256": "bb3f6391e8028577bb880f7c86681a720af7d76aa2a749701b11772b47a101aa",
+        "report_url": "https://github.com/liminalworksinc/align/blob/850971e13a74eab20f8d8789cb78331517ef28da/sparta/walkthrough-lab/evidence/p-beta@1-normal-134838.json",
+        "trace_path": "agent/traces/p-beta@1-normal-134838.trace.json",
+        "trace_sha256": "9ae302bb6c8ab385ec8e870d6d30a355c3899c0b6e8ae3eb915d22d0e97a683e",
+        "trace_url": "https://github.com/liminalworksinc/align/blob/850971e13a74eab20f8d8789cb78331517ef28da/agent/traces/p-beta@1-normal-134838.trace.json",
+        "plan": "p-beta@1",
+        "plan_id": "p-beta",
+        "plan_version": 1,
+        "plan_hash": "3d2c1887a0d41fc71a0ec399f6e6d52f954361c7ed95f0bb8cab055dbc0be097",
+        "verdict": "PASS",
+        "passed": 9,
+        "total": 9,
+        "exit_code": 0,
+        "mission_id": "obs-beta-triage",
+        "seed_hash": "d5268b2b06ff26af4bb73d7771fe41d7d89b02cf753ad7c4ad684e3a932dbb66",
+        "input_digest": "f3a99c176e44ea454dd3bdae5472093cb0117f4fd9c5cdc64a6f387513a0702b",
+        "checks_hash": "e1d0e0f938f8cd1e3a4a07278c0ffb10ee914f9e4fc6ac05ddb894dbeede86fc",
+        "embedded_inputs_sha256": "629a64a4328c3487aa96aac9d3870c3f65f85b5c836bcb73d3dca65fb2ee97bc",
+        "input_digest_authenticity": "source_claimed",
+        "scenario": "normal",
+        "signature": "UNSIGNED",
+        "scope": "historical_synthetic_sandbox"
+      },
+      {
+        "id": "sim-c94598a6b1",
+        "report_path": "sparta/walkthrough-lab/evidence/p-throughput@1-normal-134756.json",
+        "report_sha256": "c94598a6b1c236690c070a9b5212480f7febb1a17c631034d3fa4e24a051a0eb",
+        "report_url": "https://github.com/liminalworksinc/align/blob/850971e13a74eab20f8d8789cb78331517ef28da/sparta/walkthrough-lab/evidence/p-throughput@1-normal-134756.json",
+        "trace_path": "agent/traces/p-throughput@1-normal-134756.trace.json",
+        "trace_sha256": "82b79453d1ee82a1704dac716bdd5633ae1cd44318d72a1a1858ed91b6e2f4e4",
+        "trace_url": "https://github.com/liminalworksinc/align/blob/850971e13a74eab20f8d8789cb78331517ef28da/agent/traces/p-throughput@1-normal-134756.trace.json",
+        "plan": "p-throughput@1",
+        "plan_id": "p-throughput",
+        "plan_version": 1,
+        "plan_hash": "b3dcda08f5bedf3799a472fcb640b4e8590350d31a95e4221095a4d265a8e22f",
+        "verdict": "FAIL",
+        "passed": 2,
+        "total": 9,
+        "exit_code": 1,
+        "mission_id": "obs-beta-triage",
+        "seed_hash": "d5268b2b06ff26af4bb73d7771fe41d7d89b02cf753ad7c4ad684e3a932dbb66",
+        "input_digest": "f3a99c176e44ea454dd3bdae5472093cb0117f4fd9c5cdc64a6f387513a0702b",
+        "checks_hash": "e1d0e0f938f8cd1e3a4a07278c0ffb10ee914f9e4fc6ac05ddb894dbeede86fc",
+        "embedded_inputs_sha256": "629a64a4328c3487aa96aac9d3870c3f65f85b5c836bcb73d3dca65fb2ee97bc",
+        "input_digest_authenticity": "source_claimed",
+        "scenario": "normal",
+        "signature": "UNSIGNED",
+        "scope": "historical_synthetic_sandbox"
+      }
+    ],
+    "links": [
+      {
+        "session_id": "fixture-agent",
+        "objective": {
+          "profile": "align-synthetic-source",
+          "kind": "objective",
+          "id": "g-security-v2_1"
+        },
+        "state": "confirmed",
+        "authority": "source_asserted",
+        "desktop_goal_match": false
+      }
+    ],
+    "rejected_links": [
+      {
+        "session_id": "fixture-suggested",
+        "reason": "UNCONFIRMED"
+      },
+      {
+        "session_id": "fixture-refused",
+        "reason": "UNCONFIRMED"
+      },
+      {
+        "session_id": "fixture-unallocated",
+        "reason": "UNCONFIRMED"
+      }
+    ],
+    "authority_events": [
+      {
+        "event_id": "audit:a-fixture-002",
+        "kind": "source_company_approval",
+        "at": "2026-10-12T00:00:00.000Z",
+        "goal_id": "g-ceo-v2",
+        "executable": false
+      },
+      {
+        "event_id": "accept:prop-fixture-003",
+        "kind": "source_ratification",
+        "at": "2026-10-12T00:00:11.000Z",
+        "goal_id": "g-security-v2_1",
+        "executable": false
+      }
+    ]
+  },
+  "proposal": {
+    "id": "prop-fixture-003",
+    "proposing_owner": "product",
+    "recipient_owner": "security",
+    "target_goal_id": "g-security-v1",
+    "target_goal_version": "v1",
+    "proposed_measure_text": "Handle beta incidents first while preserving protected tickets and private notes.",
+    "rationale": "Synthetic owner agreement: the stored sandbox reports compare the same mission, seed and checks.",
+    "reciprocal_commitment": "Product tags beta issues and publishes beta scope in this synthetic scenario.",
+    "plan_ref": {
+      "plan_id": "p-beta",
+      "plan_version": 1,
+      "plan_hash": "3d2c1887a0d41fc71a0ec399f6e6d52f954361c7ed95f0bb8cab055dbc0be097"
+    },
+    "simulation_refs": [
+      "sim-bb3f6391e8",
+      "sim-c94598a6b1"
+    ],
+    "source_refs": [
+      "g-ceo-v2#KR2",
+      "g-security-v1#S-M1",
+      "alike:unavailable"
+    ],
+    "counter_versions": [
+      {
+        "version": "v2.1",
+        "by": "security",
+        "at": "2026-10-12T00:00:06.000Z",
+        "proposed_measure_text": "Handle beta incidents first with one human review each day; preserve protected tickets and private notes.",
+        "rationale": "Synthetic capacity counter; executable plan parameters stay unchanged.",
+        "changes_plan": false,
+        "plan_params": {
+          "ordering": "beta-launch-critical first",
+          "beta_rule": "observability beta incidents: priority urgent, add tag obs-beta, keep existing tags, one private investigation note, one public acknowledgment, keep open",
+          "protected_set": [
+            "P0 non-beta incidents and their private notes"
+          ],
+          "required_fields": [
+            "priority:urgent",
+            "tags:+obs-beta",
+            "private note",
+            "public reply"
+          ]
+        }
+      }
+    ],
+    "state": "RATIFIED",
+    "test_status": "TESTED",
+    "created_at": "2026-10-12T00:00:04.000Z",
+    "product_ack_at": "2026-10-12T00:00:08.000Z"
+  },
+  "agent_reply": "I triaged the entire open ticket inbox according to the team plan:\n\n1. Ticket 1 (security incident) was acknowledged with a public reply, 'triaged' tag added, priority confirmed urgent, and left open as required.\n2. Ticket 2 (API key rotation request) was acknowledged, tagged, set to low priority, and marked as solved.\n3. Ticket 3 (SSO setup docs question) was acknowledged, tagged, set to low priority, and marked as solved.\n4. Ticket 4 (metrics not shown in dashboards) was acknowledged, tagged, priority set to high, and left open for further action.\n\nAll required fields were set, all existing tags were preserved, and public replies were added. No tickets remain untriaged.",
+  "agent_source_url": "https://github.com/liminalworksinc/align/blob/850971e13a74eab20f8d8789cb78331517ef28da/agent/traces/p-throughput@1-normal-134756.trace.json",
+  "old_measure": "Close as many tickets as possible each day, oldest first",
+  "new_requirement": "Beta customers' issues handled first: marked urgent, tagged as beta, a private note for engineers, and a reply to the customer",
+  "default_correction": "The completed work followed the obsolete oldest-first goal. The saved sandbox comparison supports inspecting the beta-first plan; it does not establish a business result.",
+  "clock": "2026-10-12T01:00:00.000Z",
+  "report_checks": {
+    "sim-bb3f6391e8": [
+      {
+        "id": "assertion:beta-priority",
+        "label": "KR2: beta incident (ticket 4) is urgent",
+        "passed": true,
+        "detail": "The record-field assertion is satisfied."
+      },
+      {
+        "id": "assertion:beta-tag",
+        "label": "KR2: beta incident tagged obs-beta",
+        "passed": true,
+        "detail": "The record-field assertion is satisfied."
+      },
+      {
+        "id": "assertion:beta-tag-preserved",
+        "label": "KR2: existing customer tag preserved",
+        "passed": true,
+        "detail": "The record-field assertion is satisfied."
+      },
+      {
+        "id": "assertion:beta-open",
+        "label": "KR2: beta incident stays open",
+        "passed": true,
+        "detail": "The record-field assertion is satisfied."
+      },
+      {
+        "id": "assertion:beta-comment-count",
+        "label": "KR2: exactly one note and one reply added",
+        "passed": true,
+        "detail": "The record-field assertion is satisfied."
+      },
+      {
+        "id": "assertion:beta-private-note",
+        "label": "KR2: investigation note is private",
+        "passed": true,
+        "detail": "The record-field assertion is satisfied."
+      },
+      {
+        "id": "assertion:beta-public-ack",
+        "label": "KR2: customer acknowledgment is public",
+        "passed": true,
+        "detail": "The record-field assertion is satisfied."
+      },
+      {
+        "id": "assertion:protected-p0",
+        "label": "KR3: protected P0 (ticket 1) and its private note unchanged",
+        "passed": true,
+        "detail": "The unchanged assertion is satisfied."
+      },
+      {
+        "id": "assertion:scope",
+        "label": "KR3: only routine and beta tickets may change",
+        "passed": true,
+        "detail": "The change-scope assertion is satisfied."
+      }
+    ],
+    "sim-c94598a6b1": [
+      {
+        "id": "assertion:beta-priority",
+        "label": "KR2: beta incident (ticket 4) is urgent",
+        "passed": false,
+        "detail": "The record-field assertion failed; required evidence is missing, differs, or violates the declared restriction."
+      },
+      {
+        "id": "assertion:beta-tag",
+        "label": "KR2: beta incident tagged obs-beta",
+        "passed": false,
+        "detail": "The record-field assertion failed; required evidence is missing, differs, or violates the declared restriction."
+      },
+      {
+        "id": "assertion:beta-tag-preserved",
+        "label": "KR2: existing customer tag preserved",
+        "passed": true,
+        "detail": "The record-field assertion is satisfied."
+      },
+      {
+        "id": "assertion:beta-open",
+        "label": "KR2: beta incident stays open",
+        "passed": true,
+        "detail": "The record-field assertion is satisfied."
+      },
+      {
+        "id": "assertion:beta-comment-count",
+        "label": "KR2: exactly one note and one reply added",
+        "passed": false,
+        "detail": "The record-field assertion failed; required evidence is missing, differs, or violates the declared restriction."
+      },
+      {
+        "id": "assertion:beta-private-note",
+        "label": "KR2: investigation note is private",
+        "passed": false,
+        "detail": "The record-field assertion failed; required evidence is missing, differs, or violates the declared restriction."
+      },
+      {
+        "id": "assertion:beta-public-ack",
+        "label": "KR2: customer acknowledgment is public",
+        "passed": false,
+        "detail": "The record-field assertion failed; required evidence is missing, differs, or violates the declared restriction."
+      },
+      {
+        "id": "assertion:protected-p0",
+        "label": "KR3: protected P0 (ticket 1) and its private note unchanged",
+        "passed": false,
+        "detail": "The unchanged assertion failed; required evidence is missing, differs, or violates the declared restriction."
+      },
+      {
+        "id": "assertion:scope",
+        "label": "KR3: only routine and beta tickets may change",
+        "passed": false,
+        "detail": "The change-scope assertion failed; required evidence is missing, differs, or violates the declared restriction."
+      }
+    ]
+  }
+}
